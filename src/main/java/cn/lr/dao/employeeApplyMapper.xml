@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.lr.dao.employeeApplyMapper">
+  <resultMap id="BaseResultMap" type="cn.lr.po.employeeApply">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="employeeId" jdbcType="INTEGER" property="employeeId" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="startDate" jdbcType="DATE" property="startDate" />
+    <result column="startPhase" jdbcType="VARCHAR" property="startPhase" />
+    <result column="endDate" jdbcType="DATE" property="endDate" />
+    <result column="endPhase" jdbcType="VARCHAR" property="endPhase" />
+    <result column="note" jdbcType="VARCHAR" property="note" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, employeeId, type, name, startDate, startPhase, endDate, endPhase, note, state
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_employeeapply
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from tb_employeeapply
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cn.lr.po.employeeApply">
+    insert into tb_employeeapply (id, employeeId, type, 
+      name, startDate, startPhase, 
+      endDate, endPhase, note, 
+      state)
+    values (#{id,jdbcType=INTEGER}, #{employeeId,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, 
+      #{name,jdbcType=VARCHAR}, #{startDate,jdbcType=DATE}, #{startPhase,jdbcType=VARCHAR}, 
+      #{endDate,jdbcType=DATE}, #{endPhase,jdbcType=VARCHAR}, #{note,jdbcType=VARCHAR}, 
+      #{state,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.lr.po.employeeApply">
+    insert into tb_employeeapply
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="employeeId != null">
+        employeeId,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="startDate != null">
+        startDate,
+      </if>
+      <if test="startPhase != null">
+        startPhase,
+      </if>
+      <if test="endDate != null">
+        endDate,
+      </if>
+      <if test="endPhase != null">
+        endPhase,
+      </if>
+      <if test="note != null">
+        note,
+      </if>
+      <if test="state != null">
+        state,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="employeeId != null">
+        #{employeeId,jdbcType=INTEGER},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="startDate != null">
+        #{startDate,jdbcType=DATE},
+      </if>
+      <if test="startPhase != null">
+        #{startPhase,jdbcType=VARCHAR},
+      </if>
+      <if test="endDate != null">
+        #{endDate,jdbcType=DATE},
+      </if>
+      <if test="endPhase != null">
+        #{endPhase,jdbcType=VARCHAR},
+      </if>
+      <if test="note != null">
+        #{note,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.lr.po.employeeApply">
+    update tb_employeeapply
+    <set>
+      <if test="employeeId != null">
+        employeeId = #{employeeId,jdbcType=INTEGER},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="startDate != null">
+        startDate = #{startDate,jdbcType=DATE},
+      </if>
+      <if test="startPhase != null">
+        startPhase = #{startPhase,jdbcType=VARCHAR},
+      </if>
+      <if test="endDate != null">
+        endDate = #{endDate,jdbcType=DATE},
+      </if>
+      <if test="endPhase != null">
+        endPhase = #{endPhase,jdbcType=VARCHAR},
+      </if>
+      <if test="note != null">
+        note = #{note,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        state = #{state,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.lr.po.employeeApply">
+    update tb_employeeapply
+    set employeeId = #{employeeId,jdbcType=INTEGER},
+      type = #{type,jdbcType=INTEGER},
+      name = #{name,jdbcType=VARCHAR},
+      startDate = #{startDate,jdbcType=DATE},
+      startPhase = #{startPhase,jdbcType=VARCHAR},
+      endDate = #{endDate,jdbcType=DATE},
+      endPhase = #{endPhase,jdbcType=VARCHAR},
+      note = #{note,jdbcType=VARCHAR},
+      state = #{state,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

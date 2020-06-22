@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.lr.dao.customerProjectMapper">
+  <resultMap id="BaseResultMap" type="cn.lr.po.customerProject">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="customerId" jdbcType="INTEGER" property="customerId" />
+    <result column="projectId" jdbcType="INTEGER" property="projectId" />
+    <result column="count" jdbcType="INTEGER" property="count" />
+    <result column="money" jdbcType="VARCHAR" property="money" />
+    <result column="restCount" jdbcType="INTEGER" property="restCount" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, customerId, projectId, count, money, restCount, state
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_customerproject
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from tb_customerproject
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cn.lr.po.customerProject">
+    insert into tb_customerproject (id, customerId, projectId, 
+      count, money, restCount, 
+      state)
+    values (#{id,jdbcType=INTEGER}, #{customerId,jdbcType=INTEGER}, #{projectId,jdbcType=INTEGER}, 
+      #{count,jdbcType=INTEGER}, #{money,jdbcType=VARCHAR}, #{restCount,jdbcType=INTEGER}, 
+      #{state,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.lr.po.customerProject">
+    insert into tb_customerproject
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="customerId != null">
+        customerId,
+      </if>
+      <if test="projectId != null">
+        projectId,
+      </if>
+      <if test="count != null">
+        count,
+      </if>
+      <if test="money != null">
+        money,
+      </if>
+      <if test="restCount != null">
+        restCount,
+      </if>
+      <if test="state != null">
+        state,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="customerId != null">
+        #{customerId,jdbcType=INTEGER},
+      </if>
+      <if test="projectId != null">
+        #{projectId,jdbcType=INTEGER},
+      </if>
+      <if test="count != null">
+        #{count,jdbcType=INTEGER},
+      </if>
+      <if test="money != null">
+        #{money,jdbcType=VARCHAR},
+      </if>
+      <if test="restCount != null">
+        #{restCount,jdbcType=INTEGER},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.lr.po.customerProject">
+    update tb_customerproject
+    <set>
+      <if test="customerId != null">
+        customerId = #{customerId,jdbcType=INTEGER},
+      </if>
+      <if test="projectId != null">
+        projectId = #{projectId,jdbcType=INTEGER},
+      </if>
+      <if test="count != null">
+        count = #{count,jdbcType=INTEGER},
+      </if>
+      <if test="money != null">
+        money = #{money,jdbcType=VARCHAR},
+      </if>
+      <if test="restCount != null">
+        restCount = #{restCount,jdbcType=INTEGER},
+      </if>
+      <if test="state != null">
+        state = #{state,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.lr.po.customerProject">
+    update tb_customerproject
+    set customerId = #{customerId,jdbcType=INTEGER},
+      projectId = #{projectId,jdbcType=INTEGER},
+      count = #{count,jdbcType=INTEGER},
+      money = #{money,jdbcType=VARCHAR},
+      restCount = #{restCount,jdbcType=INTEGER},
+      state = #{state,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

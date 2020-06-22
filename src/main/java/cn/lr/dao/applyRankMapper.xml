@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.lr.dao.applyRankMapper">
+  <resultMap id="BaseResultMap" type="cn.lr.po.applyRank">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="employeeId" jdbcType="INTEGER" property="employeeId" />
+    <result column="rankId" jdbcType="INTEGER" property="rankId" />
+    <result column="startTime" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="checkId1" jdbcType="VARCHAR" property="checkId1" />
+    <result column="checkTime1" jdbcType="TIMESTAMP" property="checkTime1" />
+    <result column="check1" jdbcType="INTEGER" property="check1" />
+    <result column="note1" jdbcType="VARCHAR" property="note1" />
+    <result column="checkId2" jdbcType="VARCHAR" property="checkId2" />
+    <result column="checkTime2" jdbcType="TIMESTAMP" property="checkTime2" />
+    <result column="check2" jdbcType="INTEGER" property="check2" />
+    <result column="note2" jdbcType="VARCHAR" property="note2" />
+    <result column="checkId3" jdbcType="VARCHAR" property="checkId3" />
+    <result column="checkTime3" jdbcType="TIMESTAMP" property="checkTime3" />
+    <result column="check3" jdbcType="INTEGER" property="check3" />
+    <result column="note3" jdbcType="VARCHAR" property="note3" />
+    <result column="checkId4" jdbcType="VARCHAR" property="checkId4" />
+    <result column="checkTime4" jdbcType="TIMESTAMP" property="checkTime4" />
+    <result column="check4" jdbcType="INTEGER" property="check4" />
+    <result column="note4" jdbcType="VARCHAR" property="note4" />
+    <result column="checkId5" jdbcType="VARCHAR" property="checkId5" />
+    <result column="checkTime5" jdbcType="TIMESTAMP" property="checkTime5" />
+    <result column="check5" jdbcType="INTEGER" property="check5" />
+    <result column="note5" jdbcType="VARCHAR" property="note5" />
+    <result column="checkNumber" jdbcType="INTEGER" property="checkNumber" />
+    <result column="endTime" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="tbName" jdbcType="VARCHAR" property="tbName" />
+    <result column="tbId" jdbcType="INTEGER" property="tbId" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, employeeId, rankId, startTime, checkId1, checkTime1, check1, note1, checkId2, 
+    checkTime2, check2, note2, checkId3, checkTime3, check3, note3, checkId4, checkTime4, 
+    check4, note4, checkId5, checkTime5, check5, note5, checkNumber, endTime, tbName, 
+    tbId, state
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_applyrank
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from tb_applyrank
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cn.lr.po.applyRank">
+    insert into tb_applyrank (id, employeeId, rankId, 
+      startTime, checkId1, checkTime1, 
+      check1, note1, checkId2, 
+      checkTime2, check2, note2, 
+      checkId3, checkTime3, check3, 
+      note3, checkId4, checkTime4, 
+      check4, note4, checkId5, 
+      checkTime5, check5, note5, 
+      checkNumber, endTime, tbName, 
+      tbId, state)
+    values (#{id,jdbcType=INTEGER}, #{employeeId,jdbcType=INTEGER}, #{rankId,jdbcType=INTEGER}, 
+      #{startTime,jdbcType=TIMESTAMP}, #{checkId1,jdbcType=VARCHAR}, #{checkTime1,jdbcType=TIMESTAMP}, 
+      #{check1,jdbcType=INTEGER}, #{note1,jdbcType=VARCHAR}, #{checkId2,jdbcType=VARCHAR}, 
+      #{checkTime2,jdbcType=TIMESTAMP}, #{check2,jdbcType=INTEGER}, #{note2,jdbcType=VARCHAR}, 
+      #{checkId3,jdbcType=VARCHAR}, #{checkTime3,jdbcType=TIMESTAMP}, #{check3,jdbcType=INTEGER}, 
+      #{note3,jdbcType=VARCHAR}, #{checkId4,jdbcType=VARCHAR}, #{checkTime4,jdbcType=TIMESTAMP}, 
+      #{check4,jdbcType=INTEGER}, #{note4,jdbcType=VARCHAR}, #{checkId5,jdbcType=VARCHAR}, 
+      #{checkTime5,jdbcType=TIMESTAMP}, #{check5,jdbcType=INTEGER}, #{note5,jdbcType=VARCHAR}, 
+      #{checkNumber,jdbcType=INTEGER}, #{endTime,jdbcType=TIMESTAMP}, #{tbName,jdbcType=VARCHAR}, 
+      #{tbId,jdbcType=INTEGER}, #{state,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.lr.po.applyRank">
+    insert into tb_applyrank
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="employeeId != null">
+        employeeId,
+      </if>
+      <if test="rankId != null">
+        rankId,
+      </if>
+      <if test="startTime != null">
+        startTime,
+      </if>
+      <if test="checkId1 != null">
+        checkId1,
+      </if>
+      <if test="checkTime1 != null">
+        checkTime1,
+      </if>
+      <if test="check1 != null">
+        check1,
+      </if>
+      <if test="note1 != null">
+        note1,
+      </if>
+      <if test="checkId2 != null">
+        checkId2,
+      </if>
+      <if test="checkTime2 != null">
+        checkTime2,
+      </if>
+      <if test="check2 != null">
+        check2,
+      </if>
+      <if test="note2 != null">
+        note2,
+      </if>
+      <if test="checkId3 != null">
+        checkId3,
+      </if>
+      <if test="checkTime3 != null">
+        checkTime3,
+      </if>
+      <if test="check3 != null">
+        check3,
+      </if>
+      <if test="note3 != null">
+        note3,
+      </if>
+      <if test="checkId4 != null">
+        checkId4,
+      </if>
+      <if test="checkTime4 != null">
+        checkTime4,
+      </if>
+      <if test="check4 != null">
+        check4,
+      </if>
+      <if test="note4 != null">
+        note4,
+      </if>
+      <if test="checkId5 != null">
+        checkId5,
+      </if>
+      <if test="checkTime5 != null">
+        checkTime5,
+      </if>
+      <if test="check5 != null">
+        check5,
+      </if>
+      <if test="note5 != null">
+        note5,
+      </if>
+      <if test="checkNumber != null">
+        checkNumber,
+      </if>
+      <if test="endTime != null">
+        endTime,
+      </if>
+      <if test="tbName != null">
+        tbName,
+      </if>
+      <if test="tbId != null">
+        tbId,
+      </if>
+      <if test="state != null">
+        state,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="employeeId != null">
+        #{employeeId,jdbcType=INTEGER},
+      </if>
+      <if test="rankId != null">
+        #{rankId,jdbcType=INTEGER},
+      </if>
+      <if test="startTime != null">
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="checkId1 != null">
+        #{checkId1,jdbcType=VARCHAR},
+      </if>
+      <if test="checkTime1 != null">
+        #{checkTime1,jdbcType=TIMESTAMP},
+      </if>
+      <if test="check1 != null">
+        #{check1,jdbcType=INTEGER},
+      </if>
+      <if test="note1 != null">
+        #{note1,jdbcType=VARCHAR},
+      </if>
+      <if test="checkId2 != null">
+        #{checkId2,jdbcType=VARCHAR},
+      </if>
+      <if test="checkTime2 != null">
+        #{checkTime2,jdbcType=TIMESTAMP},
+      </if>
+      <if test="check2 != null">
+        #{check2,jdbcType=INTEGER},
+      </if>
+      <if test="note2 != null">
+        #{note2,jdbcType=VARCHAR},
+      </if>
+      <if test="checkId3 != null">
+        #{checkId3,jdbcType=VARCHAR},
+      </if>
+      <if test="checkTime3 != null">
+        #{checkTime3,jdbcType=TIMESTAMP},
+      </if>
+      <if test="check3 != null">
+        #{check3,jdbcType=INTEGER},
+      </if>
+      <if test="note3 != null">
+        #{note3,jdbcType=VARCHAR},
+      </if>
+      <if test="checkId4 != null">
+        #{checkId4,jdbcType=VARCHAR},
+      </if>
+      <if test="checkTime4 != null">
+        #{checkTime4,jdbcType=TIMESTAMP},
+      </if>
+      <if test="check4 != null">
+        #{check4,jdbcType=INTEGER},
+      </if>
+      <if test="note4 != null">
+        #{note4,jdbcType=VARCHAR},
+      </if>
+      <if test="checkId5 != null">
+        #{checkId5,jdbcType=VARCHAR},
+      </if>
+      <if test="checkTime5 != null">
+        #{checkTime5,jdbcType=TIMESTAMP},
+      </if>
+      <if test="check5 != null">
+        #{check5,jdbcType=INTEGER},
+      </if>
+      <if test="note5 != null">
+        #{note5,jdbcType=VARCHAR},
+      </if>
+      <if test="checkNumber != null">
+        #{checkNumber,jdbcType=INTEGER},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="tbName != null">
+        #{tbName,jdbcType=VARCHAR},
+      </if>
+      <if test="tbId != null">
+        #{tbId,jdbcType=INTEGER},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.lr.po.applyRank">
+    update tb_applyrank
+    <set>
+      <if test="employeeId != null">
+        employeeId = #{employeeId,jdbcType=INTEGER},
+      </if>
+      <if test="rankId != null">
+        rankId = #{rankId,jdbcType=INTEGER},
+      </if>
+      <if test="startTime != null">
+        startTime = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="checkId1 != null">
+        checkId1 = #{checkId1,jdbcType=VARCHAR},
+      </if>
+      <if test="checkTime1 != null">
+        checkTime1 = #{checkTime1,jdbcType=TIMESTAMP},
+      </if>
+      <if test="check1 != null">
+        check1 = #{check1,jdbcType=INTEGER},
+      </if>
+      <if test="note1 != null">
+        note1 = #{note1,jdbcType=VARCHAR},
+      </if>
+      <if test="checkId2 != null">
+        checkId2 = #{checkId2,jdbcType=VARCHAR},
+      </if>
+      <if test="checkTime2 != null">
+        checkTime2 = #{checkTime2,jdbcType=TIMESTAMP},
+      </if>
+      <if test="check2 != null">
+        check2 = #{check2,jdbcType=INTEGER},
+      </if>
+      <if test="note2 != null">
+        note2 = #{note2,jdbcType=VARCHAR},
+      </if>
+      <if test="checkId3 != null">
+        checkId3 = #{checkId3,jdbcType=VARCHAR},
+      </if>
+      <if test="checkTime3 != null">
+        checkTime3 = #{checkTime3,jdbcType=TIMESTAMP},
+      </if>
+      <if test="check3 != null">
+        check3 = #{check3,jdbcType=INTEGER},
+      </if>
+      <if test="note3 != null">
+        note3 = #{note3,jdbcType=VARCHAR},
+      </if>
+      <if test="checkId4 != null">
+        checkId4 = #{checkId4,jdbcType=VARCHAR},
+      </if>
+      <if test="checkTime4 != null">
+        checkTime4 = #{checkTime4,jdbcType=TIMESTAMP},
+      </if>
+      <if test="check4 != null">
+        check4 = #{check4,jdbcType=INTEGER},
+      </if>
+      <if test="note4 != null">
+        note4 = #{note4,jdbcType=VARCHAR},
+      </if>
+      <if test="checkId5 != null">
+        checkId5 = #{checkId5,jdbcType=VARCHAR},
+      </if>
+      <if test="checkTime5 != null">
+        checkTime5 = #{checkTime5,jdbcType=TIMESTAMP},
+      </if>
+      <if test="check5 != null">
+        check5 = #{check5,jdbcType=INTEGER},
+      </if>
+      <if test="note5 != null">
+        note5 = #{note5,jdbcType=VARCHAR},
+      </if>
+      <if test="checkNumber != null">
+        checkNumber = #{checkNumber,jdbcType=INTEGER},
+      </if>
+      <if test="endTime != null">
+        endTime = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="tbName != null">
+        tbName = #{tbName,jdbcType=VARCHAR},
+      </if>
+      <if test="tbId != null">
+        tbId = #{tbId,jdbcType=INTEGER},
+      </if>
+      <if test="state != null">
+        state = #{state,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.lr.po.applyRank">
+    update tb_applyrank
+    set employeeId = #{employeeId,jdbcType=INTEGER},
+      rankId = #{rankId,jdbcType=INTEGER},
+      startTime = #{startTime,jdbcType=TIMESTAMP},
+      checkId1 = #{checkId1,jdbcType=VARCHAR},
+      checkTime1 = #{checkTime1,jdbcType=TIMESTAMP},
+      check1 = #{check1,jdbcType=INTEGER},
+      note1 = #{note1,jdbcType=VARCHAR},
+      checkId2 = #{checkId2,jdbcType=VARCHAR},
+      checkTime2 = #{checkTime2,jdbcType=TIMESTAMP},
+      check2 = #{check2,jdbcType=INTEGER},
+      note2 = #{note2,jdbcType=VARCHAR},
+      checkId3 = #{checkId3,jdbcType=VARCHAR},
+      checkTime3 = #{checkTime3,jdbcType=TIMESTAMP},
+      check3 = #{check3,jdbcType=INTEGER},
+      note3 = #{note3,jdbcType=VARCHAR},
+      checkId4 = #{checkId4,jdbcType=VARCHAR},
+      checkTime4 = #{checkTime4,jdbcType=TIMESTAMP},
+      check4 = #{check4,jdbcType=INTEGER},
+      note4 = #{note4,jdbcType=VARCHAR},
+      checkId5 = #{checkId5,jdbcType=VARCHAR},
+      checkTime5 = #{checkTime5,jdbcType=TIMESTAMP},
+      check5 = #{check5,jdbcType=INTEGER},
+      note5 = #{note5,jdbcType=VARCHAR},
+      checkNumber = #{checkNumber,jdbcType=INTEGER},
+      endTime = #{endTime,jdbcType=TIMESTAMP},
+      tbName = #{tbName,jdbcType=VARCHAR},
+      tbId = #{tbId,jdbcType=INTEGER},
+      state = #{state,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
