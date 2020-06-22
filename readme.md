@@ -1,5 +1,5 @@
 # 俪人掌柜
-![welcome](https://woolson.gitee.io/npmer-badge/welcome-555555-G16-ZCC-44cc11-square-gradient-shadow.svg)
+![welcome](https://img.shields.io/badge/welcome-lr-green.svg)
 ![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)
 
 本项目为美容院管理系统，本人负责后端代码。
