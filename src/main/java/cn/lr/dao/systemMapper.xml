@@ -21,13 +21,13 @@
     delete from tb_system
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="cn.lr.po.system">
+  <insert id="insert" parameterType="cn.lr.po.system" useGeneratedKeys="true" keyProperty="id">
     insert into tb_system (id, companyId, name, 
       content, state)
     values (#{id,jdbcType=INTEGER}, #{companyId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
       #{content,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="cn.lr.po.system">
+  <insert id="insertSelective" parameterType="cn.lr.po.system" useGeneratedKeys="true" keyProperty="id">
     insert into tb_system
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -90,4 +90,16 @@
       state = #{state,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <select id="selectByCompanyId" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_system
+    where companyId = #{companyId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER} limit #{page},#{size}
+  </select>
+  <select id="selectByCompanyCount"  resultType="Integer">
+    select count(*)
+    from tb_system
+    where companyId = #{companyId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER}
+  </select>
 </mapper>

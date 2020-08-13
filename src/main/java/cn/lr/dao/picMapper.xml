@@ -20,13 +20,13 @@
     delete from tb_pic
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="cn.lr.po.pic">
+  <insert id="insert" parameterType="cn.lr.po.pic" useGeneratedKeys="true" keyProperty="id">
     insert into tb_pic (id, companyId, pic, 
       state)
     values (#{id,jdbcType=INTEGER}, #{companyId,jdbcType=INTEGER}, #{pic,jdbcType=VARCHAR}, 
       #{state,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="cn.lr.po.pic">
+  <insert id="insertSelective" parameterType="cn.lr.po.pic" useGeneratedKeys="true" keyProperty="id">
     insert into tb_pic
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -78,5 +78,23 @@
       pic = #{pic,jdbcType=VARCHAR},
       state = #{state,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectByCompanyId" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_pic
+    where companyId = #{companyId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER} 
+  </select>
+  
+  <select id="selectByPic" parameterType="string" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_pic
+    where pic = #{pic,jdbcType=VARCHAR}
+  </select>
+   <update id="updateByPic" parameterType="cn.lr.po.pic">
+    update tb_pic set state = #{state,jdbcType=INTEGER}
+    where pic = #{pic,jdbcType=VARCHAR}
   </update>
 </mapper>

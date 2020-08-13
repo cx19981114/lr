@@ -5,19 +5,24 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="customerId" jdbcType="INTEGER" property="customerId" />
     <result column="employeeId" jdbcType="INTEGER" property="employeeId" />
+    <result column="customerProjectId" jdbcType="INTEGER" property="customerProjectId" />
     <result column="projectId" jdbcType="INTEGER" property="projectId" />
-    <result column="date" jdbcType="DATE" property="date" />
-    <result column="time" jdbcType="TIME" property="time" />
-    <result column="actDateTime" jdbcType="TIMESTAMP" property="actDateTime" />
+    <result column="date" jdbcType="VARCHAR" property="date" />
+    <result column="startTime" jdbcType="VARCHAR" property="startTime" />
+    <result column="dateTime" jdbcType="VARCHAR" property="dateTime" />
+    <result column="actStartTime" jdbcType="VARCHAR" property="actStartTime" />
+    <result column="actEndTime" jdbcType="VARCHAR" property="actEndTime" />
     <result column="note" jdbcType="VARCHAR" property="note" />
     <result column="evaluate" jdbcType="VARCHAR" property="evaluate" />
     <result column="pic" jdbcType="VARCHAR" property="pic" />
+    <result column="projectNum" jdbcType="INTEGER" property="projectNum" />
     <result column="applyState" jdbcType="INTEGER" property="applyState" />
     <result column="orderState" jdbcType="INTEGER" property="orderState" />
+    <result column="applyOrderState" jdbcType="INTEGER" property="applyOrderState" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, customerId, employeeId, projectId, date, time, actDateTime, note, evaluate, pic, 
-    applyState, orderState
+    id, customerId, employeeId, customerProjectId, projectId, date, startTime, dateTime, 
+    actStartTime, actEndTime, note, evaluate, pic, projectNum, applyState, orderState,applyOrderState
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -29,17 +34,21 @@
     delete from tb_order
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="cn.lr.po.order">
+  <insert id="insert" parameterType="cn.lr.po.order"  useGeneratedKeys="true" keyProperty="id">
     insert into tb_order (id, customerId, employeeId, 
-      projectId, date, time, actDateTime, 
-      note, evaluate, pic, 
-      applyState, orderState)
+      customerProjectId, projectId, date, startTime, 
+      dateTime, actStartTime, 
+      actEndTime, note, evaluate, 
+      pic, projectNum, applyState, 
+      orderState,applyOrderState)
     values (#{id,jdbcType=INTEGER}, #{customerId,jdbcType=INTEGER}, #{employeeId,jdbcType=INTEGER}, 
-      #{projectId,jdbcType=INTEGER}, #{date,jdbcType=DATE}, #{time,jdbcType=TIME}, #{actDateTime,jdbcType=TIMESTAMP}, 
-      #{note,jdbcType=VARCHAR}, #{evaluate,jdbcType=VARCHAR}, #{pic,jdbcType=VARCHAR}, 
-      #{applyState,jdbcType=INTEGER}, #{orderState,jdbcType=INTEGER})
+      #{customerProjectId,jdbcType=INTEGER},#{projectId,jdbcType=INTEGER}, #{date,jdbcType=VARCHAR}, #{startTime,jdbcType=VARCHAR}, 
+      #{dateTime,jdbcType=VARCHAR}, #{actStartTime,jdbcType=VARCHAR}, 
+      #{actEndTime,jdbcType=VARCHAR}, #{note,jdbcType=VARCHAR}, #{evaluate,jdbcType=VARCHAR}, 
+      #{pic,jdbcType=VARCHAR}, #{projectNum,jdbcType=INTEGER}, #{applyState,jdbcType=INTEGER}, 
+      #{orderState,jdbcType=INTEGER}, #{applyOrderState,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="cn.lr.po.order">
+  <insert id="insertSelective" parameterType="cn.lr.po.order" useGeneratedKeys="true" keyProperty="id">
     insert into tb_order
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -51,17 +60,26 @@
       <if test="employeeId != null">
         employeeId,
       </if>
+      <if test="customerProjectId != null">
+        customerProjectId,
+      </if>
       <if test="projectId != null">
         projectId,
       </if>
       <if test="date != null">
         date,
       </if>
-      <if test="time != null">
-        time,
+      <if test="startTime != null">
+        startTime,
       </if>
-      <if test="actDateTime != null">
-        actDateTime,
+      <if test="dateTime != null">
+        dateTime,
+      </if>
+      <if test="actStartTime != null">
+        actStartTime,
+      </if>
+      <if test="actEndTime != null">
+        actEndTime,
       </if>
       <if test="note != null">
         note,
@@ -72,11 +90,17 @@
       <if test="pic != null">
         pic,
       </if>
+      <if test="projectNum != null">
+        projectNum,
+      </if>
       <if test="applyState != null">
         applyState,
       </if>
       <if test="orderState != null">
         orderState,
+      </if>
+      <if test="applyOrderState != null">
+        applyOrderState,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -89,17 +113,26 @@
       <if test="employeeId != null">
         #{employeeId,jdbcType=INTEGER},
       </if>
+      <if test="customerProjectId != null">
+        #{customerProjectId,jdbcType=INTEGER},
+      </if>
       <if test="projectId != null">
         #{projectId,jdbcType=INTEGER},
       </if>
       <if test="date != null">
-        #{date,jdbcType=DATE},
+        #{date,jdbcType=VARCHAR},
       </if>
-      <if test="time != null">
-        #{time,jdbcType=TIME},
+      <if test="startTime != null">
+        #{startTime,jdbcType=VARCHAR},
       </if>
-      <if test="actDateTime != null">
-        #{actDateTime,jdbcType=TIMESTAMP},
+      <if test="dateTime != null">
+        #{dateTime,jdbcType=VARCHAR},
+      </if>
+      <if test="actStartTime != null">
+        #{actStartTime,jdbcType=VARCHAR},
+      </if>
+      <if test="actEndTime != null">
+        #{actEndTime,jdbcType=VARCHAR},
       </if>
       <if test="note != null">
         #{note,jdbcType=VARCHAR},
@@ -110,11 +143,17 @@
       <if test="pic != null">
         #{pic,jdbcType=VARCHAR},
       </if>
+      <if test="projectNum != null">
+        #{projectNum,jdbcType=INTEGER},
+      </if>
       <if test="applyState != null">
         #{applyState,jdbcType=INTEGER},
       </if>
       <if test="orderState != null">
         #{orderState,jdbcType=INTEGER},
+      </if>
+      <if test="applyOrderState != null">
+        #{applyOrderState,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -127,17 +166,26 @@
       <if test="employeeId != null">
         employeeId = #{employeeId,jdbcType=INTEGER},
       </if>
+      <if test="customerProjectId != null">
+        customerProjectId = #{customerProjectId,jdbcType=INTEGER},
+      </if>
       <if test="projectId != null">
         projectId = #{projectId,jdbcType=INTEGER},
       </if>
       <if test="date != null">
-        date = #{date,jdbcType=DATE},
+        date = #{date,jdbcType=VARCHAR},
       </if>
-      <if test="time != null">
-        time = #{time,jdbcType=TIME},
+      <if test="startTime != null">
+        startTime = #{startTime,jdbcType=VARCHAR},
       </if>
-      <if test="actDateTime != null">
-        actDateTime = #{actDateTime,jdbcType=TIMESTAMP},
+      <if test="dateTime != null">
+        dateTime = #{dateTime,jdbcType=VARCHAR},
+      </if>
+      <if test="actStartTime != null">
+        actStartTime = #{actStartTime,jdbcType=VARCHAR},
+      </if>
+      <if test="actEndTime != null">
+        actEndTime = #{actEndTime,jdbcType=VARCHAR},
       </if>
       <if test="note != null">
         note = #{note,jdbcType=VARCHAR},
@@ -148,11 +196,17 @@
       <if test="pic != null">
         pic = #{pic,jdbcType=VARCHAR},
       </if>
+      <if test="projectNum != null">
+        projectNum = #{projectNum,jdbcType=INTEGER},
+      </if>
       <if test="applyState != null">
         applyState = #{applyState,jdbcType=INTEGER},
       </if>
       <if test="orderState != null">
         orderState = #{orderState,jdbcType=INTEGER},
+      </if>
+      <if test="applyOrderState != null">
+        applyOrderState = #{applyOrderState,jdbcType=INTEGER},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -161,15 +215,278 @@
     update tb_order
     set customerId = #{customerId,jdbcType=INTEGER},
       employeeId = #{employeeId,jdbcType=INTEGER},
+      customerProjectId = #{customerProjectId,jdbcType=INTEGER},
       projectId = #{projectId,jdbcType=INTEGER},
-      date = #{date,jdbcType=DATE},
-      time = #{time,jdbcType=TIME},
-      actDateTime = #{actDateTime,jdbcType=TIMESTAMP},
+      date = #{date,jdbcType=VARCHAR},
+      startTime = #{startTime,jdbcType=VARCHAR},
+      dateTime = #{dateTime,jdbcType=VARCHAR},
+      actStartTime = #{actStartTime,jdbcType=VARCHAR},
+      actEndTime = #{actEndTime,jdbcType=VARCHAR},
       note = #{note,jdbcType=VARCHAR},
       evaluate = #{evaluate,jdbcType=VARCHAR},
       pic = #{pic,jdbcType=VARCHAR},
+      projectNum = #{projectNum,jdbcType=INTEGER},
       applyState = #{applyState,jdbcType=INTEGER},
-      orderState = #{orderState,jdbcType=INTEGER}
+      orderState = #{orderState,jdbcType=INTEGER},
+      applyOrderState = #{applyOrderState,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <select id="selectByEmployeeCondition" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_order
+    where 1=1
+     <if test="employeeId != null">
+    	and employeeId in
+	    <foreach collection="employeeId" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>  
+    and applyState = #{stateCG,jdbcType=INTEGER} and date = #{date,jdbcType=VARCHAR} and startTime = #{startTime,jdbcType=VARCHAR}  
+    <if test="state != null">
+    	and orderState in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    limit #{page},#{size}
+  </select>
+  <select id="selectByEmployeeConditionCount"  resultType="Integer">
+    select count(*)
+    from tb_order
+    where 1=1
+    <if test="employeeId != null">
+    	and employeeId in
+	    <foreach collection="employeeId" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>  
+    and applyState = #{stateCG,jdbcType=INTEGER} and date = #{date,jdbcType=VARCHAR} and startTime = #{startTime,jdbcType=VARCHAR} 
+    <if test="state != null">
+    	and orderState in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+  </select>
+  <select id="selectByEmployeeConditionCount1"  resultType="Integer">
+    select count(*)
+    from tb_order
+    where 1=1
+    <if test="employeeId != null">
+    	and employeeId in
+	    <foreach collection="employeeId" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>
+    and applyState = #{stateCG,jdbcType=INTEGER} and date = #{date,jdbcType=VARCHAR} 
+    <if test="state != null">
+    	and orderState in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+  </select>
+   <select id="selectByEmployeeIdDate"  resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from tb_order
+     where employeeId = #{employeeId,jdbcType=INTEGER}  and applyState = #{state,jdbcType=INTEGER} and to_days(date) = to_days(#{date,jdbcType=VARCHAR})
+  </select>
+  <select id="selectByEmployeeIdCount"  resultType="Integer">
+    select count(*)
+    from tb_order
+     where 1=1
+    <if test="employeeId != null">
+    	and employeeId in
+	    <foreach collection="employeeId" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>
+    and applyState = #{state,jdbcType=INTEGER} and to_days(date) = to_days(now())
+  </select>
+   <select id="selectByEmployeeIdHistory" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_order
+    where employeeId = #{employeeId,jdbcType=INTEGER} and applyState = #{applyState,jdbcType=INTEGER} and orderState = #{orderState,jdbcType=INTEGER} and applyorderState = #{applyState,jdbcType=INTEGER} order by date,startTime 
+  </select>
+  <select id="selectByProjectCount"  resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from tb_order
+     where 1=1
+    <if test="employeeId != null">
+    	and employeeId in
+	    <foreach collection="employeeId" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>
+     and applyState = #{state,jdbcType=INTEGER} and to_days(date) = to_days(now())  group by projectId
+  </select>
+  <select id="selectByProjectDayCount"  resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from tb_order
+    where 1=1
+    <if test="employeeId != null">
+    	and employeeId in
+	    <foreach collection="employeeId" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    and applyState = #{state,jdbcType=INTEGER} and date = #{date,jdbcType=VARCHAR}  group by projectId
+  </select>
+  <select id="selectByProjectMonCount"  resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from tb_order
+     where 1=1
+    <if test="employeeId != null">
+    	and employeeId in
+	    <foreach collection="employeeId" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>
+     and applyState = #{state,jdbcType=INTEGER} and DATE_FORMAT( date, '%Y%m' ) = DATE_FORMAT( #{date,jdbcType=VARCHAR} , '%Y%m' )  group by projectId
+  </select>
+  <select id="selectByProjectYearCount"  resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from tb_order
+     where 1=1
+    <if test="employeeId != null">
+    	and employeeId in
+	    <foreach collection="employeeId" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>
+     and applyState = #{state,jdbcType=INTEGER} and YEAR(date)=YEAR(#{date,jdbcType=VARCHAR})  group by projectId
+  </select>
+  <select id="selectByProjectDay"  resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from tb_order
+     where 1=1
+    <if test="employeeId != null">
+    	and employeeId in
+	    <foreach collection="employeeId" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>
+     and applyState = #{state,jdbcType=INTEGER} and date = #{date,jdbcType=VARCHAR}  and projectId = #{projectId,jdbcType=INTEGER}
+  </select>
+  <select id="selectByProjectMon"  resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from tb_order
+     where 1=1
+    <if test="employeeId != null">
+    	and employeeId in
+	    <foreach collection="employeeId" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>
+     and applyState = #{state,jdbcType=INTEGER} and DATE_FORMAT( date, '%Y%m' ) = DATE_FORMAT( #{date,jdbcType=VARCHAR} , '%Y%m' ) and projectId = #{projectId,jdbcType=INTEGER}
+  </select>
+  <select id="selectByProjectYear"  resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from tb_order
+     where 1=1
+    <if test="employeeId != null">
+    	and employeeId in
+	    <foreach collection="employeeId" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>
+     and applyState = #{state,jdbcType=INTEGER} and YEAR(date)=YEAR(#{date,jdbcType=VARCHAR}) and projectId = #{projectId,jdbcType=INTEGER}
+  </select>
+  
+   <select id="selectByEmployeeCXApply"  resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from tb_order
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    <if test="applyState != null">
+    	and applyState in
+	    <foreach collection="applyState" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>
+  </select>
+  <select id="selectByEmployeeCXOrder"  resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from tb_order
+    where employeeId = #{employeeId,jdbcType=INTEGER} and applyState = #{applyState,jdbcType=INTEGER}
+    and orderState = #{orderState,jdbcType=INTEGER}
+  </select>
+  <select id="selectByEmployeeCXOrderApply"  resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from tb_order
+    where employeeId = #{employeeId,jdbcType=INTEGER} and applyState = #{applyState,jdbcType=INTEGER}
+    and orderState = #{orderState,jdbcType=INTEGER} 
+    and applyOrderState = in
+	    <foreach collection="applyOrderState" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+  </select>
+   <select id="selectByEmployeeWKS"  resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from tb_order
+    where employeeId = #{employeeId,jdbcType=INTEGER} and applyState = #{applyState,jdbcType=INTEGER} and to_days(date) = to_days(#{date,jdbcType=VARCHAR}) and orderState = #{orderState,jdbcType=INTEGER}
+  </select>
+  <select id="selectByEmployeeWTJ"  resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from tb_order
+    where employeeId = #{employeeId,jdbcType=INTEGER} and applyState = #{state,jdbcType=INTEGER} and to_days(date) - to_days(#{date,jdbcType=VARCHAR}) &lt;= 1
+  </select>
+  <select id="selectByEmployeeWSHAndSHZ"  resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from tb_order
+    where employeeId = #{employeeId,jdbcType=INTEGER} and applyState in(#{stateWSH,jdbcType=INTEGER},#{stateSHZ,jdbcType=INTEGER}) and to_days(date) - to_days(#{date,jdbcType=VARCHAR}) &lt;= 1
+  </select>
+  <select id="selectByEmployeeFinishWTJ"  resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from tb_order
+    where employeeId = #{employeeId,jdbcType=INTEGER} and applyOrderState = #{state,jdbcType=INTEGER} and to_days(date) - to_days(now()) &lt;= 1
+  </select>
+  <select id="selectByEmployeeFinishWSHAndSHZ"  resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from tb_order
+    where employeeId = #{employeeId,jdbcType=INTEGER} and applyOrderState in (#{stateWSH,jdbcType=INTEGER},#{stateSHZ,jdbcType=INTEGER}) and to_days(date) - to_days(now()) &lt;= 1
+  </select>
+   <select id="selectByProjectAllCount"  resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from tb_order
+     where 1=1
+    <if test="employeeId != null">
+    	and employeeId in
+	    <foreach collection="employeeId" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>
+     and applyState = #{state,jdbcType=INTEGER}  group by projectId
+  </select>
+  <select id="selectByProjectAll"  resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from tb_order
+     where 1=1
+    <if test="employeeId != null">
+    	and employeeId in
+	    <foreach collection="employeeId" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>
+     and applyState = #{state,jdbcType=INTEGER} and projectId = #{projectId,jdbcType=INTEGER}
+  </select>
+  <select id="selectByProject"  resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from tb_order
+    where employeeId = #{employeeId,jdbcType=INTEGER} and applyState = #{applyState,jdbcType=INTEGER} 
+    and customerProjectId = #{customerProjectId,jdbcType=INTEGER}
+  </select>
+   <select id="selectByEmployee"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_order
+    where employeeId = #{employeeId,jdbcType=INTEGER} and applyState > #{state,jdbcType=INTEGER} limit #{page},#{size}
+  </select>
+  <select id="selectByEmployeeCount"  resultType="Integer">
+    select count(*)
+    from tb_order
+    where employeeId = #{employeeId,jdbcType=INTEGER} and applyState > #{state,jdbcType=INTEGER}
+  </select>
 </mapper>

@@ -1,7 +1,5 @@
 package cn.lr.po;
 
-import java.util.Date;
-
 public class order {
     private Integer id;
 
@@ -9,13 +7,19 @@ public class order {
 
     private Integer employeeId;
 
+    private Integer customerProjectId;
+    
     private Integer projectId;
 
-    private Date date;
+    private String date;
 
-    private Date time;
+    private String startTime;
 
-    private Date actDateTime;
+    private String dateTime;
+
+    private String actStartTime;
+
+    private String actEndTime;
 
     private String note;
 
@@ -23,11 +27,31 @@ public class order {
 
     private String pic;
 
+    private Integer projectNum;
+
     private Integer applyState;
 
     private Integer orderState;
+    
+    private Integer applyOrderState;
 
-    public Integer getId() {
+    public Integer getProjectId() {
+		return projectId;
+	}
+
+	public void setProjectId(Integer projectId) {
+		this.projectId = projectId;
+	}
+
+	public Integer getApplyOrderState() {
+		return applyOrderState;
+	}
+
+	public void setApplyOrderState(Integer applyOrderState) {
+		this.applyOrderState = applyOrderState;
+	}
+
+	public Integer getId() {
         return id;
     }
 
@@ -51,36 +75,52 @@ public class order {
         this.employeeId = employeeId;
     }
 
-    public Integer getProjectId() {
-        return projectId;
-    }
+    public Integer getCustomerProjectId() {
+		return customerProjectId;
+	}
 
-    public void setProjectId(Integer projectId) {
-        this.projectId = projectId;
-    }
+	public void setCustomerProjectId(Integer customerProjectId) {
+		this.customerProjectId = customerProjectId;
+	}
 
-    public Date getDate() {
+	public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setDate(String date) {
+        this.date = date == null ? null : date.trim();
     }
 
-    public Date getTime() {
-        return time;
+    public String getStartTime() {
+        return startTime;
     }
 
-    public void setTime(Date time) {
-        this.time = time;
+    public void setStartTime(String startTime) {
+        this.startTime = startTime == null ? null : startTime.trim();
     }
 
-    public Date getActDateTime() {
-        return actDateTime;
+    public String getDateTime() {
+        return dateTime;
     }
 
-    public void setActDateTime(Date actDateTime) {
-        this.actDateTime = actDateTime;
+    public void setDateTime(String dateTime) {
+        this.dateTime = dateTime == null ? null : dateTime.trim();
+    }
+
+    public String getActStartTime() {
+        return actStartTime;
+    }
+
+    public void setActStartTime(String actStartTime) {
+        this.actStartTime = actStartTime == null ? null : actStartTime.trim();
+    }
+
+    public String getActEndTime() {
+        return actEndTime;
+    }
+
+    public void setActEndTime(String actEndTime) {
+        this.actEndTime = actEndTime == null ? null : actEndTime.trim();
     }
 
     public String getNote() {
@@ -105,6 +145,14 @@ public class order {
 
     public void setPic(String pic) {
         this.pic = pic == null ? null : pic.trim();
+    }
+
+    public Integer getProjectNum() {
+        return projectNum;
+    }
+
+    public void setProjectNum(Integer projectNum) {
+        this.projectNum = projectNum;
     }
 
     public Integer getApplyState() {

@@ -14,4 +14,6 @@ public interface applyRankMapper {
     int updateByPrimaryKeySelective(applyRank record);
 
     int updateByPrimaryKey(applyRank record);
+    
+    applyRank selectByDynamic(Integer dynamicId);
 }

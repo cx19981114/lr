@@ -4,12 +4,14 @@
   <resultMap id="BaseResultMap" type="cn.lr.po.employeeRank">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="employeeId" jdbcType="INTEGER" property="employeeId" />
-    <result column="dateTime" jdbcType="TIMESTAMP" property="dateTime" />
-    <result column="rankId" jdbcType="INTEGER" property="rankId" />
-    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="dateTime" jdbcType="VARCHAR" property="dateTime" />
+    <result column="rank" jdbcType="INTEGER" property="rank" />
+    <result column="dynamicId" jdbcType="INTEGER" property="dynamicId" />
+    <result column="companyId" jdbcType="INTEGER" property="companyId" />
+    <result column="isAdd" jdbcType="INTEGER" property="isAdd" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, employeeId, dateTime, rankId, state
+    id, employeeId, dateTime, rank, dynamicId, companyId,isAdd
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -23,9 +25,9 @@
   </delete>
   <insert id="insert" parameterType="cn.lr.po.employeeRank">
     insert into tb_employeerank (id, employeeId, dateTime, 
-      rankId, state)
-    values (#{id,jdbcType=INTEGER}, #{employeeId,jdbcType=INTEGER}, #{dateTime,jdbcType=TIMESTAMP}, 
-      #{rankId,jdbcType=INTEGER}, #{state,jdbcType=INTEGER})
+      rank, dynamicId,companyId,isAdd)
+    values (#{id,jdbcType=INTEGER}, #{employeeId,jdbcType=INTEGER}, #{dateTime,jdbcType=VARCHAR}, 
+      #{rank,jdbcType=INTEGER}, #{dynamicId,jdbcType=INTEGER}, #{companyId,jdbcType=INTEGER}, #{isAdd,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="cn.lr.po.employeeRank">
     insert into tb_employeerank
@@ -39,11 +41,17 @@
       <if test="dateTime != null">
         dateTime,
       </if>
-      <if test="rankId != null">
-        rankId,
+      <if test="rank != null">
+        rank,
       </if>
-      <if test="state != null">
-        state,
+      <if test="dynamicId != null">
+        dynamicId,
+      </if>
+      <if test="companyId != null">
+        companyId,
+      </if>
+      <if test="isAdd != null">
+        isAdd,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -54,13 +62,19 @@
         #{employeeId,jdbcType=INTEGER},
       </if>
       <if test="dateTime != null">
-        #{dateTime,jdbcType=TIMESTAMP},
+        #{dateTime,jdbcType=VARCHAR},
       </if>
-      <if test="rankId != null">
-        #{rankId,jdbcType=INTEGER},
+      <if test="rank != null">
+        #{rank,jdbcType=INTEGER},
       </if>
-      <if test="state != null">
-        #{state,jdbcType=INTEGER},
+      <if test="dynamicId != null">
+        #{dynamicId,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="isAdd != null">
+        #{isAdd,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -71,13 +85,19 @@
         employeeId = #{employeeId,jdbcType=INTEGER},
       </if>
       <if test="dateTime != null">
-        dateTime = #{dateTime,jdbcType=TIMESTAMP},
+        dateTime = #{dateTime,jdbcType=VARCHAR},
       </if>
-      <if test="rankId != null">
-        rankId = #{rankId,jdbcType=INTEGER},
+      <if test="rank != null">
+        rank = #{rank,jdbcType=INTEGER},
       </if>
-      <if test="state != null">
-        state = #{state,jdbcType=INTEGER},
+      <if test="dynamicId != null">
+        dynamicId = #{dynamicId,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null">
+        companyId = #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="isAdd != null">
+        isAdd = #{isAdd,jdbcType=INTEGER},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -85,9 +105,36 @@
   <update id="updateByPrimaryKey" parameterType="cn.lr.po.employeeRank">
     update tb_employeerank
     set employeeId = #{employeeId,jdbcType=INTEGER},
-      dateTime = #{dateTime,jdbcType=TIMESTAMP},
-      rankId = #{rankId,jdbcType=INTEGER},
-      state = #{state,jdbcType=INTEGER}
+      dateTime = #{dateTime,jdbcType=VARCHAR},
+      rank = #{rank,jdbcType=INTEGER},
+      dynamicId = #{dynamicId,jdbcType=INTEGER},
+      companyId = #{companyId,jdbcType=INTEGER},
+      isAdd = #{isAdd,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <select id="selectByEmployeeIdDay" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_employeerank
+    where employeeId = #{employeeId,jdbcType=INTEGER} and to_days(dateTime) = to_days(now())
+  </select>
+  <select id="selectByEmployeeIdMon" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_employeerank
+    where employeeId = #{employeeId,jdbcType=INTEGER} and DATE_FORMAT( dateTime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' )
+  </select>
+  <select id="selectByEmployeeIdQtr" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_employeerank
+    where employeeId = #{employeeId,jdbcType=INTEGER} and QUARTER(dateTime)=QUARTER(now())
+  </select>
+  <select id="selectByEmployeeIdYear" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_employeerank
+    where employeeId = #{employeeId,jdbcType=INTEGER} and YEAR(dateTime)=YEAR(NOW())
+  </select>
 </mapper>

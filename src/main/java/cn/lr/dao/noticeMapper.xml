@@ -21,13 +21,13 @@
     delete from tb_notice
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="cn.lr.po.notice">
+  <insert id="insert" parameterType="cn.lr.po.notice" useGeneratedKeys="true" keyProperty="id">
     insert into tb_notice (id, companyId, name, 
       content, state)
     values (#{id,jdbcType=INTEGER}, #{companyId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
       #{content,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="cn.lr.po.notice">
+  <insert id="insertSelective" parameterType="cn.lr.po.notice" useGeneratedKeys="true" keyProperty="id">
     insert into tb_notice
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -90,4 +90,16 @@
       state = #{state,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <select id="selectByCompanyId" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_notice
+    where companyId = #{companyId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER} limit #{page},#{size}
+  </select>
+  <select id="selectByCompanyCount"  resultType="Integer">
+    select count(*)
+    from tb_notice
+    where companyId = #{companyId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER}
+  </select>
 </mapper>

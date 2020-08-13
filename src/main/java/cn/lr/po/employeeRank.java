@@ -1,19 +1,37 @@
 package cn.lr.po;
 
-import java.util.Date;
-
 public class employeeRank {
     private Integer id;
 
     private Integer employeeId;
 
-    private Date dateTime;
+    private String dateTime;
 
-    private Integer rankId;
+    private Integer rank;
 
-    private Integer state;
+    private Integer dynamicId;
+    
+    private Integer companyId;
 
-    public Integer getId() {
+    private Integer isAdd;
+    
+	public Integer getIsAdd() {
+		return isAdd;
+	}
+
+	public void setIsAdd(Integer isAdd) {
+		this.isAdd = isAdd;
+	}
+
+	public Integer getCompanyId() {
+		return companyId;
+	}
+
+	public void setCompanyId(Integer companyId) {
+		this.companyId = companyId;
+	}
+
+	public Integer getId() {
         return id;
     }
 
@@ -29,27 +47,27 @@ public class employeeRank {
         this.employeeId = employeeId;
     }
 
-    public Date getDateTime() {
+    public String getDateTime() {
         return dateTime;
     }
 
-    public void setDateTime(Date dateTime) {
-        this.dateTime = dateTime;
+    public void setDateTime(String dateTime) {
+        this.dateTime = dateTime == null ? null : dateTime.trim();
     }
 
-    public Integer getRankId() {
-        return rankId;
+    public Integer getRank() {
+        return rank;
     }
 
-    public void setRankId(Integer rankId) {
-        this.rankId = rankId;
+    public void setRank(Integer rank) {
+        this.rank = rank;
     }
 
-    public Integer getState() {
-        return state;
+    public Integer getDynamicId() {
+        return dynamicId;
     }
 
-    public void setState(Integer state) {
-        this.state = state;
+    public void setDynamicId(Integer dynamicId) {
+        this.dynamicId = dynamicId;
     }
 }

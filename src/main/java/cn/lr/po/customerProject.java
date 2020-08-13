@@ -4,18 +4,28 @@ public class customerProject {
     private Integer id;
 
     private Integer customerId;
+    
+    private Integer employeeId;
 
     private Integer projectId;
 
     private Integer count;
 
-    private String money;
+    private String dateTime;
 
     private Integer restCount;
 
     private Integer state;
 
-    public Integer getId() {
+    public Integer getEmployeeId() {
+		return employeeId;
+	}
+
+	public void setEmployeeId(Integer employeeId) {
+		this.employeeId = employeeId;
+	}
+
+	public Integer getId() {
         return id;
     }
 
@@ -47,12 +57,12 @@ public class customerProject {
         this.count = count;
     }
 
-    public String getMoney() {
-        return money;
+    public String getDateTime() {
+        return dateTime;
     }
 
-    public void setMoney(String money) {
-        this.money = money == null ? null : money.trim();
+    public void setDateTime(String dateTime) {
+        this.dateTime = dateTime == null ? null : dateTime.trim();
     }
 
     public Integer getRestCount() {

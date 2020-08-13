@@ -4,14 +4,15 @@
   <resultMap id="BaseResultMap" type="cn.lr.po.customerProject">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="customerId" jdbcType="INTEGER" property="customerId" />
+    <result column="employeeId" jdbcType="INTEGER" property="employeeId" />
     <result column="projectId" jdbcType="INTEGER" property="projectId" />
     <result column="count" jdbcType="INTEGER" property="count" />
-    <result column="money" jdbcType="VARCHAR" property="money" />
+    <result column="dateTime" jdbcType="VARCHAR" property="dateTime" />
     <result column="restCount" jdbcType="INTEGER" property="restCount" />
     <result column="state" jdbcType="INTEGER" property="state" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, customerId, projectId, count, money, restCount, state
+    id, customerId, employeeId,projectId, count, dateTime, restCount, state
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -23,15 +24,15 @@
     delete from tb_customerproject
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="cn.lr.po.customerProject">
+  <insert id="insert" parameterType="cn.lr.po.customerProject" useGeneratedKeys="true" keyProperty="id">
     insert into tb_customerproject (id, customerId, projectId, 
-      count, money, restCount, 
+      count, dateTime, restCount, 
       state)
-    values (#{id,jdbcType=INTEGER}, #{customerId,jdbcType=INTEGER}, #{projectId,jdbcType=INTEGER}, 
-      #{count,jdbcType=INTEGER}, #{money,jdbcType=VARCHAR}, #{restCount,jdbcType=INTEGER}, 
+    values (#{id,jdbcType=INTEGER}, #{customerId,jdbcType=INTEGER},#{employeeId,jdbcType=INTEGER}, #{projectId,jdbcType=INTEGER}, 
+      #{count,jdbcType=INTEGER}, #{dateTime,jdbcType=VARCHAR}, #{restCount,jdbcType=INTEGER}, 
       #{state,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="cn.lr.po.customerProject">
+  <insert id="insertSelective" parameterType="cn.lr.po.customerProject" useGeneratedKeys="true" keyProperty="id">
     insert into tb_customerproject
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -40,14 +41,17 @@
       <if test="customerId != null">
         customerId,
       </if>
+      <if test="employeeId != null">
+        employeeId,
+      </if>
       <if test="projectId != null">
         projectId,
       </if>
       <if test="count != null">
         count,
       </if>
-      <if test="money != null">
-        money,
+      <if test="dateTime != null">
+        dateTime,
       </if>
       <if test="restCount != null">
         restCount,
@@ -63,14 +67,17 @@
       <if test="customerId != null">
         #{customerId,jdbcType=INTEGER},
       </if>
+      <if test="employeeId != null">
+        #{employeeId,jdbcType=INTEGER},
+      </if>
       <if test="projectId != null">
         #{projectId,jdbcType=INTEGER},
       </if>
       <if test="count != null">
         #{count,jdbcType=INTEGER},
       </if>
-      <if test="money != null">
-        #{money,jdbcType=VARCHAR},
+      <if test="dateTime != null">
+        #{dateTime,jdbcType=VARCHAR},
       </if>
       <if test="restCount != null">
         #{restCount,jdbcType=INTEGER},
@@ -86,14 +93,17 @@
       <if test="customerId != null">
         customerId = #{customerId,jdbcType=INTEGER},
       </if>
+      <if test="employeeId != null">
+        employeeId = #{employeeId,jdbcType=INTEGER},
+      </if>
       <if test="projectId != null">
         projectId = #{projectId,jdbcType=INTEGER},
       </if>
       <if test="count != null">
         count = #{count,jdbcType=INTEGER},
       </if>
-      <if test="money != null">
-        money = #{money,jdbcType=VARCHAR},
+      <if test="dateTime != null">
+        dateTime = #{dateTime,jdbcType=VARCHAR},
       </if>
       <if test="restCount != null">
         restCount = #{restCount,jdbcType=INTEGER},
@@ -107,11 +117,46 @@
   <update id="updateByPrimaryKey" parameterType="cn.lr.po.customerProject">
     update tb_customerproject
     set customerId = #{customerId,jdbcType=INTEGER},
+    	employeeId = #{employeeId,jdbcType=INTEGER},
       projectId = #{projectId,jdbcType=INTEGER},
       count = #{count,jdbcType=INTEGER},
-      money = #{money,jdbcType=VARCHAR},
+      dateTime = #{dateTime,jdbcType=VARCHAR},
       restCount = #{restCount,jdbcType=INTEGER},
       state = #{state,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <select id="selectByCustomer"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_customerproject
+    where customerId = #{customerId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER}
+  </select>
+  <select id="selectByEmployeeWTJ"  resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from tb_customerproject
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and to_days(dateTime) = to_days(now()) 
+  </select>
+  <select id="selectByEmployeeWSHAndSHZ"  resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from tb_customerproject
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state in (#{stateWSH,jdbcType=INTEGER},#{stateSHZ,jdbcType=INTEGER}) and to_days(dateTime) = to_days(now()) 
+  </select>
+  <select id="selectByEmployee"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_customerproject
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER} limit #{page},#{size}
+  </select>
+  <select id="selectByEmployeeCount"  resultType="Integer">
+    select count(*)
+    from tb_customerproject
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER}
+  </select>
+  <select id="selectByProject"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_customerproject
+    where projectId = #{projectId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER}
+  </select>
 </mapper>

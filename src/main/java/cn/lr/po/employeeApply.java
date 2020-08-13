@@ -1,7 +1,5 @@
 package cn.lr.po;
 
-import java.util.Date;
-
 public class employeeApply {
     private Integer id;
 
@@ -11,19 +9,29 @@ public class employeeApply {
 
     private String name;
 
-    private Date startDate;
+    private String startDate;
 
     private String startPhase;
 
-    private Date endDate;
+    private String endDate;
 
     private String endPhase;
 
     private String note;
 
+    private String dateTime;
+
     private Integer state;
 
-    public Integer getId() {
+    public String getDateTime() {
+		return dateTime;
+	}
+
+	public void setDateTime(String dateTime) {
+		this.dateTime = dateTime;
+	}
+
+	public Integer getId() {
         return id;
     }
 
@@ -55,12 +63,12 @@ public class employeeApply {
         this.name = name == null ? null : name.trim();
     }
 
-    public Date getStartDate() {
+    public String getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
+    public void setStartDate(String startDate) {
+        this.startDate = startDate == null ? null : startDate.trim();
     }
 
     public String getStartPhase() {
@@ -71,12 +79,12 @@ public class employeeApply {
         this.startPhase = startPhase == null ? null : startPhase.trim();
     }
 
-    public Date getEndDate() {
+    public String getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
+    public void setEndDate(String endDate) {
+        this.endDate = endDate == null ? null : endDate.trim();
     }
 
     public String getEndPhase() {

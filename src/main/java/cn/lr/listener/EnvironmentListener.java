@@ -26,12 +26,13 @@ public class EnvironmentListener implements ServletContextListener {
 	/**
      * @see ServletContextListener#contextInitialized(ServletContextEvent)
      */
-  /*  public void contextInitialized(ServletContextEvent sce)  { 
-    	String projectHome = System.getenv("g16_project_home");
+    public void contextInitialized(ServletContextEvent sce)  { 
+    	String projectHome = System.getenv("lr_project_home");
+    	System.out.println("ServletContext上下文初始化的");
     	if(projectHome == null) {
     		projectHome = ".";
     	}
     	System.setProperty("project.home", projectHome);
     }
-	*/
+	
 }

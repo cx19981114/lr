@@ -9,9 +9,23 @@ public class post {
 
     private String permissionList;
 
-    private Integer state;
+    private String pic;
 
-    public Integer getId() {
+    private Integer num;
+
+    private Integer state;
+    
+    private Integer leaderPostId;
+
+    public Integer getLeaderPostId() {
+		return leaderPostId;
+	}
+
+	public void setLeaderPostId(Integer leaderPostId) {
+		this.leaderPostId = leaderPostId;
+	}
+
+	public Integer getId() {
         return id;
     }
 
@@ -41,6 +55,22 @@ public class post {
 
     public void setPermissionList(String permissionList) {
         this.permissionList = permissionList == null ? null : permissionList.trim();
+    }
+
+    public String getPic() {
+        return pic;
+    }
+
+    public void setPic(String pic) {
+        this.pic = pic == null ? null : pic.trim();
+    }
+
+    public Integer getNum() {
+        return num;
+    }
+
+    public void setNum(Integer num) {
+        this.num = num;
     }
 
     public Integer getState() {

@@ -14,4 +14,6 @@ public interface employeeTaskMapper {
     int updateByPrimaryKeySelective(employeeTask record);
 
     int updateByPrimaryKey(employeeTask record);
+    
+    employeeTask selectByEmployee(Integer employeeId);
 }

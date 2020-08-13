@@ -1,5 +1,7 @@
 package cn.lr.dao;
 
+import org.apache.ibatis.annotations.Param;
+
 import cn.lr.po.rank;
 
 public interface rankMapper {
@@ -14,4 +16,6 @@ public interface rankMapper {
     int updateByPrimaryKeySelective(rank record);
 
     int updateByPrimaryKey(rank record);
+    
+    int selectByName(@Param("name")String name,@Param("companyId")Integer companyId,@Param("state")Integer state);
 }

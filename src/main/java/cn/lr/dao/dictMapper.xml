@@ -7,9 +7,10 @@
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="stateName" jdbcType="VARCHAR" property="stateName" />
     <result column="stateCode" jdbcType="INTEGER" property="stateCode" />
+    <result column="companyId" jdbcType="INTEGER" property="companyId" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, code, name, stateName, stateCode
+    id, code, name, stateName, stateCode, companyId
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -23,9 +24,11 @@
   </delete>
   <insert id="insert" parameterType="cn.lr.po.dict">
     insert into tb_dict (id, code, name, 
-      stateName, stateCode)
+      stateName, stateCode, companyId
+      )
     values (#{id,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
-      #{stateName,jdbcType=VARCHAR}, #{stateCode,jdbcType=INTEGER})
+      #{stateName,jdbcType=VARCHAR}, #{stateCode,jdbcType=INTEGER}, #{companyId,jdbcType=INTEGER}
+      )
   </insert>
   <insert id="insertSelective" parameterType="cn.lr.po.dict">
     insert into tb_dict
@@ -45,6 +48,9 @@
       <if test="stateCode != null">
         stateCode,
       </if>
+      <if test="companyId != null">
+        companyId,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -61,6 +67,9 @@
       </if>
       <if test="stateCode != null">
         #{stateCode,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -79,6 +88,9 @@
       <if test="stateCode != null">
         stateCode = #{stateCode,jdbcType=INTEGER},
       </if>
+      <if test="companyId != null">
+        companyId = #{companyId,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -87,7 +99,26 @@
     set code = #{code,jdbcType=VARCHAR},
       name = #{name,jdbcType=VARCHAR},
       stateName = #{stateName,jdbcType=VARCHAR},
-      stateCode = #{stateCode,jdbcType=INTEGER}
+      stateCode = #{stateCode,jdbcType=INTEGER},
+      companyId = #{companyId,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+     <select id="selectByCodeAndStateName" resultType="java.lang.Integer">
+    select stateCode
+    from tb_dict
+    where code = #{code} and stateName = #{stateName} and companyId = #{companyId};
+  </select>
+  
+   <select id="selectByCodeAndStateCode" resultType="string">
+    select stateName
+    from tb_dict
+    where code = #{code} and stateCode = #{stateCode} and companyId = #{companyId};
+  </select>
+  
+   <select id="selectByName" resultMap="BaseResultMap">
+    select  <include refid="Base_Column_List" />
+    from tb_dict
+    where name = #{name} and companyId = #{companyId};
+  </select>
 </mapper>

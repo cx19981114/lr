@@ -6,10 +6,13 @@
     <result column="companyId" jdbcType="INTEGER" property="companyId" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="permissionList" jdbcType="VARCHAR" property="permissionList" />
+    <result column="pic" jdbcType="VARCHAR" property="pic" />
+    <result column="num" jdbcType="INTEGER" property="num" />
     <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="leaderPostId" jdbcType="INTEGER" property="leaderPostId" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, companyId, name, permissionList, state
+    id, companyId, name, permissionList, pic, num, state, leaderPostId
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -21,13 +24,15 @@
     delete from tb_post
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="cn.lr.po.post">
+  <insert id="insert" parameterType="cn.lr.po.post" useGeneratedKeys="true" keyProperty="id">
     insert into tb_post (id, companyId, name, 
-      permissionList, state)
+      permissionList, pic, num, 
+      state,leaderPostId)
     values (#{id,jdbcType=INTEGER}, #{companyId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
-      #{permissionList,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER})
+      #{permissionList,jdbcType=VARCHAR}, #{pic,jdbcType=VARCHAR}, #{num,jdbcType=INTEGER}, 
+      #{state,jdbcType=INTEGER},#{leaderPostId,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="cn.lr.po.post">
+  <insert id="insertSelective" parameterType="cn.lr.po.post" useGeneratedKeys="true" keyProperty="id">
     insert into tb_post
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -42,8 +47,17 @@
       <if test="permissionList != null">
         permissionList,
       </if>
+      <if test="pic != null">
+        pic,
+      </if>
+      <if test="num != null">
+        num,
+      </if>
       <if test="state != null">
         state,
+      </if>
+      <if test="leaderPostId != null">
+        leaderPostId,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -59,8 +73,17 @@
       <if test="permissionList != null">
         #{permissionList,jdbcType=VARCHAR},
       </if>
+      <if test="pic != null">
+        #{pic,jdbcType=VARCHAR},
+      </if>
+      <if test="num != null">
+        #{num,jdbcType=INTEGER},
+      </if>
       <if test="state != null">
         #{state,jdbcType=INTEGER},
+      </if>
+      <if test="leaderPostId != null">
+        leaderPostId,
       </if>
     </trim>
   </insert>
@@ -76,8 +99,17 @@
       <if test="permissionList != null">
         permissionList = #{permissionList,jdbcType=VARCHAR},
       </if>
+      <if test="pic != null">
+        pic = #{pic,jdbcType=VARCHAR},
+      </if>
+      <if test="num != null">
+        num = #{num,jdbcType=INTEGER},
+      </if>
       <if test="state != null">
         state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="leaderPostId != null">
+        leaderPostId = #{leaderPostId,jdbcType=INTEGER},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -87,7 +119,28 @@
     set companyId = #{companyId,jdbcType=INTEGER},
       name = #{name,jdbcType=VARCHAR},
       permissionList = #{permissionList,jdbcType=VARCHAR},
-      state = #{state,jdbcType=INTEGER}
+      pic = #{pic,jdbcType=VARCHAR},
+      num = #{num,jdbcType=INTEGER},
+      state = #{state,jdbcType=INTEGER},
+      leaderPostId = #{leaderPostId,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+   <select id="selectByCompanyIdAndPostName" parameterType="cn.lr.po.post" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_post
+    where companyId = #{companyId,jdbcType=INTEGER} and name = #{name,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByCompany"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_post
+    where companyId = #{companyId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER} limit #{page},#{size}
+  </select>
+  <select id="selectByCompanyCount"  resultType="Integer">
+    select count(*)
+    from tb_post
+    where companyId = #{companyId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER}
+  </select>
 </mapper>

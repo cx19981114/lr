@@ -1,13 +1,11 @@
 package cn.lr.po;
 
-import java.util.Date;
-
 public class employeeAttendance {
     private Integer id;
 
     private Integer employeeId;
 
-    private Date dateTime;
+    private String dateTime;
 
     private String pic;
 
@@ -33,12 +31,12 @@ public class employeeAttendance {
         this.employeeId = employeeId;
     }
 
-    public Date getDateTime() {
+    public String getDateTime() {
         return dateTime;
     }
 
-    public void setDateTime(Date dateTime) {
-        this.dateTime = dateTime;
+    public void setDateTime(String dateTime) {
+        this.dateTime = dateTime == null ? null : dateTime.trim();
     }
 
     public String getPic() {

@@ -11,6 +11,8 @@ public class dict {
 
     private Integer stateCode;
 
+    private Integer companyId;
+
     public Integer getId() {
         return id;
     }
@@ -49,5 +51,13 @@ public class dict {
 
     public void setStateCode(Integer stateCode) {
         this.stateCode = stateCode;
+    }
+
+    public Integer getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(Integer companyId) {
+        this.companyId = companyId;
     }
 }

@@ -5,9 +5,11 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="score" jdbcType="INTEGER" property="score" />
+    <result column="companyId" jdbcType="INTEGER" property="companyId" />
+    <result column="state" jdbcType="INTEGER" property="state" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, name, score
+    id, name, score,companyId,state
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -19,13 +21,14 @@
     delete from tb_rank
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="cn.lr.po.rank">
-    insert into tb_rank (id, name, score
+  <insert id="insert" parameterType="cn.lr.po.rank" useGeneratedKeys="true" keyProperty="id">
+    insert into tb_rank (id, name, score,companyId,state
       )
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{score,jdbcType=INTEGER}
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{score,jdbcType=INTEGER},
+     #{companyId,jdbcType=INTEGER},#{state,jdbcType=INTEGER}
       )
   </insert>
-  <insert id="insertSelective" parameterType="cn.lr.po.rank">
+  <insert id="insertSelective" parameterType="cn.lr.po.rank" useGeneratedKeys="true" keyProperty="id">
     insert into tb_rank
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -36,6 +39,12 @@
       </if>
       <if test="score != null">
         score,
+      </if>
+      <if test="companyId != null">
+        companyId,
+      </if>
+      <if test="state != null">
+        state,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -48,6 +57,12 @@
       <if test="score != null">
         #{score,jdbcType=INTEGER},
       </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=INTEGER},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="cn.lr.po.rank">
@@ -59,13 +74,27 @@
       <if test="score != null">
         score = #{score,jdbcType=INTEGER},
       </if>
+      <if test="companyId != null">
+        companyId = #{companyId,jdbcType=INTEGER},
+      </if>
+      <if test="state != null">
+        state = #{state,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="cn.lr.po.rank">
     update tb_rank
     set name = #{name,jdbcType=VARCHAR},
-      score = #{score,jdbcType=INTEGER}
+      score = #{score,jdbcType=INTEGER},
+      companyId = #{companyId,jdbcType=INTEGER},
+      state = #{state,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+   <select id="selectByName" resultType="Integer">
+    select score
+    from tb_rank
+    where name = #{name,jdbcType=VARCHAR} and companyId = #{companyId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER}
+  </select>
 </mapper>

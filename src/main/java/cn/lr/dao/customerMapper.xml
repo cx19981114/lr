@@ -11,11 +11,13 @@
     <result column="habit" jdbcType="VARCHAR" property="habit" />
     <result column="plan" jdbcType="VARCHAR" property="plan" />
     <result column="note" jdbcType="VARCHAR" property="note" />
-    <result column="money" jdbcType="VARCHAR" property="money" />
+    <result column="money" jdbcType="INTEGER" property="money" />
+    <result column="dateTime" jdbcType="VARCHAR" property="dateTime" />
+    <result column="pic" jdbcType="VARCHAR" property="pic" />
     <result column="state" jdbcType="INTEGER" property="state" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, name, sex, brith, phone, employeeId, habit, plan, note, money, state
+    id, name, sex, brith, phone, employeeId, habit, plan, note, money, dateTime, state, pic
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -27,17 +29,20 @@
     delete from tb_customer
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="cn.lr.po.customer">
+  <insert id="insert" parameterType="cn.lr.po.customer" useGeneratedKeys="true" keyProperty="id">
     insert into tb_customer (id, name, sex, 
       brith, phone, employeeId, 
       habit, plan, note, 
-      money, state)
+      money, dateTime, state, pic
+      )
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, 
       #{brith,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{employeeId,jdbcType=INTEGER}, 
       #{habit,jdbcType=VARCHAR}, #{plan,jdbcType=VARCHAR}, #{note,jdbcType=VARCHAR}, 
-      #{money,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER})
+      #{money,jdbcType=INTEGER}, #{dateTime,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER},
+      #{pic,jdbcType=VARCHAR}
+      )
   </insert>
-  <insert id="insertSelective" parameterType="cn.lr.po.customer">
+  <insert id="insertSelective" parameterType="cn.lr.po.customer" useGeneratedKeys="true" keyProperty="id">
     insert into tb_customer
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -70,8 +75,14 @@
       <if test="money != null">
         money,
       </if>
+      <if test="dateTime != null">
+        dateTime,
+      </if>
       <if test="state != null">
         state,
+      </if>
+      <if test="pic != null">
+        pic,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -103,10 +114,16 @@
         #{note,jdbcType=VARCHAR},
       </if>
       <if test="money != null">
-        #{money,jdbcType=VARCHAR},
+        #{money,jdbcType=INTEGER},
+      </if>
+      <if test="dateTime != null">
+        #{dateTime,jdbcType=VARCHAR},
       </if>
       <if test="state != null">
         #{state,jdbcType=INTEGER},
+      </if>
+       <if test="pic != null">
+        #{pic,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -138,10 +155,16 @@
         note = #{note,jdbcType=VARCHAR},
       </if>
       <if test="money != null">
-        money = #{money,jdbcType=VARCHAR},
+        money = #{money,jdbcType=INTEGER},
+      </if>
+      <if test="dateTime != null">
+        dateTime = #{dateTime,jdbcType=VARCHAR},
       </if>
       <if test="state != null">
         state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="pic != null">
+        pic = #{pic,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -156,8 +179,76 @@
       habit = #{habit,jdbcType=VARCHAR},
       plan = #{plan,jdbcType=VARCHAR},
       note = #{note,jdbcType=VARCHAR},
-      money = #{money,jdbcType=VARCHAR},
-      state = #{state,jdbcType=INTEGER}
+      money = #{money,jdbcType=INTEGER},
+      dateTime = #{dateTime,jdbcType=VARCHAR},
+      state = #{state,jdbcType=INTEGER},
+      pic = #{pic,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+   <select id="selectByEmployeeId" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_customer
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER} limit #{page},#{size}
+  </select>
+  <select id="selectByEmployeeIdCount"  resultType="Integer">
+    select count(*)
+    from tb_customer
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER}
+  </select>
+   <select id="selectByEmployeeIdList" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_customer
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER}  
+  </select>
+  
+   <select id="selectByEmployeeIdDay" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_customer
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and to_days(dateTime) = to_days(now()) limit #{page},#{size}
+  </select>
+  <select id="selectByEmployeeIdDayCount"  resultType="Integer">
+    select count(*)
+    from tb_customer
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and to_days(dateTime) = to_days(now())
+  </select>
+  
+   <select id="selectByEmployeeIdMon" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_customer
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and DATE_FORMAT( dateTime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' ) limit #{page},#{size}
+  </select>
+  <select id="selectByEmployeeIdMonCount"  resultType="Integer">
+    select count(*)
+    from tb_customer
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and DATE_FORMAT( dateTime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' )
+  </select>
+  
+   <select id="selectByEmployeeIdQtr" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_customer
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and QUARTER(dateTime)=QUARTER(now()) limit #{page},#{size}
+  </select>
+   <select id="selectByEmployeeIdQtrCount"  resultType="Integer">
+    select count(*)
+    from tb_customer
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state =  #{state,jdbcType=INTEGER} and QUARTER(dateTime)=QUARTER(now())
+  </select>
+  
+   <select id="selectByEmployeeIdYear" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_customer
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and YEAR(dateTime)=YEAR(NOW()) limit #{page},#{size}
+  </select>
+   <select id="selectByEmployeeIdYearCount"  resultType="Integer">
+    select count(*)
+    from tb_customer
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and YEAR(dateTime)=YEAR(NOW())
+  </select>
 </mapper>

@@ -10,8 +10,28 @@ public class project {
     private String content;
 
     private Integer state;
+    
+    private Integer money;
+    
+    private Integer num;
 
-    public Integer getId() {
+    public Integer getNum() {
+		return num;
+	}
+
+	public void setNum(Integer num) {
+		this.num = num;
+	}
+
+	public Integer getMoney() {
+		return money;
+	}
+
+	public void setMoney(Integer money) {
+		this.money = money;
+	}
+
+	public Integer getId() {
         return id;
     }
 

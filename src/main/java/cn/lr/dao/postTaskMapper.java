@@ -14,4 +14,6 @@ public interface postTaskMapper {
     int updateByPrimaryKeySelective(postTask record);
 
     int updateByPrimaryKey(postTask record);
+    
+    postTask selectByPost(Integer postId);
 }

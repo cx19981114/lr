@@ -1,5 +1,9 @@
 package cn.lr.dao;
 
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
 import cn.lr.po.customer;
 
 public interface customerMapper {
@@ -14,4 +18,31 @@ public interface customerMapper {
     int updateByPrimaryKeySelective(customer record);
 
     int updateByPrimaryKey(customer record);
+    
+    List<customer> selectByEmployeeId(@Param("employeeId") Integer employeeId,@Param("state") Integer state,@Param("page") Integer page,
+			@Param("size") Integer size);
+
+	int selectByEmployeeIdCount(@Param("employeeId") Integer employeeId,@Param("state") Integer state);
+	
+	List<customer> selectByEmployeeIdList(@Param("employeeId") Integer employeeId,@Param("state") Integer state);
+	
+	List<customer> selectByEmployeeIdDay(@Param("employeeId") Integer employeeId,@Param("state") Integer state,@Param("page") Integer page,
+			@Param("size") Integer size);
+
+	int selectByEmployeeIdDayCount(@Param("employeeId") Integer employeeId,@Param("state") Integer state);
+	
+	List<customer> selectByEmployeeIdMon(@Param("employeeId") Integer employeeId,@Param("state") Integer state,@Param("page") Integer page,
+			@Param("size") Integer size);
+	
+	int selectByEmployeeIdMonCount(@Param("employeeId") Integer employeeId,@Param("state") Integer state);
+	
+	List<customer> selectByEmployeeIdQtr(@Param("employeeId") Integer employeeId,@Param("state") Integer state,@Param("page") Integer page,
+			@Param("size") Integer size);
+	
+	int selectByEmployeeIdQtrCount(@Param("employeeId") Integer employeeId,@Param("state") Integer state);
+	
+	List<customer> selectByEmployeeIdYear(@Param("employeeId") Integer employeeId,@Param("state") Integer state,@Param("page") Integer page,
+			@Param("size") Integer size);
+	
+	int selectByEmployeeIdYearCount(@Param("employeeId") Integer employeeId,@Param("state") Integer state);
 }

@@ -9,17 +9,33 @@ public class employee {
 
     private String password;
 
+    private String sex;
+
     private Integer companyId;
 
     private Integer postId;
 
     private String pic;
 
-    private Integer leaderId;
+    private String leaderIdList;
 
     private Integer state;
 
-    public Integer getId() {
+    private String verficationCode;
+
+    private String validTime;
+    
+    private String underIdList;
+
+	public String getUnderIdList() {
+		return underIdList;
+	}
+
+	public void setUnderIdList(String underIdList) {
+		this.underIdList = underIdList;
+	}
+
+	public Integer getId() {
         return id;
     }
 
@@ -51,6 +67,14 @@ public class employee {
         this.password = password == null ? null : password.trim();
     }
 
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex == null ? null : sex.trim();
+    }
+
     public Integer getCompanyId() {
         return companyId;
     }
@@ -75,12 +99,12 @@ public class employee {
         this.pic = pic == null ? null : pic.trim();
     }
 
-    public Integer getLeaderId() {
-        return leaderId;
+    public String getLeaderIdList() {
+        return leaderIdList;
     }
 
-    public void setLeaderId(Integer leaderId) {
-        this.leaderId = leaderId;
+    public void setLeaderIdList(String leaderIdList) {
+        this.leaderIdList = leaderIdList == null ? null : leaderIdList.trim();
     }
 
     public Integer getState() {
@@ -89,5 +113,21 @@ public class employee {
 
     public void setState(Integer state) {
         this.state = state;
+    }
+
+    public String getVerficationCode() {
+        return verficationCode;
+    }
+
+    public void setVerficationCode(String verficationCode) {
+        this.verficationCode = verficationCode == null ? null : verficationCode.trim();
+    }
+
+    public String getValidTime() {
+        return validTime;
+    }
+
+    public void setValidTime(String validTime) {
+        this.validTime = validTime == null ? null : validTime.trim();
     }
 }

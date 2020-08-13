@@ -4,7 +4,7 @@
   <resultMap id="BaseResultMap" type="cn.lr.po.employeeAttendance">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="employeeId" jdbcType="INTEGER" property="employeeId" />
-    <result column="dateTime" jdbcType="TIMESTAMP" property="dateTime" />
+    <result column="dateTime" jdbcType="VARCHAR" property="dateTime" />
     <result column="pic" jdbcType="VARCHAR" property="pic" />
     <result column="address" jdbcType="VARCHAR" property="address" />
     <result column="note" jdbcType="VARCHAR" property="note" />
@@ -23,15 +23,15 @@
     delete from tb_employeeattendance
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="cn.lr.po.employeeAttendance">
+  <insert id="insert" parameterType="cn.lr.po.employeeAttendance" useGeneratedKeys="true" keyProperty="id">
     insert into tb_employeeattendance (id, employeeId, dateTime, 
       pic, address, note, 
       state)
-    values (#{id,jdbcType=INTEGER}, #{employeeId,jdbcType=INTEGER}, #{dateTime,jdbcType=TIMESTAMP}, 
+    values (#{id,jdbcType=INTEGER}, #{employeeId,jdbcType=INTEGER}, #{dateTime,jdbcType=VARCHAR}, 
       #{pic,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{note,jdbcType=VARCHAR}, 
       #{state,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="cn.lr.po.employeeAttendance">
+  <insert id="insertSelective" parameterType="cn.lr.po.employeeAttendance" useGeneratedKeys="true" keyProperty="id">
     insert into tb_employeeattendance
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -64,7 +64,7 @@
         #{employeeId,jdbcType=INTEGER},
       </if>
       <if test="dateTime != null">
-        #{dateTime,jdbcType=TIMESTAMP},
+        #{dateTime,jdbcType=VARCHAR},
       </if>
       <if test="pic != null">
         #{pic,jdbcType=VARCHAR},
@@ -87,7 +87,7 @@
         employeeId = #{employeeId,jdbcType=INTEGER},
       </if>
       <if test="dateTime != null">
-        dateTime = #{dateTime,jdbcType=TIMESTAMP},
+        dateTime = #{dateTime,jdbcType=VARCHAR},
       </if>
       <if test="pic != null">
         pic = #{pic,jdbcType=VARCHAR},
@@ -107,11 +107,29 @@
   <update id="updateByPrimaryKey" parameterType="cn.lr.po.employeeAttendance">
     update tb_employeeattendance
     set employeeId = #{employeeId,jdbcType=INTEGER},
-      dateTime = #{dateTime,jdbcType=TIMESTAMP},
+      dateTime = #{dateTime,jdbcType=VARCHAR},
       pic = #{pic,jdbcType=VARCHAR},
       address = #{address,jdbcType=VARCHAR},
       note = #{note,jdbcType=VARCHAR},
       state = #{state,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+   <select id="selectByEmployeeId" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_employeeattendance
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER}  order by dateTime desc limit #{page},#{size}
+  </select>
+  <select id="selectByEmployeeIdCount"  resultType="Integer">
+    select count(*)
+    from tb_employeeattendance
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER} 
+  </select>
+    <select id="selectByEmployeeIdNew" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_employeeattendance
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state > #{stateSX,jdbcType=INTEGER} and state &lt; #{stateSB,jdbcType=INTEGER} and to_days(dateTime) = to_days(now()) 
+  </select>
 </mapper>

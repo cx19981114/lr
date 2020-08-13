@@ -9,10 +9,14 @@
     <result column="rank" jdbcType="INTEGER" property="rank" />
     <result column="prevType" jdbcType="INTEGER" property="prevType" />
     <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="step" jdbcType="INTEGER" property="step" />
+    <result column="postIdList" jdbcType="VARCHAR" property="postIdList" />
+    <result column="employeeIdList" jdbcType="VARCHAR" property="employeeIdList" />
     <result column="state" jdbcType="INTEGER" property="state" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, companyId, name, content, rank, prevType, type, state
+    id, companyId, name, content, rank, prevType, type, step, postIdList, employeeIdList, 
+    state
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -24,15 +28,17 @@
     delete from tb_task
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="cn.lr.po.task">
+  <insert id="insert" parameterType="cn.lr.po.task" useGeneratedKeys="true" keyProperty="id">
     insert into tb_task (id, companyId, name, 
       content, rank, prevType, 
-      type, state)
+      type, step, postIdList, 
+      employeeIdList, state)
     values (#{id,jdbcType=INTEGER}, #{companyId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
       #{content,jdbcType=VARCHAR}, #{rank,jdbcType=INTEGER}, #{prevType,jdbcType=INTEGER}, 
-      #{type,jdbcType=INTEGER}, #{state,jdbcType=INTEGER})
+      #{type,jdbcType=INTEGER}, #{step,jdbcType=INTEGER}, #{postIdList,jdbcType=VARCHAR}, 
+      #{employeeIdList,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="cn.lr.po.task">
+  <insert id="insertSelective" parameterType="cn.lr.po.task" useGeneratedKeys="true" keyProperty="id">
     insert into tb_task
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -55,6 +61,15 @@
       </if>
       <if test="type != null">
         type,
+      </if>
+      <if test="step != null">
+        step,
+      </if>
+      <if test="postIdList != null">
+        postIdList,
+      </if>
+      <if test="employeeIdList != null">
+        employeeIdList,
       </if>
       <if test="state != null">
         state,
@@ -82,6 +97,15 @@
       <if test="type != null">
         #{type,jdbcType=INTEGER},
       </if>
+      <if test="step != null">
+        #{step,jdbcType=INTEGER},
+      </if>
+      <if test="postIdList != null">
+        #{postIdList,jdbcType=VARCHAR},
+      </if>
+      <if test="employeeIdList != null">
+        #{employeeIdList,jdbcType=VARCHAR},
+      </if>
       <if test="state != null">
         #{state,jdbcType=INTEGER},
       </if>
@@ -108,6 +132,15 @@
       <if test="type != null">
         type = #{type,jdbcType=INTEGER},
       </if>
+      <if test="step != null">
+        step = #{step,jdbcType=INTEGER},
+      </if>
+      <if test="postIdList != null">
+        postIdList = #{postIdList,jdbcType=VARCHAR},
+      </if>
+      <if test="employeeIdList != null">
+        employeeIdList = #{employeeIdList,jdbcType=VARCHAR},
+      </if>
       <if test="state != null">
         state = #{state,jdbcType=INTEGER},
       </if>
@@ -122,7 +155,36 @@
       rank = #{rank,jdbcType=INTEGER},
       prevType = #{prevType,jdbcType=INTEGER},
       type = #{type,jdbcType=INTEGER},
+      step = #{step,jdbcType=INTEGER},
+      postIdList = #{postIdList,jdbcType=VARCHAR},
+      employeeIdList = #{employeeIdList,jdbcType=VARCHAR},
       state = #{state,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <select id="selectByCompanyId" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_task
+    where companyId = #{companyId,jdbcType=INTEGER} and  prevType = #{prevType,jdbcType=INTEGER} 
+    <if test="type != null">
+        and type = #{type,jdbcType=INTEGER}
+     </if>  
+     and state > #{state,jdbcType=INTEGER} order by step desc limit #{page},#{size} 
+  </select>
+  <select id="selectByCompanyCount"  resultType="Integer">
+    select count(*)
+    from tb_task
+    where companyId = #{companyId,jdbcType=INTEGER} and  prevType = #{prevType,jdbcType=INTEGER}  
+   <if test="type != null">
+        and type = #{type,jdbcType=INTEGER}
+   </if>  and state > #{state,jdbcType=INTEGER}
+  </select>
+   <select id="selectByCompanyAndPrevTypeAndTypeAndStep" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_task
+    where companyId = #{companyId,jdbcType=INTEGER} and  prevType = #{prevType,jdbcType=INTEGER} 
+    and type = #{type,jdbcType=INTEGER} and step = 1 
+  </select>
 </mapper>

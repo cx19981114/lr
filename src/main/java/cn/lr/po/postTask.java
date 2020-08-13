@@ -5,17 +5,13 @@ public class postTask {
 
     private Integer postId;
 
-    private String name;
+    private String taskIdListFN;
 
-    private String content;
+    private String taskIdListRWDay;
 
-    private Integer step;
+    private String taskIdListRWWeek;
 
-    private Integer rank;
-
-    private Integer type;
-
-    private Integer state;
+    private String taskIdListRWMon;
 
     public Integer getId() {
         return id;
@@ -33,51 +29,35 @@ public class postTask {
         this.postId = postId;
     }
 
-    public String getName() {
-        return name;
+    public String getTaskIdListFN() {
+        return taskIdListFN;
     }
 
-    public void setName(String name) {
-        this.name = name == null ? null : name.trim();
+    public void setTaskIdListFN(String taskIdListFN) {
+        this.taskIdListFN = taskIdListFN == null ? null : taskIdListFN.trim();
     }
 
-    public String getContent() {
-        return content;
+    public String getTaskIdListRWDay() {
+        return taskIdListRWDay;
     }
 
-    public void setContent(String content) {
-        this.content = content == null ? null : content.trim();
+    public void setTaskIdListRWDay(String taskIdListRWDay) {
+        this.taskIdListRWDay = taskIdListRWDay == null ? null : taskIdListRWDay.trim();
     }
 
-    public Integer getStep() {
-        return step;
+    public String getTaskIdListRWWeek() {
+        return taskIdListRWWeek;
     }
 
-    public void setStep(Integer step) {
-        this.step = step;
+    public void setTaskIdListRWWeek(String taskIdListRWWeek) {
+        this.taskIdListRWWeek = taskIdListRWWeek == null ? null : taskIdListRWWeek.trim();
     }
 
-    public Integer getRank() {
-        return rank;
+    public String getTaskIdListRWMon() {
+        return taskIdListRWMon;
     }
 
-    public void setRank(Integer rank) {
-        this.rank = rank;
-    }
-
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
-    }
-
-    public Integer getState() {
-        return state;
-    }
-
-    public void setState(Integer state) {
-        this.state = state;
+    public void setTaskIdListRWMon(String taskIdListRWMon) {
+        this.taskIdListRWMon = taskIdListRWMon == null ? null : taskIdListRWMon.trim();
     }
 }

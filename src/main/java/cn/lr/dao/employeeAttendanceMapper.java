@@ -1,5 +1,9 @@
 package cn.lr.dao;
 
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
 import cn.lr.po.employeeAttendance;
 
 public interface employeeAttendanceMapper {
@@ -14,4 +18,14 @@ public interface employeeAttendanceMapper {
     int updateByPrimaryKeySelective(employeeAttendance record);
 
     int updateByPrimaryKey(employeeAttendance record);
+    
+    employeeAttendance selectByEmployeeId(Integer employeeId);
+    
+    List<employeeAttendance> selectByEmployeeId(@Param("employeeId") Integer employeeId,@Param("state") Integer state,@Param("page") Integer page,
+			@Param("size") Integer size);
+
+	int selectByEmployeeIdCount(@Param("employeeId") Integer employeeId,@Param("state") Integer state);
+	
+	employeeAttendance selectByEmployeeIdNew(@Param("employeeId")Integer employeeId,@Param("stateSX") Integer stateSX,@Param("stateSB") Integer stateSB);
+
 }

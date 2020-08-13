@@ -1,6 +1,6 @@
 package cn.lr.exception;
 
-public class BusiException extends BaseException {
+public class BusiException extends RuntimeException {
 	
 	private static final long serialVersionUID = 1L;
 	

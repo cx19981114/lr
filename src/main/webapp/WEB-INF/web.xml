@@ -3,7 +3,10 @@
   <display-name>lr</display-name>
   <listener>
     <listener-class>cn.lr.listener.EnvironmentListener</listener-class>
-  </listener>
+  </listener> 
+  <listener>
+    <listener-class>cn.lr.listener.MyListener</listener-class>
+  </listener> 
   <context-param>
     <param-name>contextConfigLocation</param-name>
     <param-value>classpath:applicationContext.xml</param-value>

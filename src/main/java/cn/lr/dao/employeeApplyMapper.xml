@@ -6,15 +6,16 @@
     <result column="employeeId" jdbcType="INTEGER" property="employeeId" />
     <result column="type" jdbcType="INTEGER" property="type" />
     <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="startDate" jdbcType="DATE" property="startDate" />
+    <result column="startDate" jdbcType="VARCHAR" property="startDate" />
     <result column="startPhase" jdbcType="VARCHAR" property="startPhase" />
-    <result column="endDate" jdbcType="DATE" property="endDate" />
+    <result column="endDate" jdbcType="VARCHAR" property="endDate" />
     <result column="endPhase" jdbcType="VARCHAR" property="endPhase" />
     <result column="note" jdbcType="VARCHAR" property="note" />
+    <result column="dateTime" jdbcType="INTEGER" property="dateTime" />
     <result column="state" jdbcType="INTEGER" property="state" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, employeeId, type, name, startDate, startPhase, endDate, endPhase, note, state
+    id, employeeId, type, name, startDate, startPhase, endDate, endPhase, note, dateTime,state
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -26,17 +27,17 @@
     delete from tb_employeeapply
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="cn.lr.po.employeeApply">
+  <insert id="insert" parameterType="cn.lr.po.employeeApply" useGeneratedKeys="true" keyProperty="id">
     insert into tb_employeeapply (id, employeeId, type, 
       name, startDate, startPhase, 
-      endDate, endPhase, note, 
+      endDate, endPhase, note,dateTime, 
       state)
     values (#{id,jdbcType=INTEGER}, #{employeeId,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, 
-      #{name,jdbcType=VARCHAR}, #{startDate,jdbcType=DATE}, #{startPhase,jdbcType=VARCHAR}, 
-      #{endDate,jdbcType=DATE}, #{endPhase,jdbcType=VARCHAR}, #{note,jdbcType=VARCHAR}, 
-      #{state,jdbcType=INTEGER})
+      #{name,jdbcType=VARCHAR}, #{startDate,jdbcType=VARCHAR}, #{startPhase,jdbcType=VARCHAR}, 
+      #{endDate,jdbcType=VARCHAR}, #{endPhase,jdbcType=VARCHAR}, #{note,jdbcType=VARCHAR}, 
+      #{dateTime,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="cn.lr.po.employeeApply">
+  <insert id="insertSelective" parameterType="cn.lr.po.employeeApply" useGeneratedKeys="true" keyProperty="id">
     insert into tb_employeeapply
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -66,6 +67,9 @@
       <if test="note != null">
         note,
       </if>
+      <if test="dateTime != null">
+        dateTime,
+      </if>
       <if test="state != null">
         state,
       </if>
@@ -84,19 +88,22 @@
         #{name,jdbcType=VARCHAR},
       </if>
       <if test="startDate != null">
-        #{startDate,jdbcType=DATE},
+        #{startDate,jdbcType=VARCHAR},
       </if>
       <if test="startPhase != null">
         #{startPhase,jdbcType=VARCHAR},
       </if>
       <if test="endDate != null">
-        #{endDate,jdbcType=DATE},
+        #{endDate,jdbcType=VARCHAR},
       </if>
       <if test="endPhase != null">
         #{endPhase,jdbcType=VARCHAR},
       </if>
       <if test="note != null">
         #{note,jdbcType=VARCHAR},
+      </if>
+      <if test="dateTime != null">
+        #{dateTime,jdbcType=VARCHAR},
       </if>
       <if test="state != null">
         #{state,jdbcType=INTEGER},
@@ -116,19 +123,22 @@
         name = #{name,jdbcType=VARCHAR},
       </if>
       <if test="startDate != null">
-        startDate = #{startDate,jdbcType=DATE},
+        startDate = #{startDate,jdbcType=VARCHAR},
       </if>
       <if test="startPhase != null">
         startPhase = #{startPhase,jdbcType=VARCHAR},
       </if>
       <if test="endDate != null">
-        endDate = #{endDate,jdbcType=DATE},
+        endDate = #{endDate,jdbcType=VARCHAR},
       </if>
       <if test="endPhase != null">
         endPhase = #{endPhase,jdbcType=VARCHAR},
       </if>
       <if test="note != null">
         note = #{note,jdbcType=VARCHAR},
+      </if>
+      <if test="dateTime != null">
+        dateTime = #{dateTime,jdbcType=VARCHAR},
       </if>
       <if test="state != null">
         state = #{state,jdbcType=INTEGER},
@@ -141,12 +151,31 @@
     set employeeId = #{employeeId,jdbcType=INTEGER},
       type = #{type,jdbcType=INTEGER},
       name = #{name,jdbcType=VARCHAR},
-      startDate = #{startDate,jdbcType=DATE},
+      startDate = #{startDate,jdbcType=VARCHAR},
       startPhase = #{startPhase,jdbcType=VARCHAR},
-      endDate = #{endDate,jdbcType=DATE},
+      endDate = #{endDate,jdbcType=VARCHAR},
       endPhase = #{endPhase,jdbcType=VARCHAR},
       note = #{note,jdbcType=VARCHAR},
+      dateTime = #{dateTime,jdbcType=VARCHAR},
       state = #{state,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <select id="selectByEmployeeIdAndType" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_employeeapply
+    where employeeId = #{employeeId,jdbcType=INTEGER} and type = #{type,jdbcType=INTEGER} and state >  #{state,jdbcType=INTEGER}  order by dateTime desc limit #{page},#{size}
+  </select>
+  <select id="selectByEmployeeIdAndTypeCount"  resultType="Integer">
+    select count(*)
+    from tb_employeeapply
+    where employeeId = #{employeeId,jdbcType=INTEGER} and type = #{type,jdbcType=INTEGER} and state >  #{state,jdbcType=INTEGER} 
+  </select>
+   <select id="selectByEmployeeId" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_employeeapply
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state > #{stateSX,jdbcType=INTEGER}  and state &lt; #{stateCG,jdbcType=INTEGER} and TO_DAYS( endDate ) - TO_DAYS( now()) &lt;= 1
+  </select>
 </mapper>

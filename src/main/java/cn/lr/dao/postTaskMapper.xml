@@ -4,15 +4,13 @@
   <resultMap id="BaseResultMap" type="cn.lr.po.postTask">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="postId" jdbcType="INTEGER" property="postId" />
-    <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="content" jdbcType="VARCHAR" property="content" />
-    <result column="step" jdbcType="INTEGER" property="step" />
-    <result column="rank" jdbcType="INTEGER" property="rank" />
-    <result column="type" jdbcType="INTEGER" property="type" />
-    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="taskIdListFN" jdbcType="VARCHAR" property="taskIdListFN" />
+    <result column="taskIdListRWDay" jdbcType="VARCHAR" property="taskIdListRWDay" />
+    <result column="taskIdListRWWeek" jdbcType="VARCHAR" property="taskIdListRWWeek" />
+    <result column="taskIdListRWMon" jdbcType="VARCHAR" property="taskIdListRWMon" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, postId, name, content, step, rank, type, state
+    id, postId, taskIdListFN, taskIdListRWDay, taskIdListRWWeek, taskIdListRWMon
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -25,12 +23,12 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="cn.lr.po.postTask">
-    insert into tb_posttask (id, postId, name, 
-      content, step, rank, 
-      type, state)
-    values (#{id,jdbcType=INTEGER}, #{postId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
-      #{content,jdbcType=VARCHAR}, #{step,jdbcType=INTEGER}, #{rank,jdbcType=INTEGER}, 
-      #{type,jdbcType=INTEGER}, #{state,jdbcType=INTEGER})
+    insert into tb_posttask (id, postId, taskIdListFN, 
+      taskIdListRWDay, taskIdListRWWeek, taskIdListRWMon
+      )
+    values (#{id,jdbcType=INTEGER}, #{postId,jdbcType=INTEGER}, #{taskIdListFN,jdbcType=VARCHAR}, 
+      #{taskIdListRWDay,jdbcType=VARCHAR}, #{taskIdListRWWeek,jdbcType=VARCHAR}, #{taskIdListRWMon,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="cn.lr.po.postTask">
     insert into tb_posttask
@@ -41,23 +39,17 @@
       <if test="postId != null">
         postId,
       </if>
-      <if test="name != null">
-        name,
+      <if test="taskIdListFN != null">
+        taskIdListFN,
       </if>
-      <if test="content != null">
-        content,
+      <if test="taskIdListRWDay != null">
+        taskIdListRWDay,
       </if>
-      <if test="step != null">
-        step,
+      <if test="taskIdListRWWeek != null">
+        taskIdListRWWeek,
       </if>
-      <if test="rank != null">
-        rank,
-      </if>
-      <if test="type != null">
-        type,
-      </if>
-      <if test="state != null">
-        state,
+      <if test="taskIdListRWMon != null">
+        taskIdListRWMon,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -67,23 +59,17 @@
       <if test="postId != null">
         #{postId,jdbcType=INTEGER},
       </if>
-      <if test="name != null">
-        #{name,jdbcType=VARCHAR},
+      <if test="taskIdListFN != null">
+        #{taskIdListFN,jdbcType=VARCHAR},
       </if>
-      <if test="content != null">
-        #{content,jdbcType=VARCHAR},
+      <if test="taskIdListRWDay != null">
+        #{taskIdListRWDay,jdbcType=VARCHAR},
       </if>
-      <if test="step != null">
-        #{step,jdbcType=INTEGER},
+      <if test="taskIdListRWWeek != null">
+        #{taskIdListRWWeek,jdbcType=VARCHAR},
       </if>
-      <if test="rank != null">
-        #{rank,jdbcType=INTEGER},
-      </if>
-      <if test="type != null">
-        #{type,jdbcType=INTEGER},
-      </if>
-      <if test="state != null">
-        #{state,jdbcType=INTEGER},
+      <if test="taskIdListRWMon != null">
+        #{taskIdListRWMon,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -93,23 +79,17 @@
       <if test="postId != null">
         postId = #{postId,jdbcType=INTEGER},
       </if>
-      <if test="name != null">
-        name = #{name,jdbcType=VARCHAR},
+      <if test="taskIdListFN != null">
+        taskIdListFN = #{taskIdListFN,jdbcType=VARCHAR},
       </if>
-      <if test="content != null">
-        content = #{content,jdbcType=VARCHAR},
+      <if test="taskIdListRWDay != null">
+        taskIdListRWDay = #{taskIdListRWDay,jdbcType=VARCHAR},
       </if>
-      <if test="step != null">
-        step = #{step,jdbcType=INTEGER},
+      <if test="taskIdListRWWeek != null">
+        taskIdListRWWeek = #{taskIdListRWWeek,jdbcType=VARCHAR},
       </if>
-      <if test="rank != null">
-        rank = #{rank,jdbcType=INTEGER},
-      </if>
-      <if test="type != null">
-        type = #{type,jdbcType=INTEGER},
-      </if>
-      <if test="state != null">
-        state = #{state,jdbcType=INTEGER},
+      <if test="taskIdListRWMon != null">
+        taskIdListRWMon = #{taskIdListRWMon,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -117,12 +97,17 @@
   <update id="updateByPrimaryKey" parameterType="cn.lr.po.postTask">
     update tb_posttask
     set postId = #{postId,jdbcType=INTEGER},
-      name = #{name,jdbcType=VARCHAR},
-      content = #{content,jdbcType=VARCHAR},
-      step = #{step,jdbcType=INTEGER},
-      rank = #{rank,jdbcType=INTEGER},
-      type = #{type,jdbcType=INTEGER},
-      state = #{state,jdbcType=INTEGER}
+      taskIdListFN = #{taskIdListFN,jdbcType=VARCHAR},
+      taskIdListRWDay = #{taskIdListRWDay,jdbcType=VARCHAR},
+      taskIdListRWWeek = #{taskIdListRWWeek,jdbcType=VARCHAR},
+      taskIdListRWMon = #{taskIdListRWMon,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <select id="selectByPost" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_posttask
+    where postId = #{postId,jdbcType=INTEGER}
+  </select>
 </mapper>

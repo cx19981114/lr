@@ -5,9 +5,9 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="address" jdbcType="VARCHAR" property="address" />
-    <result column="startTime" jdbcType="TIMESTAMP" property="startTime" />
-    <result column="endTime" jdbcType="TIMESTAMP" property="endTime" />
-    <result column="dateTime" jdbcType="TIMESTAMP" property="dateTime" />
+    <result column="startTime" jdbcType="VARCHAR" property="startTime" />
+    <result column="endTime" jdbcType="VARCHAR" property="endTime" />
+    <result column="dateTime" jdbcType="VARCHAR" property="dateTime" />
     <result column="state" jdbcType="INTEGER" property="state" />
   </resultMap>
   <sql id="Base_Column_List">
@@ -23,15 +23,15 @@
     delete from tb_company
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="cn.lr.po.company">
+  <insert id="insert" parameterType="cn.lr.po.company" useGeneratedKeys="true" keyProperty="id">
     insert into tb_company (id, name, address, 
       startTime, endTime, dateTime, 
       state)
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, 
-      #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{dateTime,jdbcType=TIMESTAMP}, 
+      #{startTime,jdbcType=VARCHAR}, #{endTime,jdbcType=VARCHAR}, #{dateTime,jdbcType=VARCHAR}, 
       #{state,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="cn.lr.po.company">
+  <insert id="insertSelective" parameterType="cn.lr.po.company" useGeneratedKeys="true" keyProperty="id">
     insert into tb_company
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -67,20 +67,20 @@
         #{address,jdbcType=VARCHAR},
       </if>
       <if test="startTime != null">
-        #{startTime,jdbcType=TIMESTAMP},
+        #{startTime,jdbcType=VARCHAR},
       </if>
       <if test="endTime != null">
-        #{endTime,jdbcType=TIMESTAMP},
+        #{endTime,jdbcType=VARCHAR},
       </if>
       <if test="dateTime != null">
-        #{dateTime,jdbcType=TIMESTAMP},
+        #{dateTime,jdbcType=VARCHAR},
       </if>
       <if test="state != null">
         #{state,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="cn.lr.po.company">
+  <update id="updateByPrimaryKeySelective" parameterType="cn.lr.po.company" >
     update tb_company
     <set>
       <if test="name != null">
@@ -90,13 +90,13 @@
         address = #{address,jdbcType=VARCHAR},
       </if>
       <if test="startTime != null">
-        startTime = #{startTime,jdbcType=TIMESTAMP},
+        startTime = #{startTime,jdbcType=VARCHAR},
       </if>
       <if test="endTime != null">
-        endTime = #{endTime,jdbcType=TIMESTAMP},
+        endTime = #{endTime,jdbcType=VARCHAR},
       </if>
       <if test="dateTime != null">
-        dateTime = #{dateTime,jdbcType=TIMESTAMP},
+        dateTime = #{dateTime,jdbcType=VARCHAR},
       </if>
       <if test="state != null">
         state = #{state,jdbcType=INTEGER},
@@ -104,14 +104,27 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="cn.lr.po.company">
+  <update id="updateByPrimaryKey" parameterType="cn.lr.po.company" >
     update tb_company
     set name = #{name,jdbcType=VARCHAR},
       address = #{address,jdbcType=VARCHAR},
-      startTime = #{startTime,jdbcType=TIMESTAMP},
-      endTime = #{endTime,jdbcType=TIMESTAMP},
-      dateTime = #{dateTime,jdbcType=TIMESTAMP},
+      startTime = #{startTime,jdbcType=VARCHAR},
+      endTime = #{endTime,jdbcType=VARCHAR},
+      dateTime = #{dateTime,jdbcType=VARCHAR},
       state = #{state,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+    <select id="selectByName" parameterType="cn.lr.po.company" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_company
+    where name = #{name,jdbcType=VARCHAR}
+  </select>
+   <select id="listCompanyVaild" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_company
+    where state > (select stateCode from tb_dict where name = "数据" and stateName = "已失效" and companyId = a.id)
+  </select>
 </mapper>

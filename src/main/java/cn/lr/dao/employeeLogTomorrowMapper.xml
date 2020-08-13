@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.lr.dao.employeeLogTomorrowMapper">
+  <resultMap id="BaseResultMap" type="cn.lr.po.employeeLogTomorrow">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="employeeId" jdbcType="INTEGER" property="employeeId" />
+    <result column="dateTime" jdbcType="VARCHAR" property="dateTime" />
+    <result column="money" jdbcType="VARCHAR" property="money" />
+    <result column="customer" jdbcType="VARCHAR" property="customer" />
+    <result column="run" jdbcType="VARCHAR" property="run" />
+    <result column="person" jdbcType="VARCHAR" property="person" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, employeeId, dateTime, money, customer, run, person, state
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_employeelogtomorrow
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from tb_employeelogtomorrow
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cn.lr.po.employeeLogTomorrow"  useGeneratedKeys="true" keyProperty="id">
+    insert into tb_employeelogtomorrow (id, employeeId, dateTime, 
+      money, customer, run, 
+      person, state)
+    values (#{id,jdbcType=INTEGER}, #{employeeId,jdbcType=INTEGER}, #{dateTime,jdbcType=VARCHAR}, 
+      #{money,jdbcType=VARCHAR}, #{customer,jdbcType=VARCHAR}, #{run,jdbcType=VARCHAR}, 
+      #{person,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.lr.po.employeeLogTomorrow"  useGeneratedKeys="true" keyProperty="id">
+    insert into tb_employeelogtomorrow
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="employeeId != null">
+        employeeId,
+      </if>
+      <if test="dateTime != null">
+        dateTime,
+      </if>
+      <if test="money != null">
+        money,
+      </if>
+      <if test="customer != null">
+        customer,
+      </if>
+      <if test="run != null">
+        run,
+      </if>
+      <if test="person != null">
+        person,
+      </if>
+      <if test="state != null">
+        state,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="employeeId != null">
+        #{employeeId,jdbcType=INTEGER},
+      </if>
+      <if test="dateTime != null">
+        #{dateTime,jdbcType=VARCHAR},
+      </if>
+      <if test="money != null">
+        #{money,jdbcType=VARCHAR},
+      </if>
+      <if test="customer != null">
+        #{customer,jdbcType=VARCHAR},
+      </if>
+      <if test="run != null">
+        #{run,jdbcType=VARCHAR},
+      </if>
+      <if test="person != null">
+        #{person,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.lr.po.employeeLogTomorrow">
+    update tb_employeelogtomorrow
+    <set>
+      <if test="employeeId != null">
+        employeeId = #{employeeId,jdbcType=INTEGER},
+      </if>
+      <if test="dateTime != null">
+        dateTime = #{dateTime,jdbcType=VARCHAR},
+      </if>
+      <if test="money != null">
+        money = #{money,jdbcType=VARCHAR},
+      </if>
+      <if test="customer != null">
+        customer = #{customer,jdbcType=VARCHAR},
+      </if>
+      <if test="run != null">
+        run = #{run,jdbcType=VARCHAR},
+      </if>
+      <if test="person != null">
+        person = #{person,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        state = #{state,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.lr.po.employeeLogTomorrow">
+    update tb_employeelogtomorrow
+    set employeeId = #{employeeId,jdbcType=INTEGER},
+      dateTime = #{dateTime,jdbcType=VARCHAR},
+      money = #{money,jdbcType=VARCHAR},
+      customer = #{customer,jdbcType=VARCHAR},
+      run = #{run,jdbcType=VARCHAR},
+      person = #{person,jdbcType=VARCHAR},
+      state = #{state,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectByEmployeeId" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_employeelogtomorrow
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER}  order by dateTime desc limit #{page},#{size}
+  </select>
+  <select id="selectByEmployeeIdCount"  resultType="Integer">
+    select count(*)
+    from tb_employeelogtomorrow
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER} 
+  </select>
+     <select id="selectByEmployeeIdNew" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_employeelogtomorrow
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state > #{stateSX,jdbcType=INTEGER} and state &lt; #{stateSB,jdbcType=INTEGER} and to_days(dateTime) = to_days(now()) 
+  </select>
+</mapper>

@@ -5,6 +5,7 @@
     xmlns:context="http://www.springframework.org/schema/context"
     xmlns:aop="http://www.springframework.org/schema/aop"
     xmlns:tx="http://www.springframework.org/schema/tx" 
+    xmlns:task="http://www.springframework.org/schema/task"
     xsi:schemaLocation="http://www.springframework.org/schema/beans 
     http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
     http://www.springframework.org/schema/mvc
@@ -14,10 +15,12 @@
     http://www.springframework.org/schema/aop 
     http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
     http://www.springframework.org/schema/tx 
-    http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
-    
+    http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+    http://www.springframework.org/schema/task
+    http://www.springframework.org/schema/task/spring-task-3.1.xsd">
+    <tx:annotation-driven transaction-manager="transactionManager"/>
     <!--  	读取db.properties配置文件 -->
-    <context:property-placeholder location="classpath:db.properties" ignore-unresolvable="true" />
+    <context:property-placeholder location="classpath:*.properties" ignore-unresolvable="true" />
     <bean id="dataSource"
     	class="org.apache.commons.dbcp2.BasicDataSource">
     	<property name="driverClassName" value="${jdbc.driver}" />
@@ -28,10 +31,21 @@
     	<property name="maxIdle" value="${jdbc.maxIdle}" />
     	<property name="initialSize" value="${jdbc.initialSize}" />
     </bean>
-	
+	 <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 默认编码 -->
+        <property name="defaultEncoding" value="UTF-8"/>
+        <!-- 上传文件大小限制为31M，31*1024*1024 -->
+        <property name="maxUploadSize" value="32505856"/>
+        <!-- 内存中的最大值 -->
+        <property name="maxInMemorySize" value="4096"/>
+    </bean>
 	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource"/>
 	</bean>
+	
+	<context:component-scan base-package="cn.lr.*">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
 	
 	<tx:advice id="txAdvice" transaction-manager="transactionManager">
 		<tx:attributes>
@@ -62,5 +76,4 @@
 		<property name="basePackage" value="cn.lr.dao"></property>
 	</bean>
 	
-	<context:component-scan base-package="cn.lr.service" />
 </beans>

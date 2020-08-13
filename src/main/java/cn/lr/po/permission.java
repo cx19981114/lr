@@ -5,6 +5,8 @@ public class permission {
 
     private String name;
 
+    private Integer companyId;
+
     private Integer state;
 
     public Integer getId() {
@@ -21,6 +23,14 @@ public class permission {
 
     public void setName(String name) {
         this.name = name == null ? null : name.trim();
+    }
+
+    public Integer getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(Integer companyId) {
+        this.companyId = companyId;
     }
 
     public Integer getState() {

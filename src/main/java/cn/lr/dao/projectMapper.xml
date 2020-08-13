@@ -7,9 +7,11 @@
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="content" jdbcType="VARCHAR" property="content" />
     <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="money" jdbcType="INTEGER" property="money" />
+    <result column="num" jdbcType="INTEGER" property="num" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, companyId, name, content, state
+    id, companyId, name, content, state, money, num
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -21,13 +23,14 @@
     delete from tb_project
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="cn.lr.po.project">
+  <insert id="insert" parameterType="cn.lr.po.project" useGeneratedKeys="true" keyProperty="id">
     insert into tb_project (id, companyId, name, 
-      content, state)
+      content, state,money,num)
     values (#{id,jdbcType=INTEGER}, #{companyId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
-      #{content,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER})
+      #{content,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER}, #{money,jdbcType=INTEGER}),
+      #{num,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="cn.lr.po.project">
+  <insert id="insertSelective" parameterType="cn.lr.po.project" useGeneratedKeys="true" keyProperty="id">
     insert into tb_project
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -44,6 +47,12 @@
       </if>
       <if test="state != null">
         state,
+      </if>
+      <if test="money != null">
+        money,
+      </if>
+      <if test="num != null">
+        num,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -62,6 +71,12 @@
       <if test="state != null">
         #{state,jdbcType=INTEGER},
       </if>
+      <if test="money != null">
+        #{money,jdbcType=INTEGER},
+      </if>
+      <if test="num != null">
+        #{num,jdbcType=INTEGER},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="cn.lr.po.project">
@@ -79,6 +94,12 @@
       <if test="state != null">
         state = #{state,jdbcType=INTEGER},
       </if>
+      <if test="money != null">
+        money = #{money,jdbcType=INTEGER},
+      </if>
+      <if test="num != null">
+        num = #{num,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -87,7 +108,21 @@
     set companyId = #{companyId,jdbcType=INTEGER},
       name = #{name,jdbcType=VARCHAR},
       content = #{content,jdbcType=VARCHAR},
-      state = #{state,jdbcType=INTEGER}
+      state = #{state,jdbcType=INTEGER},
+      money = #{money,jdbcType=INTEGER},
+      num = #{num,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <select id="selectByCompanyId" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_project
+    where companyId = #{companyId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER} limit #{page},#{size}
+  </select>
+  <select id="selectByCompanyCount"  resultType="Integer">
+    select count(*)
+    from tb_project
+    where companyId = #{companyId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER}
+  </select>
 </mapper>

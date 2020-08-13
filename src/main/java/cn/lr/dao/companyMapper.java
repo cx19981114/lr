@@ -1,5 +1,7 @@
 package cn.lr.dao;
 
+import java.util.List;
+
 import cn.lr.po.company;
 
 public interface companyMapper {
@@ -10,8 +12,12 @@ public interface companyMapper {
     int insertSelective(company record);
 
     company selectByPrimaryKey(Integer id);
+    
+    company selectByName(company record);
 
     int updateByPrimaryKeySelective(company record);
 
     int updateByPrimaryKey(company record);
+    
+    List<company> listCompanyVaild();
 }

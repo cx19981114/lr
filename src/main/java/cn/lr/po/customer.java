@@ -19,11 +19,23 @@ public class customer {
 
     private String note;
 
-    private String money;
+    private Integer money;
+
+    private String dateTime;
 
     private Integer state;
 
-    public Integer getId() {
+    private String pic;
+    
+    public String getPic() {
+		return pic;
+	}
+
+	public void setPic(String pic) {
+		this.pic = pic;
+	}
+
+	public Integer getId() {
         return id;
     }
 
@@ -95,12 +107,20 @@ public class customer {
         this.note = note == null ? null : note.trim();
     }
 
-    public String getMoney() {
+    public Integer getMoney() {
         return money;
     }
 
-    public void setMoney(String money) {
-        this.money = money == null ? null : money.trim();
+    public void setMoney(Integer money) {
+        this.money = money;
+    }
+
+    public String getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(String dateTime) {
+        this.dateTime = dateTime == null ? null : dateTime.trim();
     }
 
     public Integer getState() {

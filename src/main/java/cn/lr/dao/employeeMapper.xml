@@ -6,14 +6,19 @@
     <result column="phone" jdbcType="VARCHAR" property="phone" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="sex" jdbcType="VARCHAR" property="sex" />
     <result column="companyId" jdbcType="INTEGER" property="companyId" />
     <result column="postId" jdbcType="INTEGER" property="postId" />
     <result column="pic" jdbcType="VARCHAR" property="pic" />
-    <result column="leaderId" jdbcType="INTEGER" property="leaderId" />
+    <result column="leaderIdList" jdbcType="VARCHAR" property="leaderIdList" />
     <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="verficationCode" jdbcType="VARCHAR" property="verficationCode" />
+    <result column="validTime" jdbcType="VARCHAR" property="validTime" />
+    <result column="underIdList" jdbcType="VARCHAR" property="underIdList" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, phone, name, password, companyId, postId, pic, leaderId, state
+    id, phone, name, password, sex, companyId, postId, pic, leaderIdList, state, verficationCode, 
+    validTime, underIdList
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -25,17 +30,20 @@
     delete from tb_employee
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="cn.lr.po.employee">
+  <insert id="insert" parameterType="cn.lr.po.employee" useGeneratedKeys="true" keyProperty="id">
     insert into tb_employee (id, phone, name, 
-      password, companyId, postId, 
-      pic, leaderId, state
+      password, sex, companyId, 
+      postId, pic, leaderIdList, 
+      state, verficationCode, validTime, underIdList
       )
     values (#{id,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
-      #{password,jdbcType=VARCHAR}, #{companyId,jdbcType=INTEGER}, #{postId,jdbcType=INTEGER}, 
-      #{pic,jdbcType=VARCHAR}, #{leaderId,jdbcType=INTEGER}, #{state,jdbcType=INTEGER}
+      #{password,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, #{companyId,jdbcType=INTEGER}, 
+      #{postId,jdbcType=INTEGER}, #{pic,jdbcType=VARCHAR}, #{leaderIdList,jdbcType=VARCHAR}, 
+      #{state,jdbcType=INTEGER}, #{verficationCode,jdbcType=VARCHAR}, #{validTime,jdbcType=VARCHAR},
+      #{underIdList,jdbcType=VARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="cn.lr.po.employee">
+  <insert id="insertSelective" parameterType="cn.lr.po.employee" useGeneratedKeys="true" keyProperty="id">
     insert into tb_employee
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -50,6 +58,9 @@
       <if test="password != null">
         password,
       </if>
+      <if test="sex != null">
+        sex,
+      </if>
       <if test="companyId != null">
         companyId,
       </if>
@@ -59,11 +70,20 @@
       <if test="pic != null">
         pic,
       </if>
-      <if test="leaderId != null">
-        leaderId,
+      <if test="leaderIdList != null">
+        leaderIdList,
       </if>
       <if test="state != null">
         state,
+      </if>
+      <if test="verficationCode != null">
+        verficationCode,
+      </if>
+      <if test="validTime != null">
+        validTime,
+      </if>
+      <if test="underIdList != null">
+        underIdList,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -79,6 +99,9 @@
       <if test="password != null">
         #{password,jdbcType=VARCHAR},
       </if>
+      <if test="sex != null">
+        #{sex,jdbcType=VARCHAR},
+      </if>
       <if test="companyId != null">
         #{companyId,jdbcType=INTEGER},
       </if>
@@ -88,11 +111,20 @@
       <if test="pic != null">
         #{pic,jdbcType=VARCHAR},
       </if>
-      <if test="leaderId != null">
-        #{leaderId,jdbcType=INTEGER},
+      <if test="leaderIdList != null">
+        #{leaderIdList,jdbcType=VARCHAR},
       </if>
       <if test="state != null">
         #{state,jdbcType=INTEGER},
+      </if>
+      <if test="verficationCode != null">
+        #{verficationCode,jdbcType=VARCHAR},
+      </if>
+      <if test="validTime != null">
+        #{validTime,jdbcType=VARCHAR},
+      </if>
+      <if test="underIdList != null">
+        #{underIdList,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -108,6 +140,9 @@
       <if test="password != null">
         password = #{password,jdbcType=VARCHAR},
       </if>
+      <if test="sex != null">
+        sex = #{sex,jdbcType=VARCHAR},
+      </if>
       <if test="companyId != null">
         companyId = #{companyId,jdbcType=INTEGER},
       </if>
@@ -117,11 +152,20 @@
       <if test="pic != null">
         pic = #{pic,jdbcType=VARCHAR},
       </if>
-      <if test="leaderId != null">
-        leaderId = #{leaderId,jdbcType=INTEGER},
+      <if test="leaderIdList != null">
+        leaderIdList = #{leaderIdList,jdbcType=VARCHAR},
       </if>
       <if test="state != null">
         state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="verficationCode != null">
+        verficationCode = #{verficationCode,jdbcType=VARCHAR},
+      </if>
+      <if test="validTime != null">
+        validTime = #{validTime,jdbcType=VARCHAR},
+      </if>
+      <if test="underIdList != null">
+        underIdList = #{underIdList,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -131,11 +175,44 @@
     set phone = #{phone,jdbcType=VARCHAR},
       name = #{name,jdbcType=VARCHAR},
       password = #{password,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=VARCHAR},
       companyId = #{companyId,jdbcType=INTEGER},
       postId = #{postId,jdbcType=INTEGER},
       pic = #{pic,jdbcType=VARCHAR},
-      leaderId = #{leaderId,jdbcType=INTEGER},
-      state = #{state,jdbcType=INTEGER}
+      leaderIdList = #{leaderIdList,jdbcType=VARCHAR},
+      state = #{state,jdbcType=INTEGER},
+      verficationCode = #{verficationCode,jdbcType=VARCHAR},
+      validTime = #{validTime,jdbcType=VARCHAR},
+      underIdList = #{underIdList,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <select id="selectByPhone" parameterType="string" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_employee
+    where phone = #{phone,jdbcType=VARCHAR}
+  </select>
+   <select id="selectByCompanyId" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_employee
+    where companyId = #{companyId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER} limit #{page},#{size}
+  </select>
+  <select id="selectByCompanyCount"  resultType="Integer">
+    select count(*)
+    from tb_employee
+    where companyId = #{companyId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER}
+  </select>
+   <select id="selectByPostId" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_employee
+    where companyId = #{companyId,jdbcType=INTEGER} and postId = #{postId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER} limit #{page},#{size}
+  </select>
+  <select id="selectByPostCount"  resultType="Integer">
+    select count(*)
+    from tb_employee
+    where companyId = #{companyId,jdbcType=INTEGER} and postId = #{postId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER}
+  </select>
 </mapper>
