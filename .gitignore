@@ -72,8 +72,3 @@ hs_err_pid*
 .DS_Store
 
 
-# identification
-*.properties
-
-# mybatis generator
-src/main/resources/generatorConfig.xml
