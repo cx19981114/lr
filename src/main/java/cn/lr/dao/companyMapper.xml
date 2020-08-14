@@ -124,7 +124,7 @@
    <select id="listCompanyVaild" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from tb_company
+    from tb_company a
     where state > (select stateCode from tb_dict where name = "数据" and stateName = "已失效" and companyId = a.id)
   </select>
 </mapper>

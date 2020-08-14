@@ -59,7 +59,7 @@ public class EmployeeAttendanceServiceImpl implements EmployeeAttendanceService 
 	private Integer PAGESIZE;
 	@Value("${apply.flow}")
 	private String APPLY_FLOW;
-	@Value("${path}")
+	@Value("${picPath}")
 	private String PATH;
 
 	@Override

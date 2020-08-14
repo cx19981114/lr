@@ -74,7 +74,7 @@ public class CustomerProjectServiceImpl implements CustomerProjectService {
 	private String ORDER_FLOW;
 	@Value("${pageSize}")
 	private Integer PAGESIZE;
-	@Value("${path}")
+	@Value("${picPath}")
 	private String PATH;
 	
 	@Override

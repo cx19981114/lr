@@ -121,7 +121,7 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 	private String EMPLOYEE_TYPE;
 	@Value("${order.flow}")
 	private String ORDER_FLOW;
-	@Value("${path}")
+	@Value("${picPath}")
 	private String PATH;
 
 	@Override

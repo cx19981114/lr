@@ -32,7 +32,7 @@ public class PicServiceImpl implements PicService {
 	private String DATA_TYPE;
 	@Value("${pageSize}")
 	private Integer PAGESIZE;
-	@Value("${path}")
+	@Value("${picPath}")
 	private String PATH;
 	@Override
 	public JSONObject getPicByCompany(JSONObject data){

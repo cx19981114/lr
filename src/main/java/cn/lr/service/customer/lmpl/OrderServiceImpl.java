@@ -82,7 +82,7 @@ public class OrderServiceImpl implements OrderService {
 	private String CHECK_FLOW;
 	@Value("${order.flow}")
 	private String ORDER_FLOW;
-	@Value("${path}")
+	@Value("${picPath}")
 	private String PATH;
 	
 	@Override
@@ -430,7 +430,7 @@ public class OrderServiceImpl implements OrderService {
 	public JSONObject getOrderDetail(JSONObject data) throws ParseException {
 		order order = orderMapper.selectByPrimaryKey(data.getInteger("orderId"));
 		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"));
-		if(order == null || order.getApplyState() != dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"))) {
+		if(order == null) {
 			throw new BusiException("该orderId不存在");
 		}
 		JSONObject dataJSonDynamic = new JSONObject();
@@ -581,7 +581,7 @@ public class OrderServiceImpl implements OrderService {
 		if(order.getApplyState() != dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"))) {
 			throw new BusiException("该预约无法开始");
 		}
-		if(order.getOrderState() != dictMapper.selectByCodeAndStateName(ORDER_FLOW, "进行中", data.getInteger("companyId"))) {
+		if(order.getOrderState() != dictMapper.selectByCodeAndStateName(ORDER_FLOW, "未开始", data.getInteger("companyId")) && order.getOrderState() != dictMapper.selectByCodeAndStateName(ORDER_FLOW, "进行中", data.getInteger("companyId"))) {
 			throw new BusiException("该预约无法结束");
 		}
 		customerProject customerProject = customerProjectMapper.selectByPrimaryKey(order.getCustomerProjectId());

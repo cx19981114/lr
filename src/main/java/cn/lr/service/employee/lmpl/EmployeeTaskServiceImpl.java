@@ -66,7 +66,7 @@ public class EmployeeTaskServiceImpl implements EmployeeTaskService {
 	private String PRETASK_TYPE;
 	@Value("${task.type}")
 	private String TASK_TYPE;
-	@Value("${path}")
+	@Value("${picPath}")
 	private String PATH;
 
 	@Override

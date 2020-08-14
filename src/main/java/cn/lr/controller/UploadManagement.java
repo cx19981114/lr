@@ -34,7 +34,7 @@ public class UploadManagement {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 			// 保证文件名的唯一性：uuid 或者 时间戳
 			String newFileName = sdf.format(new Date()) + fileName.substring(fileName.lastIndexOf("."));
-			String folderPath = "D:\\upload/";
+			String folderPath = "/usr/upload";
 			File actFile = new File(folderPath);
 			// 该目录是否已经存在
 			if (!actFile.exists()) {
