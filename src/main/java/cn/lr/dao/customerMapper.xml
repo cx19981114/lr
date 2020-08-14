@@ -190,12 +190,12 @@
     select 
     <include refid="Base_Column_List" />
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER} limit #{page},#{size}
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} limit #{page},#{size}
   </select>
   <select id="selectByEmployeeIdCount"  resultType="Integer">
     select count(*)
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER}
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER}
   </select>
    <select id="selectByEmployeeIdList" resultMap="BaseResultMap">
     select 

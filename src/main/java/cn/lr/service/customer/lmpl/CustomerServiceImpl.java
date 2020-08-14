@@ -126,7 +126,7 @@ public class CustomerServiceImpl implements CustomerService {
 	public Page<JSONObject> getCustomerByEmployee(JSONObject data) {
 		Integer employeeId = data.getInteger("employeeId");
 		Integer pageNum = data.getInteger("pageNum");
-		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
+		Integer state = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
 		List<customer> customers = customerMapper.selectByEmployeeId(employeeId,state,(pageNum-1)*PAGESIZE,PAGESIZE);
 		List<JSONObject> jsonObjects = new ArrayList<JSONObject>();
 		for(customer c : customers) {
@@ -194,6 +194,7 @@ public class CustomerServiceImpl implements CustomerService {
 		Integer employeeId = data.getInteger("employeeId");
 		Integer pageNum = data.getInteger("pageNum");
 		String type = data.getString("type");
+		String search = data.getString("search");
 		Integer state = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
 		List<customer> customers = new ArrayList<>();
 		List<JSONObject> jsonObjects = new ArrayList<>();
@@ -211,19 +212,37 @@ public class CustomerServiceImpl implements CustomerService {
 			customers = customerMapper.selectByEmployeeIdYear(employeeId,state,(pageNum-1)*PAGESIZE,PAGESIZE);
 			total = customerMapper.selectByEmployeeIdYearCount(employeeId,state);
 		}
+		int count = 0;
 		for(customer c:customers) {
-			JSONObject customer = new JSONObject();
-			customer.put("id", c.getId());
-			customer.put("pic", c.getPic());
-			customer.put("name", c.getName());
-			customer.put("phone", c.getPhone());
-			customer.put("employeeName", employeeMapper.selectByPrimaryKey(c.getEmployeeId()).getName());
-			jsonObjects.add(customer);
+			if(!"".equals(search)) {
+				if(c.getName().contains(search)) {
+					count++;
+					JSONObject customer = new JSONObject();
+					customer.put("id", c.getId());
+					customer.put("pic", c.getPic());
+					customer.put("name", c.getName());
+					customer.put("phone", c.getPhone());
+					customer.put("employeeName", employeeMapper.selectByPrimaryKey(c.getEmployeeId()).getName());
+					jsonObjects.add(customer);
+				}
+			}else {
+				JSONObject customer = new JSONObject();
+				customer.put("id", c.getId());
+				customer.put("pic", c.getPic());
+				customer.put("name", c.getName());
+				customer.put("phone", c.getPhone());
+				customer.put("employeeName", employeeMapper.selectByPrimaryKey(c.getEmployeeId()).getName());
+				jsonObjects.add(customer);
+			}
 		}
 		Page<JSONObject> page = new Page<JSONObject>();
 		page.setPageNum(pageNum);
 		page.setPageSize(PAGESIZE);
-		page.setTotal(total);
+		if(!"".equals(search)) {
+			page.setTotal(count);
+		}else {
+			page.setTotal(total);
+		}
 		page.setList(jsonObjects);
 		return page;
 	}

@@ -69,6 +69,7 @@ public class LoginServiceImpl implements LoginService {
 		employeeDTO.setPic(employee.getPic());
 		employeeDTO.setPost(postMapper.selectByPrimaryKey(employee.getPostId()).getName());
 		employeeDTO.setSex(employee.getSex());
+		employeeDTO.setState(dictMapper.selectByCodeAndStateCode(DATA_TYPE, employee.getState(), data.getInteger("companyId")));
 		if(employee.getLeaderIdList() != null && !employee.getLeaderIdList().equals("")) {
 			String leaderId = employee.getLeaderIdList().split("-")[0];
 			employee employee2 = employeeMapper.selectByPrimaryKey(Integer.valueOf(leaderId));

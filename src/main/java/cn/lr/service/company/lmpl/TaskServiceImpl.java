@@ -111,7 +111,9 @@ public class TaskServiceImpl implements TaskService {
 		if (data.getString("prevType") != null) {
 			JSONObject dataJson = this.testType(data);
 			task.setPrevType(dataJson.getInteger("prevType"));
-			task.setType(dataJson.getInteger("type"));
+			if (dataJson.getInteger("type") != 0) {
+				task.setType(dataJson.getInteger("type"));
+			}
 		}
 		if(data.getInteger("comapnyId") != null) {
 			task .setCompanyId(data.getInteger("comapnyId"));

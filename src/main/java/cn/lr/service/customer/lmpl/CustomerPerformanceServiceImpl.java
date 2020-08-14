@@ -316,7 +316,7 @@ public class CustomerPerformanceServiceImpl implements CustomerPerformanceServic
 	public Page<CustomerPerformanceDTO> getCustomerPerformanceByEmployee(JSONObject data) throws ParseException {
 		Integer employeeId = data.getInteger("employeeId");
 		Integer pageNum = data.getInteger("pageNum");
-		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
+		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
 		List<customerPerformance> customerPerformances = customerPerformanceMapper.selectByEmployee(employeeId,state,(pageNum-1)*PAGESIZE, PAGESIZE);
 		List<CustomerPerformanceDTO> jsonObjects = new ArrayList<CustomerPerformanceDTO>();
 		for(customerPerformance c:customerPerformances) {

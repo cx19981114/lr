@@ -243,7 +243,10 @@
 	         #{item,jdbcType=INTEGER}
 	    </foreach>
     </if>  
-    and applyState = #{stateCG,jdbcType=INTEGER} and date = #{date,jdbcType=VARCHAR} and startTime = #{startTime,jdbcType=VARCHAR}  
+    and applyState = #{stateCG,jdbcType=INTEGER} and date = #{date,jdbcType=VARCHAR} 
+    <if test="startTime != null">
+    and startTime = #{startTime,jdbcType=VARCHAR}
+    </if>
     <if test="state != null">
     	and orderState in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -262,7 +265,11 @@
 	         #{item,jdbcType=INTEGER}
 	    </foreach>
     </if>  
-    and applyState = #{stateCG,jdbcType=INTEGER} and date = #{date,jdbcType=VARCHAR} and startTime = #{startTime,jdbcType=VARCHAR} 
+    and applyState = #{stateCG,jdbcType=INTEGER} 
+    <if test="startTime != null">
+    and startTime = #{startTime,jdbcType=VARCHAR}
+    </if>
+    and date = #{date,jdbcType=VARCHAR} 
     <if test="state != null">
     	and orderState in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">

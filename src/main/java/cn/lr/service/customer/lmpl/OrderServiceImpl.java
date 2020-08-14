@@ -101,19 +101,23 @@ public class OrderServiceImpl implements OrderService {
 		}
 		String date = TimeFormatUtil.dateToString(data.getTimestamp("date"));
 		String startTime = data.getString("startTime");
-		List<Integer> stateList = new ArrayList<>();
-		if(data.getString("type").equals("全部")){
-			Integer state = dictMapper.selectByCodeAndStateName(ORDER_FLOW,"未开始", data.getInteger("companyId"));
-			stateList.add(state);
-			state = dictMapper.selectByCodeAndStateName(ORDER_FLOW,"进行中", data.getInteger("companyId"));
-			stateList.add(state);
-			state = dictMapper.selectByCodeAndStateName(ORDER_FLOW,"已完成", data.getInteger("companyId"));
-			stateList.add(state);
-			state = dictMapper.selectByCodeAndStateName(ORDER_FLOW,"未完成", data.getInteger("companyId"));
-			stateList.add(state);
-		}else{
-			Integer state = dictMapper.selectByCodeAndStateName(ORDER_FLOW, data.getString("type"), data.getInteger("companyId"));
-			stateList.add(state);
+		List<Integer> stateList = null;
+		if(startTime.equals("全部")) {
+			stateList = new ArrayList<>();
+			if(data.getString("type").equals("全部")){
+				Integer state = dictMapper.selectByCodeAndStateName(ORDER_FLOW,"未开始", data.getInteger("companyId"));
+				stateList.add(state);
+				state = dictMapper.selectByCodeAndStateName(ORDER_FLOW,"进行中", data.getInteger("companyId"));
+				stateList.add(state);
+				state = dictMapper.selectByCodeAndStateName(ORDER_FLOW,"已完成", data.getInteger("companyId"));
+				stateList.add(state);
+				state = dictMapper.selectByCodeAndStateName(ORDER_FLOW,"未完成", data.getInteger("companyId"));
+				stateList.add(state);
+			}else{
+				Integer state = dictMapper.selectByCodeAndStateName(ORDER_FLOW, data.getString("type"), data.getInteger("companyId"));
+				stateList.add(state);
+			}
+			startTime = null;
 		}
 		Integer pageNum = data.getInteger("pageNum");
 		List<order> orders = orderMapper.selectByEmployeeCondition(employeeIdList, stateList,date,startTime,stateCG,(pageNum - 1) * PAGESIZE,
@@ -425,6 +429,7 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public JSONObject getOrderDetail(JSONObject data) throws ParseException {
 		order order = orderMapper.selectByPrimaryKey(data.getInteger("orderId"));
+		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"));
 		if(order == null || order.getApplyState() != dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"))) {
 			throw new BusiException("该orderId不存在");
 		}
@@ -440,16 +445,17 @@ public class OrderServiceImpl implements OrderService {
 		dataJson.put("dynamicId", dynamic.getId());
 		dataJson.put("ApplyRankDTOApply", ApplyRankService.getApplyRankByDynamic(dataJSonDynamic));
 		
-		dataJSonDynamic = new JSONObject();
-		dataJSonDynamic.put("name", OrderType);
-		dataJSonDynamic.put("id", order.getId());
-		dataJSonDynamic.put("companyId", data.getInteger("companyId"));
-		dynamic = DynamicService.getDynamicByTypeAndId(dataJSonDynamic);
-		dataJSonDynamic.put("dynamicId", dynamic.getId());
-		
-		dataJson.put("ApplyRankDTOOrder", ApplyRankService.getApplyRankByDynamic(dataJSonDynamic));
-		
+		dynamic = dynamicMapper.selectByTypeAndId(OrderType, order.getId(),state);
+		if(dynamic == null) {
+			dataJson.put("ApplyRankDTOOrder", null);
+		}else {
+			dataJSonDynamic = new JSONObject();
+			dataJSonDynamic.put("companyId", data.getInteger("companyId"));
+			dataJSonDynamic.put("dynamicId", dynamic.getId());
+			dataJson.put("ApplyRankDTOOrder", ApplyRankService.getApplyRankByDynamic(dataJSonDynamic));
+		}
 		return dataJson;
+		
 	}
 	@Override
 	public List<JSONObject> getOrderTime(JSONObject data) {
@@ -460,9 +466,13 @@ public class OrderServiceImpl implements OrderService {
 		company company = companyMapper.selectByPrimaryKey(data.getInteger("companyId"));
 	    List<String> list = DateUtil.cutDate(company.getStartTime(), company.getEndTime());
 	    List<JSONObject> timeVaildList = new ArrayList<>();
+	    JSONObject timeVaild = new JSONObject();
+	    timeVaild.put("title", "全部");
+		timeVaild.put("disabled", "false");
+		timeVaildList.add(timeVaild);
 	    int flag = 0;
 	    for(int i = 0;i<list.size();i++) {
-	    	JSONObject timeVaild = new JSONObject();
+	    	timeVaild = new JSONObject();
 	    	flag = 0;
 	    	for(order o:orders) {
 	    		if(o.getStartTime().equals(list.get(i))) {
