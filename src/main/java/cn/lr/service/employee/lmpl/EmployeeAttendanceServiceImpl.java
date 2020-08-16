@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +29,7 @@ import cn.lr.po.employeeAttendance;
 import cn.lr.service.employee.ApplyRankService;
 import cn.lr.service.employee.DynamicService;
 import cn.lr.service.employee.EmployeeAttendanceService;
+import cn.lr.util.MapUtil;
 import cn.lr.util.TimeFormatUtil;
 
 @Service
@@ -61,7 +63,13 @@ public class EmployeeAttendanceServiceImpl implements EmployeeAttendanceService 
 	private String APPLY_FLOW;
 	@Value("${picPath}")
 	private String PATH;
+	@Value("${picActPath}")
+	private String ACTPATH;
 
+	public String getAddress(JSONObject data) {
+		Map<String, String> areaMap = MapUtil.getCityByLonLat(data.getDouble("lng"), data.getDouble("lat"), data.getString("coordtype"));
+		return areaMap.get("province")+areaMap.get("city")+areaMap.get("district")+areaMap.get("street");
+	}
 	@Override
 	public Page<EmployeeAttendanceDTO> getEmployeeAttendanceByEmployee(JSONObject data) throws ParseException {
 		Integer employeeId = data.getInteger("employeeId");
@@ -259,7 +267,7 @@ public class EmployeeAttendanceServiceImpl implements EmployeeAttendanceService 
 		if (pics != null && !"".equals(pics)) {
 			String[] picList = pics.split("-");
 			for(int i =0 ;i<picList.length;i++) {
-				File picture = new File(picList[i]);
+				File picture = new File(ACTPATH+picList[i]);
 				JSONObject files = new JSONObject();
 				JSONObject file = new JSONObject();
 				file.put("path", PATH + picList[i]);

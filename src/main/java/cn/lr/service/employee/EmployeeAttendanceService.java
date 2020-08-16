@@ -9,6 +9,9 @@ import cn.lr.dto.Page;
 import cn.lr.po.employeeAttendance;
 
 public interface EmployeeAttendanceService {
+	
+	public String getAddress(JSONObject data);
+	
 	public Page<EmployeeAttendanceDTO> getEmployeeAttendanceByEmployee(JSONObject data) throws ParseException;
 
 	public Integer addEmployeeAttendance(JSONObject data) throws ParseException;

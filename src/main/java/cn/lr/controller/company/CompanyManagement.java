@@ -39,7 +39,7 @@ public class CompanyManagement {
 		try {
 			int id = CompanyService.addCompany(dataJson);
 			return ResultJsonUtil.toJsonString(200, null, "添加公司信息成功",session.getId());
-		} catch (BusiException e) {
+		} catch (BusiException e) {	
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(),session.getId());
 		} catch (Exception e) {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误",session.getId());

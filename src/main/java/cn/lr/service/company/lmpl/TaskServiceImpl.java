@@ -60,9 +60,7 @@ public class TaskServiceImpl implements TaskService {
 		task.setContent(data.getString("content"));
 		task.setName(data.getString("name"));
 		task.setPrevType(dataJson.getInteger("prevType"));
-		if (dataJson.getInteger("type") != 0) {
-			task.setType(dataJson.getInteger("type"));
-		}
+		task.setType(dataJson.getInteger("type"));
 		task.setRank(data.getInteger("rank"));
 		if (data.getInteger("step") == 1) {
 			System.out.println(dataJson.getInteger("type"));
@@ -77,7 +75,7 @@ public class TaskServiceImpl implements TaskService {
 			}
 		}
 		task.setStep(data.getInteger("step"));
-		task.setPostIdList(data.getString("postIdList"));
+		task.setPostIdList(data.getString("postIdList")+"-");
 		task.setEmployeeIdList(data.getString("employeeIdList"));
 		task.setState(dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效",data.getInteger("companyId")));
 		int count = taskMapper.insertSelective(task);
@@ -136,7 +134,7 @@ public class TaskServiceImpl implements TaskService {
 				}
 			}
 		}
-		task.setPostIdList(data.getString("postIdList"));
+		task.setPostIdList(data.getString("postIdList")+"-");
 		task.setEmployeeIdList(data.getString("employeeIdList"));
 		int count = taskMapper.updateByPrimaryKeySelective(task);
 		if (count == 0) {

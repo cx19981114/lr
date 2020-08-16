@@ -37,7 +37,7 @@ public class EmployeeRestManagement {
 		dataJson.put("companyId", session.getAttribute("companyId"));
 		try {
 			int id = EmployeeRestService.addEmployeeRest(dataJson);
-			return ResultJsonUtil.toJsonString(200, null, "添加行程成功", session.getId());
+			return ResultJsonUtil.toJsonString(200, id, "添加行程成功", session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());
 		} catch (Exception e) {
@@ -57,7 +57,7 @@ public class EmployeeRestManagement {
 		try {
 			EmployeeRestService.getEmployeeRest(dataJson);
 			int id = EmployeeRestService.modifyEmployeeRest(dataJson);
-			return ResultJsonUtil.toJsonString(200, null, "修改行程成功", session.getId());
+			return ResultJsonUtil.toJsonString(200, id, "修改行程成功", session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());
 		} catch (Exception e) {
@@ -77,7 +77,7 @@ public class EmployeeRestManagement {
 		try {
 			EmployeeRestService.getEmployeeRest(dataJson);
 			int id = EmployeeRestService.deleteEmployeeRest(dataJson);
-			return ResultJsonUtil.toJsonString(200, null, "删除行程成功", session.getId());
+			return ResultJsonUtil.toJsonString(200, id, "删除行程成功", session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());
 		} catch (Exception e) {
@@ -97,7 +97,7 @@ public class EmployeeRestManagement {
 		try {
 			EmployeeRestService.getEmployeeRest(dataJson);
 			int id = EmployeeRestService.annulEmployeeRest(dataJson);
-			return ResultJsonUtil.toJsonString(200, null, "撤销行程成功", session.getId());
+			return ResultJsonUtil.toJsonString(200, id, "撤销行程成功", session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());
 		} catch (Exception e) {

@@ -15,6 +15,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.lr.dto.Page;
+import cn.lr.dto.PostDTO;
 import cn.lr.exception.BusiException;
 import cn.lr.exception.DataException;
 import cn.lr.po.post;
@@ -123,7 +124,7 @@ public class PostManagement {
 		dataJson.put("companyId", session.getAttribute("companyId"));
 		try {
 			CompanyService.getCompany(dataJson);
-			post post = PostService.getPost(dataJson);
+			PostDTO post = PostService.getPost(dataJson);
 			return ResultJsonUtil.toJsonString(200, post, "获取岗位信息成功",session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(),session.getId());

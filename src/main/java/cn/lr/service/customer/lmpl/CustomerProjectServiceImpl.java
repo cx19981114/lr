@@ -76,6 +76,8 @@ public class CustomerProjectServiceImpl implements CustomerProjectService {
 	private Integer PAGESIZE;
 	@Value("${picPath}")
 	private String PATH;
+	@Value("${picActPath}")
+	private String ACTPATH;
 	
 	@Override
 	public Integer addCustomerProject(JSONObject data) {
@@ -330,7 +332,7 @@ public class CustomerProjectServiceImpl implements CustomerProjectService {
 			if (pics != null && !"".equals(pics)) {
 				String[] picList = pics.split("-");
 				for(int i =0 ;i<picList.length;i++) {
-					File picture = new File(picList[i]);
+					File picture = new File(ACTPATH+picList[i]);
 					JSONObject files = new JSONObject();
 					JSONObject file = new JSONObject();
 					file.put("path", PATH + picList[i]);

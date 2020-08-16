@@ -84,6 +84,8 @@ public class OrderServiceImpl implements OrderService {
 	private String ORDER_FLOW;
 	@Value("${picPath}")
 	private String PATH;
+	@Value("${picActPath}")
+	private String ACTPATH;
 	
 	@Override
 	public Page<OrderDTO> getOrderByEmployeeCondition(JSONObject data) throws ParseException {
@@ -543,7 +545,7 @@ public class OrderServiceImpl implements OrderService {
 		if (pics != null && !"".equals(pics)) {
 			String[] picList = pics.split("-");
 			for(int i =0 ;i<picList.length;i++) {
-				File picture = new File(picList[i]);
+				File picture = new File(ACTPATH+picList[i]);
 				JSONObject files = new JSONObject();
 				JSONObject file = new JSONObject();
 				file.put("path", PATH + picList[i]);

@@ -187,4 +187,10 @@
     where companyId = #{companyId,jdbcType=INTEGER} and  prevType = #{prevType,jdbcType=INTEGER} 
     and type = #{type,jdbcType=INTEGER} and step = 1 
   </select>
+   <select id="selectByPost" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_task
+    where postIdList like concat('%',#{postId},'%')
+  </select>
 </mapper>

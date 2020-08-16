@@ -34,6 +34,8 @@ public class PicServiceImpl implements PicService {
 	private Integer PAGESIZE;
 	@Value("${picPath}")
 	private String PATH;
+	@Value("${picActPath}")
+	private String ACTPATH;
 	@Override
 	public JSONObject getPicByCompany(JSONObject data){
 		Integer companyId = data.getInteger("companyId");
@@ -43,7 +45,7 @@ public class PicServiceImpl implements PicService {
 		List<JSONObject> fileListJSON = new ArrayList<JSONObject>();
 		List<String> urlList = new ArrayList<String>();
 		for(pic p:pics) {
-			File picture = new File(p.getPic());
+			File picture = new File(ACTPATH+p.getPic());
 			JSONObject files = new JSONObject();
 			JSONObject file = new JSONObject();
 			file.put("path", PATH+p.getPic());

@@ -68,6 +68,8 @@ public class EmployeeTaskServiceImpl implements EmployeeTaskService {
 	private String TASK_TYPE;
 	@Value("${picPath}")
 	private String PATH;
+	@Value("${picActPath}")
+	private String ACTPATH;
 
 	@Override
 	public Page<task> getTaskByEmployee(JSONObject data) {
@@ -344,7 +346,7 @@ public class EmployeeTaskServiceImpl implements EmployeeTaskService {
 		if (pics != null && !"".equals(pics)) {
 			String[] picList = pics.split("-");
 			for(int i =0 ;i<picList.length;i++) {
-				File picture = new File(picList[i]);
+				File picture = new File(ACTPATH+picList[i]);
 				JSONObject files = new JSONObject();
 				JSONObject file = new JSONObject();
 				file.put("path", PATH + picList[i]);
