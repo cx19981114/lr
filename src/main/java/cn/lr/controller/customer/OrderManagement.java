@@ -312,9 +312,29 @@ public class OrderManagement {
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());
 		} catch (Exception e) {
-			return ResultJsonUtil.toJsonString(404, null, "系统未知错误", session.getId());
+			return ResultJsonUtil.toJsonString(404, null, e.getMessage(), session.getId());
 		} finally {
 			LoggerUtil.LOGGER.info("-------------end 根据职员id获取预约历史信息--------------------");
+		}
+	}
+	@PostMapping("/getOrderHistoryByCustomer")
+	@ResponseBody
+	public String getOrderHistoryByCustomer(@RequestBody String data, HttpSession session) {
+		LoggerUtil.LOGGER.info("-------------enter 根据客户id获取预约历史信息--------------------");
+		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
+		LoggerUtil.LOGGER.debug("data : {}", data);
+		JSONObject dataJson = JSON.parseObject(data);
+		dataJson.put("companyId", session.getAttribute("companyId"));
+		try {
+			CustomerService.getCustomer(dataJson);
+			Page<JSONObject> orderHistory = OrderService.getOrderHistoryByCustomer(dataJson);
+			return ResultJsonUtil.toJsonString(200, orderHistory, "根据客户id获取预约历史成功", session.getId());
+		} catch (BusiException e) {
+			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());
+		} catch (Exception e) {
+			return ResultJsonUtil.toJsonString(404, null, "系统未知错误", session.getId());
+		} finally {
+			LoggerUtil.LOGGER.info("-------------end 根据客户id获取预约历史信息--------------------");
 		}
 	}
 	@PostMapping("/getOrderByEmployee")

@@ -104,7 +104,7 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   
-     <select id="selectByCodeAndStateName" resultType="java.lang.Integer">
+   <select id="selectByCodeAndStateName" resultType="java.lang.Integer">
     select stateCode
     from tb_dict
     where code = #{code} and stateName = #{stateName} and companyId = #{companyId};

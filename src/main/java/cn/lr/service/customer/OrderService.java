@@ -44,6 +44,8 @@ public interface OrderService {
 	
 	public Page<JSONObject> getOrderHistoryByEmployee(JSONObject data)  throws ParseException;
 	
+	public Page<JSONObject> getOrderHistoryByCustomer(JSONObject data)  throws ParseException;
+	
 	public List<JSONObject> getOrderByProjectType(JSONObject data) throws ParseException;
 	
 	public Integer annulOrderFinish(JSONObject data);

@@ -5,7 +5,7 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="sex" jdbcType="VARCHAR" property="sex" />
-    <result column="brith" jdbcType="VARCHAR" property="brith" />
+    <result column="birth" jdbcType="VARCHAR" property="birth" />
     <result column="phone" jdbcType="VARCHAR" property="phone" />
     <result column="employeeId" jdbcType="INTEGER" property="employeeId" />
     <result column="habit" jdbcType="VARCHAR" property="habit" />
@@ -17,7 +17,7 @@
     <result column="state" jdbcType="INTEGER" property="state" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, name, sex, brith, phone, employeeId, habit, plan, note, money, dateTime, state, pic
+    id, name, sex, birth, phone, employeeId, habit, plan, note, money, dateTime, state, pic
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -31,12 +31,12 @@
   </delete>
   <insert id="insert" parameterType="cn.lr.po.customer" useGeneratedKeys="true" keyProperty="id">
     insert into tb_customer (id, name, sex, 
-      brith, phone, employeeId, 
+      birth, phone, employeeId, 
       habit, plan, note, 
       money, dateTime, state, pic
       )
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, 
-      #{brith,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{employeeId,jdbcType=INTEGER}, 
+      #{birth,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{employeeId,jdbcType=INTEGER}, 
       #{habit,jdbcType=VARCHAR}, #{plan,jdbcType=VARCHAR}, #{note,jdbcType=VARCHAR}, 
       #{money,jdbcType=INTEGER}, #{dateTime,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER},
       #{pic,jdbcType=VARCHAR}
@@ -54,8 +54,8 @@
       <if test="sex != null">
         sex,
       </if>
-      <if test="brith != null">
-        brith,
+      <if test="birth != null">
+        birth,
       </if>
       <if test="phone != null">
         phone,
@@ -95,8 +95,8 @@
       <if test="sex != null">
         #{sex,jdbcType=VARCHAR},
       </if>
-      <if test="brith != null">
-        #{brith,jdbcType=VARCHAR},
+      <if test="birth != null">
+        #{birth,jdbcType=VARCHAR},
       </if>
       <if test="phone != null">
         #{phone,jdbcType=VARCHAR},
@@ -136,8 +136,8 @@
       <if test="sex != null">
         sex = #{sex,jdbcType=VARCHAR},
       </if>
-      <if test="brith != null">
-        brith = #{brith,jdbcType=VARCHAR},
+      <if test="birth != null">
+        birth = #{birth,jdbcType=VARCHAR},
       </if>
       <if test="phone != null">
         phone = #{phone,jdbcType=VARCHAR},
@@ -173,7 +173,7 @@
     update tb_customer
     set name = #{name,jdbcType=VARCHAR},
       sex = #{sex,jdbcType=VARCHAR},
-      brith = #{brith,jdbcType=VARCHAR},
+      birth = #{birth,jdbcType=VARCHAR},
       phone = #{phone,jdbcType=VARCHAR},
       employeeId = #{employeeId,jdbcType=INTEGER},
       habit = #{habit,jdbcType=VARCHAR},

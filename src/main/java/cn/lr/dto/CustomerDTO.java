@@ -9,7 +9,7 @@ public class CustomerDTO {
 
     private String sex;
 
-    private String brith;
+    private String birth;
 
     private String phone;
 
@@ -55,12 +55,12 @@ public class CustomerDTO {
 		this.sex = sex;
 	}
 
-	public String getBrith() {
-		return brith;
+	public String getBirth() {
+		return birth;
 	}
 
-	public void setBrith(String brith) {
-		this.brith = brith;
+	public void setBirth(String birth) {
+		this.birth = birth;
 	}
 
 	public String getPhone() {

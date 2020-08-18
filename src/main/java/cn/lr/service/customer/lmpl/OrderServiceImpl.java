@@ -29,6 +29,7 @@ import cn.lr.dto.Page;
 import cn.lr.exception.BusiException;
 import cn.lr.po.applyRank;
 import cn.lr.po.company;
+import cn.lr.po.customer;
 import cn.lr.po.customerProject;
 import cn.lr.po.dynamic;
 import cn.lr.po.employee;
@@ -745,9 +746,11 @@ public class OrderServiceImpl implements OrderService {
 		List<JSONObject> orderJsonList = new ArrayList<>();
 		for(order o: orders) {
 			JSONObject orderJson = new JSONObject();
+			customer customer = customerMapper.selectByPrimaryKey(o.getCustomerId());
 			orderJson.put("evaluate", o.getEvaluate());
 			orderJson.put("actDateTime", TimeFormatUtil.stringToTimeStamp(o.getActStartTime()));
 			orderJson.put("id", o.getId());
+			orderJson.put("customerName", customer.getName());
 			String pics = o.getPic();
 			JSONObject dataJson = new JSONObject();
 			List<JSONObject> fileListJSON = new ArrayList<JSONObject>();
@@ -774,6 +777,52 @@ public class OrderServiceImpl implements OrderService {
 			orderJsonList.add(orderJson);
 		}
 		int total = orderMapper.selectByEmployeeIdHistoryCount(data.getInteger("employeeId"),stateCG,stateYWC);
+		Page<JSONObject> page = new Page<JSONObject>();
+		page.setPageNum(pageNum);
+		page.setPageSize(PAGESIZE);
+		page.setTotal(total);
+		page.setList(orderJsonList);
+		return page;
+	}
+	public Page<JSONObject> getOrderHistoryByCustomer(JSONObject data) throws ParseException{
+		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		Integer stateYWC = dictMapper.selectByCodeAndStateName(ORDER_FLOW, "已完成", data.getInteger("companyId"));
+		Integer pageNum = data.getInteger("pageNum");
+		List<order> orders = orderMapper.selectByCustomerIdHistory(data.getInteger("customerId"),stateCG,stateYWC,(pageNum-1)*PAGESIZE,PAGESIZE);
+		List<JSONObject> orderJsonList = new ArrayList<>();
+		for(order o: orders) {
+			JSONObject orderJson = new JSONObject();
+			employee employee = employeeMapper.selectByPrimaryKey(o.getEmployeeId());
+			orderJson.put("evaluate", o.getEvaluate());
+			orderJson.put("actDateTime", TimeFormatUtil.stringToTimeStamp(o.getActStartTime()));
+			orderJson.put("id", o.getId());
+			orderJson.put("employeeName", employee.getName());
+			String pics = o.getPic();
+			JSONObject dataJson = new JSONObject();
+			List<JSONObject> fileListJSON = new ArrayList<JSONObject>();
+			List<String> urlList = new ArrayList<String>();
+			if (pics != null && !"".equals(pics)) {
+				String[] picList = pics.split("-");
+				for(int i =0 ;i<picList.length;i++) {
+					File picture = new File(ACTPATH+picList[i]);
+					JSONObject files = new JSONObject();
+					JSONObject file = new JSONObject();
+					file.put("path", PATH + picList[i]);
+					file.put("size", picture.length());
+					files.put("file", file);
+					files.put("url", PATH + picList[i]);
+					urlList.add(picList[i]);
+					fileListJSON.add(files);
+				}
+				dataJson.put("files", fileListJSON);
+				dataJson.put("uploadImg", urlList);
+				orderJson.put("pic", dataJson);
+			}else {
+				orderJson.put("pic", null);
+			}
+			orderJsonList.add(orderJson);
+		}
+		int total = orderMapper.selectByCustomerIdHistoryCount(data.getInteger("customerId"),stateCG,stateYWC);
 		Page<JSONObject> page = new Page<JSONObject>();
 		page.setPageNum(pageNum);
 		page.setPageSize(PAGESIZE);

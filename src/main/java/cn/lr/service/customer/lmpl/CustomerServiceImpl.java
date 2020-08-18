@@ -70,7 +70,7 @@ public class CustomerServiceImpl implements CustomerService {
 			throw new BusiException("该职工不存在");
 		}
 		customer customer = new customer();
-		customer.setBrith(data.getString("brith"));
+		customer.setBirth(data.getString("brith"));
 		customer.setDateTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
 		customer.setEmployeeId(data.getInteger("employeeId"));
 		customer.setHabit(data.getString("habit"));
@@ -97,7 +97,7 @@ public class CustomerServiceImpl implements CustomerService {
 		if(data.getInteger("employeeId") != customer.getEmployeeId()) {
 			throw new BusiException("该客户不属于该员工");
 		}
-		customer.setBrith(data.getString("brith"));
+		customer.setBirth(data.getString("brith"));
 		customer.setDateTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
 		customer.setHabit(data.getString("habit"));
 		customer.setName(data.getString("name"));
@@ -135,7 +135,7 @@ public class CustomerServiceImpl implements CustomerService {
 			customer.put("pic", c.getPic());
 			customer.put("name", c.getName());
 			customer.put("phone", c.getPhone());
-			customer.put("brith", c.getBrith());
+			customer.put("birth", c.getBirth());
 			customer.put("employeeName", employeeMapper.selectByPrimaryKey(c.getEmployeeId()).getName());
 			jsonObjects.add(customer);
 		}
@@ -249,11 +249,11 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 	public CustomerDTO sCustomerDTO(customer customer) throws ParseException {
 		CustomerDTO customerDTO = new CustomerDTO();
-		customerDTO.setBrith(customer.getBrith());
+		customerDTO.setBirth(customer.getBirth());
 		customerDTO.setDateTime(TimeFormatUtil.stringToTimeStamp(customer.getDateTime()));
 		customerDTO.setEmployeeId(customer.getEmployeeId());
 		customerDTO.setEmployeeName(employeeMapper.selectByPrimaryKey(customer.getEmployeeId()).getName());
-		customerDTO.setHabit(customer.getBrith());
+		customerDTO.setHabit(customer.getHabit());
 		customerDTO.setId(customer.getId());
 		customerDTO.setMoney(customer.getMoney());
 		customerDTO.setName(customer.getName());
@@ -262,7 +262,7 @@ public class CustomerServiceImpl implements CustomerService {
 		customerDTO.setPic(customer.getPic());
 		customerDTO.setPlan(customer.getPlan());
 		customerDTO.setSex(customer.getSex());
-		customerDTO.setState(dictMapper.selectByCodeAndStateCode(DATA_TYPE, customer.getState(),employeeMapper.selectByPrimaryKey(customer.getEmployeeId()).getCompanyId()));
+		customerDTO.setState(dictMapper.selectByCodeAndStateCode(APPLY_FLOW, customer.getState(),employeeMapper.selectByPrimaryKey(customer.getEmployeeId()).getCompanyId()));
 		return customerDTO;
 	}
 }

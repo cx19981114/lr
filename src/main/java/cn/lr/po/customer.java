@@ -7,7 +7,7 @@ public class customer {
 
     private String sex;
 
-    private String brith;
+    private String birth;
 
     private String phone;
 
@@ -59,15 +59,15 @@ public class customer {
         this.sex = sex == null ? null : sex.trim();
     }
 
-    public String getBrith() {
-        return brith;
-    }
+    public String getBirth() {
+		return birth;
+	}
 
-    public void setBrith(String brith) {
-        this.brith = brith == null ? null : brith.trim();
-    }
+	public void setBirth(String birth) {
+		this.birth = birth;
+	}
 
-    public String getPhone() {
+	public String getPhone() {
         return phone;
     }
 

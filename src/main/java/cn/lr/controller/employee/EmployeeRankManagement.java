@@ -39,7 +39,7 @@ public class EmployeeRankManagement {
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());
 		} catch (Exception e) {
-			return ResultJsonUtil.toJsonString(404, null, "系统未知错误", session.getId());
+			return ResultJsonUtil.toJsonString(404, null, e.getMessage(), session.getId());
 		} finally {
 			LoggerUtil.LOGGER.info("-------------end 根据公司id获取所有职员积分信息--------------------");
 		}
