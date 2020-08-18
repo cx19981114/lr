@@ -1,6 +1,7 @@
 package cn.lr.service.employee;
 
 import java.text.ParseException;
+import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 
@@ -24,5 +25,7 @@ public interface EmployeeTaskService {
 	public JSONObject getEmployeeTask(JSONObject data) throws ParseException;
 	
 	public EmployeeTaskDTO sEmployeeTaskDTO(task task,Integer employeeId,Integer companyId) throws ParseException;
+	
+	public List<JSONObject> getTaskByEmployeeList(JSONObject data);
 	
 }

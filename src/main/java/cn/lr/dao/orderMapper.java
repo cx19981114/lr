@@ -31,7 +31,11 @@ public interface orderMapper {
 	
 	int selectByEmployeeIdCount(@Param("employeeId") List<Integer> employeeId,@Param("state") Integer state);
 	
-	List<order> selectByEmployeeIdHistory(@Param("employeeId") Integer employeeId,@Param("applyState") Integer applyState,@Param("orderState") Integer orderState);
+	List<order> selectByEmployeeIdHistory(@Param("employeeId") Integer employeeId,@Param("applyState") Integer applyState,
+			@Param("orderState") Integer orderState,@Param("page") Integer page,@Param("size") Integer size);
+	
+	Integer selectByEmployeeIdHistoryCount(@Param("employeeId") Integer employeeId,@Param("applyState") Integer applyState,
+			@Param("orderState") Integer orderState);
 	
 	List<order> selectByProjectCount(@Param("employeeId") List<Integer> employeeId,@Param("state") Integer state);
 	

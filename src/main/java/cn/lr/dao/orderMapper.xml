@@ -316,6 +316,13 @@
     select 
     <include refid="Base_Column_List" />
     from tb_order
+    where employeeId = #{employeeId,jdbcType=INTEGER} and applyState = #{applyState,jdbcType=INTEGER} 
+    and orderState = #{orderState,jdbcType=INTEGER} and applyorderState = #{applyState,jdbcType=INTEGER} 
+    order by date,startTime limit #{page},#{size}
+  </select>
+   <select id="selectByEmployeeIdHistoryCount" resultType="Integer">
+    select count(*)
+    from tb_order
     where employeeId = #{employeeId,jdbcType=INTEGER} and applyState = #{applyState,jdbcType=INTEGER} and orderState = #{orderState,jdbcType=INTEGER} and applyorderState = #{applyState,jdbcType=INTEGER} order by date,startTime 
   </select>
   <select id="selectByProjectCount"  resultMap="BaseResultMap">

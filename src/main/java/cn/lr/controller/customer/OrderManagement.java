@@ -15,7 +15,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.lr.dto.OrderDTO;
-import cn.lr.dto.OrderDetailDTO;
 import cn.lr.dto.Page;
 import cn.lr.exception.BusiException;
 import cn.lr.service.customer.CustomerProjectService;
@@ -308,7 +307,7 @@ public class OrderManagement {
 		dataJson.put("companyId", session.getAttribute("companyId"));
 		try {
 			EmployeeService.getEmployee(dataJson);
-			List<JSONObject> orderHistory = OrderService.getOrderHistoryByEmployee(dataJson);
+			Page<JSONObject> orderHistory = OrderService.getOrderHistoryByEmployee(dataJson);
 			return ResultJsonUtil.toJsonString(200, orderHistory, "根据职员id获取预约历史成功", session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());

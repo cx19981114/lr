@@ -48,6 +48,8 @@ public class EmployeeRankServiceImpl implements EmployeeRankService {
 		for(employee e:employees) {
 			if(type.equals("day")) {
 				employeeRanks = employeeRankMapper.selectByEmployeeIdDay(e.getId());
+			}else if(type.equals("week")) {
+				employeeRanks = employeeRankMapper.selectByEmployeeIdWeek(e.getId());
 			}else if(type.equals("mon")) {
 				employeeRanks = employeeRankMapper.selectByEmployeeIdMon(e.getId());
 			}else if(type.equals("qtr")) {

@@ -737,14 +737,17 @@ public class OrderServiceImpl implements OrderService {
 		
 		return order.getId();
 	}
-	public List<JSONObject> getOrderHistoryByEmployee(JSONObject data){
+	public Page<JSONObject> getOrderHistoryByEmployee(JSONObject data) throws ParseException{
 		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
 		Integer stateYWC = dictMapper.selectByCodeAndStateName(ORDER_FLOW, "已完成", data.getInteger("companyId"));
-		List<order> orders = orderMapper.selectByEmployeeIdHistory(data.getInteger("employeeId"),stateCG,stateYWC);
+		Integer pageNum = data.getInteger("pageNum");
+		List<order> orders = orderMapper.selectByEmployeeIdHistory(data.getInteger("employeeId"),stateCG,stateYWC,(pageNum-1)*PAGESIZE,PAGESIZE);
 		List<JSONObject> orderJsonList = new ArrayList<>();
 		for(order o: orders) {
 			JSONObject orderJson = new JSONObject();
 			orderJson.put("evaluate", o.getEvaluate());
+			orderJson.put("actDateTime", TimeFormatUtil.stringToTimeStamp(o.getActStartTime()));
+			orderJson.put("id", o.getId());
 			String pics = o.getPic();
 			JSONObject dataJson = new JSONObject();
 			List<JSONObject> fileListJSON = new ArrayList<JSONObject>();
@@ -752,7 +755,7 @@ public class OrderServiceImpl implements OrderService {
 			if (pics != null && !"".equals(pics)) {
 				String[] picList = pics.split("-");
 				for(int i =0 ;i<picList.length;i++) {
-					File picture = new File(picList[i]);
+					File picture = new File(ACTPATH+picList[i]);
 					JSONObject files = new JSONObject();
 					JSONObject file = new JSONObject();
 					file.put("path", PATH + picList[i]);
@@ -770,7 +773,13 @@ public class OrderServiceImpl implements OrderService {
 			}
 			orderJsonList.add(orderJson);
 		}
-		return orderJsonList;
+		int total = orderMapper.selectByEmployeeIdHistoryCount(data.getInteger("employeeId"),stateCG,stateYWC);
+		Page<JSONObject> page = new Page<JSONObject>();
+		page.setPageNum(pageNum);
+		page.setPageSize(PAGESIZE);
+		page.setTotal(total);
+		page.setList(orderJsonList);
+		return page;
 	}
 	public Page<OrderDTO> getOrderByEmployee(JSONObject data) throws ParseException {
 		Integer employeeId = data.getInteger("employeeId");

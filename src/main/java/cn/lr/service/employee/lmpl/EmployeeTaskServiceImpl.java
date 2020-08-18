@@ -118,6 +118,48 @@ public class EmployeeTaskServiceImpl implements EmployeeTaskService {
 		page.setList(taskPart);
 		return page;
 	}
+	@Override
+	public List<JSONObject> getTaskByEmployeeList(JSONObject data) {
+		employeeTask employeeTask = employeeTaskMapper.selectByEmployee(data.getInteger("employeeId"));
+		Integer pageNum = data.getInteger("pageNum");
+		String taskList = null;
+		String taskStateList = null;
+		if ("赋能思维".equals(data.getString("prevType"))) {
+			taskList = employeeTask.getTaskIdListFN();
+			taskStateList = employeeTask.getTaskIdListFNState();
+		} else if ("任务清单".equals(data.getString("prevType"))) {
+			if ("日流程".equals(data.getString("type"))) {
+				taskList = employeeTask.getTaskIdListRWDay();
+				taskStateList = employeeTask.getTaskIdListRWDayState();
+			} else if ("周安排".equals(data.getString("type"))) {
+				taskList = employeeTask.getTaskIdListRWWeek();
+				taskStateList = employeeTask.getTaskIdListRWWeekState();
+			} else if ("月计划".equals(data.getString("type"))) {
+				taskList = employeeTask.getTaskIdListRWMon();
+				taskStateList = employeeTask.getTaskIdListRWMonState();
+			}
+		}
+		List<task> tasks = new ArrayList<task>();
+		if (taskList != null && !("".equals(taskList))) {
+			String[] taskId = taskList.split("-");
+			String[] taskState = taskStateList.split("-");
+			for (int i = 0; i < taskId.length; i++) {
+				task task = taskMapper.selectByPrimaryKey(Integer.valueOf(taskId[i]));
+				if (Integer.valueOf(taskState[i]) == dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未申请",data.getInteger("companyId"))) {
+					tasks.add(task);
+				}
+			}
+		}
+		List<JSONObject> taskJsonList = new ArrayList<JSONObject>();
+		for(task t:tasks) {
+			JSONObject taskJsonObject = new JSONObject();
+			taskJsonObject.put("id", t.getId());
+			taskJsonObject.put("name", t.getName());
+			taskJsonObject.put("content", t.getContent());
+			taskJsonList.add(taskJsonObject);
+		}
+		return taskJsonList;
+	}
 
 	@Override
 	public Integer addEmployeeTask(JSONObject data) {

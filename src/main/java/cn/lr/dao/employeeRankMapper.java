@@ -19,6 +19,8 @@ public interface employeeRankMapper {
     
     List<employeeRank> selectByEmployeeIdDay(Integer employeeId);
     
+    List<employeeRank> selectByEmployeeIdWeek(Integer employeeId);
+    
     List<employeeRank> selectByEmployeeIdMon(Integer employeeId);
     
     List<employeeRank> selectByEmployeeIdQtr(Integer employeeId);

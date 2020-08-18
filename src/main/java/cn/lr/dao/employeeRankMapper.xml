@@ -119,6 +119,12 @@
     from tb_employeerank
     where employeeId = #{employeeId,jdbcType=INTEGER} and to_days(dateTime) = to_days(now())
   </select>
+  <select id="selectByEmployeeIdWeek" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_employeerank
+    where employeeId = #{employeeId,jdbcType=INTEGER} and YEARWEEK(dateTime) = YEARWEEK(now())
+  </select>
   <select id="selectByEmployeeIdMon" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />

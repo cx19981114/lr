@@ -135,6 +135,7 @@ public class CustomerServiceImpl implements CustomerService {
 			customer.put("pic", c.getPic());
 			customer.put("name", c.getName());
 			customer.put("phone", c.getPhone());
+			customer.put("brith", c.getBrith());
 			customer.put("employeeName", employeeMapper.selectByPrimaryKey(c.getEmployeeId()).getName());
 			jsonObjects.add(customer);
 		}

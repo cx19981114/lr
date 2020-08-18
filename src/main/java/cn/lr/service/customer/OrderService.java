@@ -42,7 +42,7 @@ public interface OrderService {
 	
 	public JSONObject getOrderDetail(JSONObject data) throws ParseException;
 	
-	public List<JSONObject> getOrderHistoryByEmployee(JSONObject data);
+	public Page<JSONObject> getOrderHistoryByEmployee(JSONObject data)  throws ParseException;
 	
 	public List<JSONObject> getOrderByProjectType(JSONObject data) throws ParseException;
 	
