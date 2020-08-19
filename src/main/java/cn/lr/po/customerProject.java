@@ -14,10 +14,20 @@ public class customerProject {
     private String dateTime;
 
     private Integer restCount;
+    
+    private Integer ingCount;
 
     private Integer state;
 
-    public Integer getEmployeeId() {
+    public Integer getIngCount() {
+		return ingCount;
+	}
+
+	public void setIngCount(Integer ingCount) {
+		this.ingCount = ingCount;
+	}
+
+	public Integer getEmployeeId() {
 		return employeeId;
 	}
 

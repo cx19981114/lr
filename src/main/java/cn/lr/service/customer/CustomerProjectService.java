@@ -13,7 +13,7 @@ import cn.lr.po.customerProject;
 public interface CustomerProjectService {
 	public Integer addCustomerProject(JSONObject data);
 	
-	public List<JSONObject> getCustomerProjectByCustomer(JSONObject data);
+	public List<JSONObject> getCustomerProjectByCustomer(JSONObject data) throws ParseException;
 	
 	public customerProject getCustomerProject(JSONObject data);
 	

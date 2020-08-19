@@ -149,7 +149,7 @@ public class OrderServiceImpl implements OrderService {
 	public Integer addOrder(JSONObject data) {
 		customerProject customerProject = customerProjectMapper.selectByPrimaryKey(data.getInteger("customerProjectId"));
 		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
-		if(customerProject.getRestCount() == 0) {
+		if(customerProject.getRestCount()-customerProject.getIngCount() == 0) {
 			throw new BusiException("该项目剩余消费次数为0");
 		}
 		String now = TimeFormatUtil.timeStampToString(new Date().getTime());
@@ -171,8 +171,7 @@ public class OrderServiceImpl implements OrderService {
 		if(count == 0) {
 			throw new BusiException("插入order表失败");
 		}
-		
-		customerProject.setRestCount(customerProject.getRestCount()-1);
+		customerProject.setIngCount(customerProject.getIngCount()+1);
 		count = customerProjectMapper.updateByPrimaryKeySelective(customerProject);
 		if(count == 0) {
 			throw new BusiException("更新customerProject表失败");
@@ -223,9 +222,9 @@ public class OrderServiceImpl implements OrderService {
 		ApplyRankService.annulApplyRank(dataJSonApply);
 		
 		customerProject customerProject = customerProjectMapper.selectByPrimaryKey(order.getCustomerProjectId());
-		customerProject.setRestCount(customerProject.getRestCount()+1);
+		customerProject.setIngCount(customerProject.getIngCount()-1);
 		count = customerProjectMapper.updateByPrimaryKeySelective(customerProject);
-		if (count == 0) {
+		if(count == 0) {
 			throw new BusiException("更新customerProject表失败");
 		}
 		return order.getId();
@@ -296,9 +295,9 @@ public class OrderServiceImpl implements OrderService {
 		ApplyRankService.deleteApplyRank(dataJSonApply);
 		
 		customerProject customerProject = customerProjectMapper.selectByPrimaryKey(order.getCustomerProjectId());
-		customerProject.setRestCount(customerProject.getRestCount()+1);
+		customerProject.setIngCount(customerProject.getIngCount()-1);
 		count = customerProjectMapper.updateByPrimaryKeySelective(customerProject);
-		if (count == 0) {
+		if(count == 0) {
 			throw new BusiException("更新customerProject表失败");
 		}
 		return order.getId();
@@ -587,18 +586,18 @@ public class OrderServiceImpl implements OrderService {
 		if(order.getOrderState() != dictMapper.selectByCodeAndStateName(ORDER_FLOW, "未开始", data.getInteger("companyId")) && order.getOrderState() != dictMapper.selectByCodeAndStateName(ORDER_FLOW, "进行中", data.getInteger("companyId"))) {
 			throw new BusiException("该预约无法结束");
 		}
-		customerProject customerProject = customerProjectMapper.selectByPrimaryKey(order.getCustomerProjectId());
-		customerProject.setRestCount(customerProject.getRestCount()+1);
-		int count = customerProjectMapper.updateByPrimaryKeySelective(customerProject);
-		if (count == 0) {
-			throw new BusiException("更新customerProject表失败");
-		}
 		order.setOrderState(dictMapper.selectByCodeAndStateName(ORDER_FLOW, "未完成", data.getInteger("companyId")));
 		order.setActEndTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
 		order.setEvaluate(data.getString("evaluate"));
-		count = orderMapper.updateByPrimaryKeySelective(order);
+		int count = orderMapper.updateByPrimaryKeySelective(order);
 		if(count == 0) {
 			throw new BusiException("更新order表失败");
+		}
+		customerProject customerProject = customerProjectMapper.selectByPrimaryKey(order.getCustomerProjectId());
+		customerProject.setIngCount(customerProject.getIngCount()-1);
+		count = customerProjectMapper.updateByPrimaryKeySelective(customerProject);
+		if(count == 0) {
+			throw new BusiException("更新customerProject表失败");
 		}
 		return orderId;
 	}
@@ -629,6 +628,7 @@ public class OrderServiceImpl implements OrderService {
 		if(count == 0) {
 			throw new BusiException("更新order表失败");
 		}
+		
 		JSONObject dataJSonDynamic = new JSONObject();
 		dataJSonDynamic.put("note", data.getString("evaluate"));
 		dataJSonDynamic.put("name", OrderType);
@@ -709,6 +709,13 @@ public class OrderServiceImpl implements OrderService {
 		dataJSonApply.put("companyId", data.getInteger("companyId"));
 		dataJSonApply.put("dynamicId", dynamic.getId());
 		ApplyRankService.annulApplyRank(dataJSonApply);
+		
+		customerProject customerProject = customerProjectMapper.selectByPrimaryKey(order.getCustomerProjectId());
+		customerProject.setIngCount(customerProject.getIngCount()-1);
+		count = customerProjectMapper.updateByPrimaryKeySelective(customerProject);
+		if(count == 0) {
+			throw new BusiException("更新customerProject表失败");
+		}
 		return order.getId();
 	}
 	@Override
@@ -736,6 +743,12 @@ public class OrderServiceImpl implements OrderService {
 		dataJSonApply.put("dynamicId", dynamic.getId());
 		ApplyRankService.deleteApplyRank(dataJSonApply);
 		
+		customerProject customerProject = customerProjectMapper.selectByPrimaryKey(order.getCustomerProjectId());
+		customerProject.setIngCount(customerProject.getIngCount()-1);
+		count = customerProjectMapper.updateByPrimaryKeySelective(customerProject);
+		if(count == 0) {
+			throw new BusiException("更新customerProject表失败");
+		}
 		return order.getId();
 	}
 	public Page<JSONObject> getOrderHistoryByEmployee(JSONObject data) throws ParseException{
@@ -747,10 +760,12 @@ public class OrderServiceImpl implements OrderService {
 		for(order o: orders) {
 			JSONObject orderJson = new JSONObject();
 			customer customer = customerMapper.selectByPrimaryKey(o.getCustomerId());
+			project project = projectMapper.selectByPrimaryKey(o.getProjectId());
 			orderJson.put("evaluate", o.getEvaluate());
 			orderJson.put("actDateTime", TimeFormatUtil.stringToTimeStamp(o.getActStartTime()));
 			orderJson.put("id", o.getId());
 			orderJson.put("customerName", customer.getName());
+			orderJson.put("projectName", project.getName());
 			String pics = o.getPic();
 			JSONObject dataJson = new JSONObject();
 			List<JSONObject> fileListJSON = new ArrayList<JSONObject>();
@@ -793,10 +808,12 @@ public class OrderServiceImpl implements OrderService {
 		for(order o: orders) {
 			JSONObject orderJson = new JSONObject();
 			employee employee = employeeMapper.selectByPrimaryKey(o.getEmployeeId());
+			project project = projectMapper.selectByPrimaryKey(o.getProjectId());
 			orderJson.put("evaluate", o.getEvaluate());
 			orderJson.put("actDateTime", TimeFormatUtil.stringToTimeStamp(o.getActStartTime()));
 			orderJson.put("id", o.getId());
 			orderJson.put("employeeName", employee.getName());
+			orderJson.put("projectName", project.getName());
 			String pics = o.getPic();
 			JSONObject dataJson = new JSONObject();
 			List<JSONObject> fileListJSON = new ArrayList<JSONObject>();
@@ -830,6 +847,7 @@ public class OrderServiceImpl implements OrderService {
 		page.setList(orderJsonList);
 		return page;
 	}
+	
 	public Page<OrderDTO> getOrderByEmployee(JSONObject data) throws ParseException {
 		Integer employeeId = data.getInteger("employeeId");
 		Integer pageNum = data.getInteger("pageNum");

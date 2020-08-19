@@ -19,10 +19,11 @@ public interface customerMapper {
 
     int updateByPrimaryKey(customer record);
     
-    List<customer> selectByEmployeeId(@Param("employeeId") Integer employeeId,@Param("state") Integer state,@Param("page") Integer page,
-			@Param("size") Integer size);
+    List<customer> selectByEmployeeId(@Param("employeeId") Integer employeeId,@Param("state") Integer state,
+    		@Param("search")String search,@Param("page") Integer page,@Param("size") Integer size);
 
-	int selectByEmployeeIdCount(@Param("employeeId") Integer employeeId,@Param("state") Integer state);
+	int selectByEmployeeIdCount(@Param("employeeId") Integer employeeId,@Param("state") Integer state,
+			@Param("search")String search);
 	
 	List<customer> selectByEmployeeIdList(@Param("employeeId") Integer employeeId,@Param("state") Integer state);
 	

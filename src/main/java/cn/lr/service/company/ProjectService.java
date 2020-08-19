@@ -1,5 +1,7 @@
 package cn.lr.service.company;
 
+import java.util.List;
+
 import com.alibaba.fastjson.JSONObject;
 
 import cn.lr.dto.Page;
@@ -16,4 +18,6 @@ public interface ProjectService {
 	public project getProject(JSONObject data);
 	
 	public Page<project> getProjectByCompany(JSONObject data);
+	
+	public List<JSONObject> getProjectByCompanyJson(JSONObject data);
 }

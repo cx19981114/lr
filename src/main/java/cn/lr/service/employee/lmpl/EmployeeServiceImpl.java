@@ -1,7 +1,6 @@
 package cn.lr.service.employee.lmpl;
 
 import java.io.File;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -343,7 +342,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 						JSONObject oJsonObject = new JSONObject();
 						oJsonObject.put("companyId", employee.getCompanyId());
 						oJsonObject.put("employeeId", customer.getEmployeeId());
-						oJsonObject.put("brith", customer.getBrith());
+						oJsonObject.put("brith", customer.getBirth());
 						oJsonObject.put("habit", customer.getHabit());
 						oJsonObject.put("money", customer.getMoney());
 						oJsonObject.put("name", customer.getName());

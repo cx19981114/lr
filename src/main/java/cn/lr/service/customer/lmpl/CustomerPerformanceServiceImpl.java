@@ -84,12 +84,6 @@ public class CustomerPerformanceServiceImpl implements CustomerPerformanceServic
 		if(count == 0) {
 			throw new BusiException("插入customerPerfoemance表失败");
 		}
-		customer customer = customerMapper.selectByPrimaryKey(data.getInteger("customerId"));
-		customer.setMoney(customer.getMoney() == null ? data.getInteger("money"):customer.getMoney()+data.getInteger("money"));
-		count = customerMapper.updateByPrimaryKeySelective(customer);
-		if(count == 0) {
-			throw new BusiException("更新customer表失败");
-		}
 		JSONObject dataJSonDynamic = new JSONObject();
 		dataJSonDynamic.put("note", data.getString("note"));
 		dataJSonDynamic.put("name", data.getString("type"));
@@ -119,15 +113,6 @@ public class CustomerPerformanceServiceImpl implements CustomerPerformanceServic
 		int count = customerPerformanceMapper.updateByPrimaryKeySelective(customerPerformance);
 		if (count == 0) {
 			throw new BusiException("更新customerPerformance表失败");
-		}
-		customer customer = customerMapper.selectByPrimaryKey(customerPerformance.getCustomerId());
-		customer.setMoney(customer.getMoney()-customerPerformance.getMoney());
-		if(customerPerformance.getType() == dictMapper.selectByCodeAndStateName(CUSTOMERPERFORMAN_TYPE, "新增顾客", data.getInteger("companyId"))) {
-			customer.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核失败",data.getInteger("companyId")));
-		}
-		count = customerMapper.updateByPrimaryKeySelective(customer);
-		if(count == 0) {
-			throw new BusiException("更新customer表失败");
 		}
 		JSONObject dataJSonDynamic = new JSONObject();
 		dataJSonDynamic.put("name", dictMapper.selectByCodeAndStateCode(CUSTOMERPERFORMAN_TYPE, customerPerformance.getType(), data.getInteger("companyId")));
@@ -206,7 +191,6 @@ public class CustomerPerformanceServiceImpl implements CustomerPerformanceServic
 		}
 		
 		customer customer = customerMapper.selectByPrimaryKey(customerPerformance.getCustomerId());
-		customer.setMoney(customer.getMoney()-customerPerformance.getMoney());
 		if(customerPerformance.getType() == dictMapper.selectByCodeAndStateName(CUSTOMERPERFORMAN_TYPE, "新增顾客", data.getInteger("companyId"))) {
 			customer.setState(dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId")));
 		}

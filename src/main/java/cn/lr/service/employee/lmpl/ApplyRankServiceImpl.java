@@ -53,6 +53,7 @@ import cn.lr.po.employeeRank;
 import cn.lr.po.employeeRest;
 import cn.lr.po.employeeTask;
 import cn.lr.po.order;
+import cn.lr.po.project;
 import cn.lr.po.task;
 import cn.lr.service.employee.ApplyRankService;
 import cn.lr.service.employee.EmployeeService;
@@ -346,6 +347,15 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 			if (count == 0) {
 				throw new BusiException("修改客户服务项目状态失败");
 			}
+			if(state == dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", companyId)) {
+				customer customer = customerMapper.selectByPrimaryKey(customerProject.getCustomerId());
+				project project = projectMapper.selectByPrimaryKey(customerProject.getProjectId());
+				customer.setMoney(customer.getMoney()-project.getMoney());
+				count = customerMapper.updateByPrimaryKeySelective(customer);
+				if (count == 0) {
+					throw new BusiException("更新customer表失败");
+				}
+			}
 		} else if ("新增顾客".equals(name)) {
 			customerPerformance customerPerformance = customerPerformanceMapper.selectByPrimaryKey(id);
 			if (customerPerformance == null
@@ -378,6 +388,15 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 			if (count == 0) {
 				throw new BusiException("修改业绩状态失败");
 			}
+			if(state == dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", companyId)) {
+				customer customer = customerMapper.selectByPrimaryKey(customerPerformance.getCustomerId());
+				customer.setMoney(customer.getMoney()+customerPerformance.getMoney());
+				count = customerMapper.updateByPrimaryKeySelective(customer);
+				if(count == 0) {
+					throw new BusiException("更新customer表失败");
+				}
+				
+			}
 		}  else if ("预约项目".equals(name)) {
 			order order = orderMapper.selectByPrimaryKey(id);
 			if (order == null
@@ -402,6 +421,15 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 			count = orderMapper.updateByPrimaryKeySelective(order);
 			if (count == 0) {
 				throw new BusiException("修改预约状态失败");
+			}
+			if(state == dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", companyId)) {
+				customerProject customerProject = customerProjectMapper.selectByPrimaryKey(order.getCustomerProjectId());
+				customerProject.setRestCount(customerProject.getRestCount()-1);
+				customerProject.setIngCount(customerProject.getIngCount()+1);
+				count = customerProjectMapper.updateByPrimaryKeySelective(customerProject);
+				if (count == 0) {
+					throw new BusiException("修改项目剩余数量失败");
+				}
 			}
 		}
 	}

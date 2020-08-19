@@ -23,6 +23,7 @@ import cn.lr.dto.CustomerDTO;
 import cn.lr.dto.Page;
 import cn.lr.exception.BusiException;
 import cn.lr.po.customer;
+import cn.lr.po.customerProject;
 import cn.lr.po.employee;
 import cn.lr.service.customer.CustomerPerformanceService;
 import cn.lr.service.customer.CustomerService;
@@ -98,7 +99,6 @@ public class CustomerServiceImpl implements CustomerService {
 			throw new BusiException("该客户不属于该员工");
 		}
 		customer.setBirth(data.getString("brith"));
-		customer.setDateTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
 		customer.setHabit(data.getString("habit"));
 		customer.setName(data.getString("name"));
 		customer.setNote(data.getString("note"));
@@ -126,8 +126,9 @@ public class CustomerServiceImpl implements CustomerService {
 	public Page<JSONObject> getCustomerByEmployee(JSONObject data) {
 		Integer employeeId = data.getInteger("employeeId");
 		Integer pageNum = data.getInteger("pageNum");
+		String searchString = data.getString("search");
 		Integer state = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
-		List<customer> customers = customerMapper.selectByEmployeeId(employeeId,state,(pageNum-1)*PAGESIZE,PAGESIZE);
+		List<customer> customers = customerMapper.selectByEmployeeId(employeeId,state,searchString,(pageNum-1)*PAGESIZE,PAGESIZE);
 		List<JSONObject> jsonObjects = new ArrayList<JSONObject>();
 		for(customer c : customers) {
 			JSONObject customer = new JSONObject();
@@ -139,7 +140,7 @@ public class CustomerServiceImpl implements CustomerService {
 			customer.put("employeeName", employeeMapper.selectByPrimaryKey(c.getEmployeeId()).getName());
 			jsonObjects.add(customer);
 		}
-		int total = customerMapper.selectByEmployeeIdCount(employeeId,state);
+		int total = customerMapper.selectByEmployeeIdCount(employeeId,state,searchString);
 		Page<JSONObject> page = new Page<JSONObject>();
 		page.setPageNum(pageNum);
 		page.setPageSize(PAGESIZE);
@@ -248,7 +249,11 @@ public class CustomerServiceImpl implements CustomerService {
 		return page;
 	}
 	public CustomerDTO sCustomerDTO(customer customer) throws ParseException {
+		employee employee = employeeMapper.selectByPrimaryKey(customer.getEmployeeId());
+		Integer stateInteger = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", employee.getCompanyId());
+		List<customerProject> projectList = customerProjectMapper.selectByCustomer(employee.getId(), stateInteger);
 		CustomerDTO customerDTO = new CustomerDTO();
+		customerDTO.setProjectNum(projectList.size());
 		customerDTO.setBirth(customer.getBirth());
 		customerDTO.setDateTime(TimeFormatUtil.stringToTimeStamp(customer.getDateTime()));
 		customerDTO.setEmployeeId(customer.getEmployeeId());
@@ -262,7 +267,7 @@ public class CustomerServiceImpl implements CustomerService {
 		customerDTO.setPic(customer.getPic());
 		customerDTO.setPlan(customer.getPlan());
 		customerDTO.setSex(customer.getSex());
-		customerDTO.setState(dictMapper.selectByCodeAndStateCode(APPLY_FLOW, customer.getState(),employeeMapper.selectByPrimaryKey(customer.getEmployeeId()).getCompanyId()));
+		customerDTO.setState(dictMapper.selectByCodeAndStateCode(APPLY_FLOW, customer.getState(),employee.getCompanyId()));
 		return customerDTO;
 	}
 }

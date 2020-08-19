@@ -1,5 +1,6 @@
 package cn.lr.service.company.lmpl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,5 +102,21 @@ public class ProjectServiceImpl implements ProjectService {
 		page.setTotal(total);
 		page.setList(projects);
 		return page;
+	}
+	@Override
+	public List<JSONObject> getProjectByCompanyJson(JSONObject data) {
+		Integer companyId = data.getInteger("companyId");
+		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
+		List<project> projects = projectMapper.selectByCompanyId(companyId,state,0,Integer.MAX_VALUE);
+		List<JSONObject> projectJsonList = new ArrayList<JSONObject>();
+		for(project p:projects) {
+			JSONObject projectJsonObject = new JSONObject();
+			projectJsonObject.put("id", p.getId());
+			projectJsonObject.put("name", p.getName());
+			projectJsonObject.put("money", p.getMoney());
+			projectJsonObject.put("count", p.getNum());
+			projectJsonList.add(projectJsonObject);
+		}
+		return projectJsonList;
 	}
 }

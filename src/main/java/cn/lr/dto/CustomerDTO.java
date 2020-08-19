@@ -30,6 +30,16 @@ public class CustomerDTO {
     private String state;
 
     private String pic;
+    
+    private Integer projectNum;
+
+	public Integer getProjectNum() {
+		return projectNum;
+	}
+
+	public void setProjectNum(Integer projectNum) {
+		this.projectNum = projectNum;
+	}
 
 	public Integer getId() {
 		return id;

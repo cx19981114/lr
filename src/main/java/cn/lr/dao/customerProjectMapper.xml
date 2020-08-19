@@ -9,10 +9,11 @@
     <result column="count" jdbcType="INTEGER" property="count" />
     <result column="dateTime" jdbcType="VARCHAR" property="dateTime" />
     <result column="restCount" jdbcType="INTEGER" property="restCount" />
+    <result column="ingCount" jdbcType="INTEGER" property="ingCount" />
     <result column="state" jdbcType="INTEGER" property="state" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, customerId, employeeId,projectId, count, dateTime, restCount, state
+    id, customerId, employeeId,projectId, count, dateTime, restCount, ingCount,state
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -26,10 +27,10 @@
   </delete>
   <insert id="insert" parameterType="cn.lr.po.customerProject" useGeneratedKeys="true" keyProperty="id">
     insert into tb_customerproject (id, customerId, projectId, 
-      count, dateTime, restCount, 
+      count, dateTime, restCount, ingCount,
       state)
     values (#{id,jdbcType=INTEGER}, #{customerId,jdbcType=INTEGER},#{employeeId,jdbcType=INTEGER}, #{projectId,jdbcType=INTEGER}, 
-      #{count,jdbcType=INTEGER}, #{dateTime,jdbcType=VARCHAR}, #{restCount,jdbcType=INTEGER}, 
+      #{count,jdbcType=INTEGER}, #{dateTime,jdbcType=VARCHAR}, #{restCount,jdbcType=INTEGER}, #{ingCount,jdbcType=INTEGER}
       #{state,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="cn.lr.po.customerProject" useGeneratedKeys="true" keyProperty="id">
@@ -55,6 +56,9 @@
       </if>
       <if test="restCount != null">
         restCount,
+      </if>
+      <if test="ingCount != null">
+        ingCount,
       </if>
       <if test="state != null">
         state,
@@ -82,6 +86,9 @@
       <if test="restCount != null">
         #{restCount,jdbcType=INTEGER},
       </if>
+      <if test="ingCount != null">
+        #{ingCount,jdbcType=INTEGER},
+      </if>
       <if test="state != null">
         #{state,jdbcType=INTEGER},
       </if>
@@ -108,6 +115,9 @@
       <if test="restCount != null">
         restCount = #{restCount,jdbcType=INTEGER},
       </if>
+      <if test="ingCount != null">
+        ingCount = #{ingCount,jdbcType=INTEGER},
+      </if>
       <if test="state != null">
         state = #{state,jdbcType=INTEGER},
       </if>
@@ -122,6 +132,7 @@
       count = #{count,jdbcType=INTEGER},
       dateTime = #{dateTime,jdbcType=VARCHAR},
       restCount = #{restCount,jdbcType=INTEGER},
+      ingCount = #{ingCount,jdbcType=INTEGER},
       state = #{state,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>

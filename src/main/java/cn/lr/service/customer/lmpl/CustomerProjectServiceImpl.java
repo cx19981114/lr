@@ -99,11 +99,7 @@ public class CustomerProjectServiceImpl implements CustomerProjectService {
 		if(count == 0) {
 			throw new BusiException("插入customerProject表失败");
 		}
-		customer.setMoney(customer.getMoney() - project.getMoney());
-		count = customerMapper.updateByPrimaryKeySelective(customer);
-		if(count == 0) {
-			throw new BusiException("更新customer表失败");
-		}
+		
 		JSONObject dataJSonDynamic = new JSONObject();
 		dataJSonDynamic.put("note", data.getString("note"));
 		dataJSonDynamic.put("name", Type);
@@ -125,15 +121,30 @@ public class CustomerProjectServiceImpl implements CustomerProjectService {
 	}
 
 	@Override
-	public List<JSONObject> getCustomerProjectByCustomer(JSONObject data) {
-		Integer state = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
-		List<customerProject> customerProjects = customerProjectMapper.selectByCustomer(data.getInteger("customerId"),state);
+	public List<JSONObject> getCustomerProjectByCustomer(JSONObject data) throws ParseException {
+		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		Integer stateYWC = dictMapper.selectByCodeAndStateName(ORDER_FLOW, "已完成", data.getInteger("companyId"));
+		List<customerProject> customerProjects = customerProjectMapper.selectByCustomer(data.getInteger("customerId"),stateCG);
 		List<JSONObject> jsonCustomers  = new ArrayList<JSONObject>();
 		for(customerProject c:customerProjects) {
 			project project = projectMapper.selectByPrimaryKey(c.getProjectId());
 			JSONObject jsonCustomer = new JSONObject();
 			jsonCustomer.put("id", c.getId());
 			jsonCustomer.put("name",project.getName());
+			jsonCustomer.put("count", c.getCount());
+			jsonCustomer.put("restCount", c.getRestCount());
+			jsonCustomer.put("money", project.getMoney());
+			List<order> orders = orderMapper.selectByProjectIdHistory(c.getId(),stateCG,stateYWC);
+			List<JSONObject> orderJsonList = new ArrayList<>();
+			for(order o: orders) {
+				JSONObject orderJson = new JSONObject();
+				employee employee = employeeMapper.selectByPrimaryKey(o.getEmployeeId());
+				orderJson.put("actDateTime", TimeFormatUtil.stringToTimeStamp(o.getActStartTime()));
+				orderJson.put("employeeName", employee.getName());
+				orderJson.put("id", o.getId());
+				orderJsonList.add(orderJson);
+			}
+			jsonCustomer.put("history", orderJsonList);
 			jsonCustomers.add(jsonCustomer);
 		}
 		return jsonCustomers;
@@ -174,13 +185,6 @@ public class CustomerProjectServiceImpl implements CustomerProjectService {
 		dataJSonApply.put("dynamicId", dynamic.getId());
 		ApplyRankService.deleteApplyRank(dataJSonApply);
 		
-		customer customer = customerMapper.selectByPrimaryKey(customerProject.getCustomerId());
-		project project = projectMapper.selectByPrimaryKey(customerProject.getProjectId());
-		customer.setMoney(customer.getMoney()+project.getMoney());
-		count = customerMapper.updateByPrimaryKeySelective(customer);
-		if (count == 0) {
-			throw new BusiException("更新customer表失败");
-		}
 		return customerProject.getId();
 	}
 	@Override
@@ -208,13 +212,6 @@ public class CustomerProjectServiceImpl implements CustomerProjectService {
 		dataJSonApply.put("dynamicId", dynamic.getId());
 		ApplyRankService.annulApplyRank(dataJSonApply);
 		
-		customer customer = customerMapper.selectByPrimaryKey(customerProject.getCustomerId());
-		project project = projectMapper.selectByPrimaryKey(customerProject.getProjectId());
-		customer.setMoney(customer.getMoney()+project.getMoney());
-		count = customerMapper.updateByPrimaryKeySelective(customer);
-		if (count == 0) {
-			throw new BusiException("更新customer表失败");
-		}
 		return customerProject.getId();
 	}
 	public Integer affirmCustomerProject(JSONObject data) {
