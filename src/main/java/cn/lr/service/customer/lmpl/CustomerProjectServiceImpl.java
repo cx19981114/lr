@@ -363,7 +363,7 @@ public class CustomerProjectServiceImpl implements CustomerProjectService {
 		dataJSonDynamic.put("dynamicId", dynamic.getId());
 		
 		JSONObject dataJson = new JSONObject();
-		dataJson.put("customerProject", this.sCustomerProjectDetailDTO(customerProject));
+		dataJson.put("order", this.sCustomerProjectDetailDTO(customerProject));
 		dataJson.put("dynamicId", dynamic.getId());
 		dataJson.put("ApplyRankDTO", ApplyRankService.getApplyRankByDynamic(dataJSonDynamic));
 		

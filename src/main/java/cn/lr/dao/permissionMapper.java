@@ -1,5 +1,9 @@
 package cn.lr.dao;
 
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
 import cn.lr.po.permission;
 
 public interface permissionMapper {
@@ -14,4 +18,6 @@ public interface permissionMapper {
     int updateByPrimaryKeySelective(permission record);
 
     int updateByPrimaryKey(permission record);
+    
+    List<permission> selectByCompany(@Param("companyId")Integer companyId,@Param("state")Integer state);
 }

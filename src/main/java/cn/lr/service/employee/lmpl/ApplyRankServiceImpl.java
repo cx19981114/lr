@@ -203,7 +203,6 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 				applyRank.setCheckList(afterCheck);
 				applyRank.setCheckTimeList(afterCheckTime);
 				applyRank.setNoteList(afterNote);
-				applyRank.setCheckNumber(i + 1);
 				
 				if (actCheck == dictMapper.selectByCodeAndStateName(CHECK_FLOW, "通过",data.getInteger("companyId"))) {
 					if (i == checkId.length - 1) {
@@ -230,6 +229,7 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 							throw new BusiException("更新employeeRank表失败");
 						}
 					} else {
+						applyRank.setCheckNumber(i + 1);
 						applyRank.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中",data.getInteger("companyId")));
 						this.setEmployeeTask(applyRank.getDynamicId(), dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中",data.getInteger("companyId")),data.getInteger("companyId"));
 						this.setState(applyRank.getDynamicId(), dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中",data.getInteger("companyId")),
@@ -325,7 +325,7 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 				throw new BusiException("修改每日行程状态失败");
 			}
 
-		} else if ("申请".equals(name)) {
+		} else if ("请假".equals(name) || "物料".equals(name) || "培训".equals(name)) {
 			employeeApply employeeApply = employeeApplyMapper.selectByPrimaryKey(id);
 			if (employeeApply == null
 					|| employeeApply.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",companyId)) {

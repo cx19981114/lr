@@ -122,4 +122,61 @@ public class DynamicManagement {
 			LoggerUtil.LOGGER.info("-------------end 根据审核人获取申请历史信息--------------------");
 		}
 	}
+	@PostMapping("/setStateAbnormal")
+	@ResponseBody
+	public String setStateAbnormal(@RequestBody String data, HttpSession session) {
+		LoggerUtil.LOGGER.info("-------------enter 根据dynamicId获取异常申诉-------------------");
+		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
+		LoggerUtil.LOGGER.debug("data : {}", data);
+		JSONObject dataJson = JSON.parseObject(data);
+		dataJson.put("companyId", session.getAttribute("companyId"));
+		try {
+			Integer idInteger = DynamicService.setStateAbnormal(dataJson);
+			return ResultJsonUtil.toJsonString(200, idInteger, "根据dynamicId获取异常申诉成功", session.getId());
+		} catch (BusiException e) {
+			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());
+		} catch (Exception e) {
+			return ResultJsonUtil.toJsonString(404, null, "系统未知错误", session.getId());
+		} finally {
+			LoggerUtil.LOGGER.info("-------------end 根据dynamicId获取异常申诉--------------------");
+		}
+	}
+	@PostMapping("/getAbnormalDynamic")
+	@ResponseBody
+	public String getAbnormalDynamic(@RequestBody String data, HttpSession session) {
+		LoggerUtil.LOGGER.info("-------------enter 获取异常申诉列表--------------------");
+		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
+		LoggerUtil.LOGGER.debug("data : {}", data);
+		JSONObject dataJson = JSON.parseObject(data);
+		dataJson.put("companyId", session.getAttribute("companyId"));
+		try {
+			Page<DynamicDTO> dynamics = DynamicService.getAbnormalDynamic(dataJson);
+			return ResultJsonUtil.toJsonString(200, dynamics, "获取异常申诉列表成功", session.getId());
+		} catch (BusiException e) {
+			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());
+		} catch (Exception e) {
+			return ResultJsonUtil.toJsonString(404, null, "系统未知错误", session.getId());
+		} finally {
+			LoggerUtil.LOGGER.info("-------------end 获取异常申诉列表--------------------");
+		}
+	}
+	@PostMapping("/setStateAgain")
+	@ResponseBody
+	public String setStateAgain(@RequestBody String data, HttpSession session) {
+		LoggerUtil.LOGGER.info("-------------enter 将申请重返审核列表--------------------");
+		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
+		LoggerUtil.LOGGER.debug("data : {}", data);
+		JSONObject dataJson = JSON.parseObject(data);
+		dataJson.put("companyId", session.getAttribute("companyId"));
+		try {
+			Integer idInteger = DynamicService.setStateAgain(dataJson);
+			return ResultJsonUtil.toJsonString(200, idInteger, "将申请重返审核列表成功", session.getId());
+		} catch (BusiException e) {
+			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());
+		} catch (Exception e) {
+			return ResultJsonUtil.toJsonString(404, null, "系统未知错误", session.getId());
+		} finally {
+			LoggerUtil.LOGGER.info("-------------end 将申请重返审核列表--------------------");
+		}
+	}
 }

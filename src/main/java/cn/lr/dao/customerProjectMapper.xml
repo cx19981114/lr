@@ -157,7 +157,7 @@
     select 
     <include refid="Base_Column_List" />
     from tb_customerproject
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER} limit #{page},#{size}
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER} order by dateTime desc limit #{page},#{size}
   </select>
   <select id="selectByEmployeeCount"  resultType="Integer">
     select count(*)

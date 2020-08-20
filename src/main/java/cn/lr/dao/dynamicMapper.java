@@ -27,6 +27,10 @@ public interface dynamicMapper {
    	
    	int selectByCheckCount(@Param("checkId")Integer checkId,@Param("stateWSH") Integer stateWHS,@Param("stateSHZ") Integer stateSHZ);
    	
+   	List<dynamic> selectByAbnormal(@Param("companyId") Integer companyId,@Param("state") Integer state,@Param("page") Integer page,@Param("size") Integer size);
+   	
+   	int selectByAbnormalCount(@Param("companyId")Integer companyId,@Param("state") Integer state);
+   	
    	List<dynamic> selectByCompanyId(@Param("companyId") Integer companyId,@Param("state") Integer state,@Param("page") Integer page,@Param("size") Integer size);
    	
    	int selectByCompanyCount(@Param("companyId")Integer companyId,@Param("state") Integer state);

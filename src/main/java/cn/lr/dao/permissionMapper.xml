@@ -79,4 +79,11 @@
       state = #{state,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+   <select id="selectByCompany" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_permission
+    where companyId = #{companyId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER}
+  </select>
 </mapper>

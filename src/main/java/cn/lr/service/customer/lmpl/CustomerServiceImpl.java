@@ -71,7 +71,7 @@ public class CustomerServiceImpl implements CustomerService {
 			throw new BusiException("该职工不存在");
 		}
 		customer customer = new customer();
-		customer.setBirth(data.getString("brith"));
+		customer.setBirth(data.getString("birth"));
 		customer.setDateTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
 		customer.setEmployeeId(data.getInteger("employeeId"));
 		customer.setHabit(data.getString("habit"));
@@ -81,6 +81,7 @@ public class CustomerServiceImpl implements CustomerService {
 		customer.setPlan(data.getString("plan"));
 		customer.setSex(data.getString("sex"));
 		customer.setPic(data.getString("pic"));
+		customer.setMoney(data.getInteger("money"));
 		customer.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交",data.getInteger("companyId")));
 		int count = customerMapper.insertSelective(customer);
 		if(count == 0) {
@@ -251,7 +252,7 @@ public class CustomerServiceImpl implements CustomerService {
 	public CustomerDTO sCustomerDTO(customer customer) throws ParseException {
 		employee employee = employeeMapper.selectByPrimaryKey(customer.getEmployeeId());
 		Integer stateInteger = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", employee.getCompanyId());
-		List<customerProject> projectList = customerProjectMapper.selectByCustomer(employee.getId(), stateInteger);
+		List<customerProject> projectList = customerProjectMapper.selectByCustomer(customer.getId(), stateInteger);
 		CustomerDTO customerDTO = new CustomerDTO();
 		customerDTO.setProjectNum(projectList.size());
 		customerDTO.setBirth(customer.getBirth());

@@ -418,11 +418,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Override
 	public employeeDTO getEmployee(JSONObject data) {
 		employee record = employeeMapper.selectByPrimaryKey(data.getInteger("employeeId"));
-		if (record == null || record.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"))) {
+		if (record == null ) {
 			throw new BusiException("该用户不存在");
-		}
-		if (record.getState() == dictMapper.selectByCodeAndStateName(EMPLOYEE_TYPE, "未激活",data.getInteger("companyId"))) {
-			throw new BusiException("该用户未激活");
 		}
 		employeeDTO employeeDTO = new employeeDTO();
 		employeeDTO.setCompany(companyMapper.selectByPrimaryKey(record.getCompanyId()).getName());
@@ -439,7 +436,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 		if (record.getLeaderIdList() != null && !record.getLeaderIdList().equals("")) {
 			String leaderId = record.getLeaderIdList().split("-")[0];
 			employee employee = employeeMapper.selectByPrimaryKey(Integer.valueOf(leaderId));
-			if (employee == null || employee.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"))) {
+			if (employee == null) {
 				throw new BusiException("该employeeId不存在");
 			}
 			employeeDTO.setLeaderName(employee.getName());

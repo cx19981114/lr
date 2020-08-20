@@ -29,6 +29,17 @@ public class employeeDTO {
     
     private Integer score;
     
+    private String permissionList;
+    
+    
+	public String getPermissionList() {
+		return permissionList;
+	}
+
+	public void setPermissionList(String permissionList) {
+		this.permissionList = permissionList;
+	}
+
 	public Integer getRank() {
 		return rank;
 	}

@@ -328,7 +328,7 @@ public class CustomerPerformanceServiceImpl implements CustomerPerformanceServic
 		dataJSonDynamic.put("dynamicId", dynamic.getId());
 		
 		JSONObject dataJson = new JSONObject();
-		dataJson.put("customerPerformance", this.sCustomerPerformanceDTO(customerPerformance));
+		dataJson.put("order", this.sCustomerPerformanceDTO(customerPerformance));
 		dataJson.put("dynamicId", dynamic.getId());
 		dataJson.put("ApplyRankDTO", ApplyRankService.getApplyRankByDynamic(dataJSonDynamic));
 		

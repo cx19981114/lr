@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.lr.dao.applyCheckMapper;
+import cn.lr.dao.applyRankMapper;
 import cn.lr.dao.dictMapper;
 import cn.lr.dao.dynamicMapper;
 import cn.lr.dao.employeeMapper;
@@ -21,6 +22,7 @@ import cn.lr.dto.DynamicDTO;
 import cn.lr.dto.Page;
 import cn.lr.exception.BusiException;
 import cn.lr.po.applyCheck;
+import cn.lr.po.applyRank;
 import cn.lr.po.dynamic;
 import cn.lr.po.employee;
 import cn.lr.service.employee.DynamicService;
@@ -39,6 +41,8 @@ public class DynamicServiceImpl implements DynamicService {
 	dictMapper dictMapper;
 	@Autowired
 	applyCheckMapper applyCheckMapper;
+	@Autowired
+	applyRankMapper applyRankMapper;
 
 	@Value("${pageSize}")
 	private Integer PAGESIZE;
@@ -254,5 +258,85 @@ public class DynamicServiceImpl implements DynamicService {
 		dynamicDTO.setEmployeeName(employee.getName());
 		dynamicDTO.setPic(employee.getPic());
 		return dynamicDTO;
+	}
+	
+	public Integer setStateAbnormal(JSONObject data) {
+		dynamic dynamic = dynamicMapper.selectByPrimaryKey(data.getInteger("dynamicId"));
+		if(dynamic == null) {
+			throw new BusiException("该dynamicId不存在");
+		}else if(dynamic.getState() != dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核失败", data.getInteger("companyId"))) {
+			throw new BusiException("该申请不能进行申诉");
+		}
+		dynamic.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核异常", data.getInteger("companyId")));
+		int count = dynamicMapper.updateByPrimaryKeySelective(dynamic);
+		if(count == 0) {
+			throw new BusiException("更新dynamic表失败");
+		}
+		applyRank applyRank = applyRankMapper.selectByDynamic(dynamic.getId());
+		if(applyRank == null) {
+			throw new BusiException("根据dynamicId查applyRank表失败");
+		}
+		applyRank.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核异常", data.getInteger("companyId")));
+		count = applyRankMapper.updateByPrimaryKeySelective(applyRank);
+		if(count == 0) {
+			throw new BusiException("更新appkyRank表失败");
+		}
+		return dynamic.getId();
+	}
+	
+	public Page<DynamicDTO> getAbnormalDynamic(JSONObject data) throws ParseException {
+		Integer state = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核异常", data.getInteger("companyId"));
+		Integer pageNum = data.getInteger("pageNum");
+		List<dynamic> dynamics = dynamicMapper.selectByAbnormal(data.getInteger("companyId"),state, (pageNum-1)*PAGESIZE, PAGESIZE);
+		int total = dynamicMapper.selectByAbnormalCount(data.getInteger("companyId"),state);
+		List<DynamicDTO> dynamicDTOs = new ArrayList<DynamicDTO>();
+		for(dynamic d:dynamics) {
+			DynamicDTO dynamicDTO = this.sDynamicDTO(d);
+			dynamicDTOs.add(dynamicDTO);
+		}
+		Page<DynamicDTO> page = new Page<DynamicDTO>();
+		page.setPageNum(pageNum);
+		page.setPageSize(PAGESIZE);
+		page.setTotal(total);
+		page.setList(dynamicDTOs);
+		return page;
+	}
+	
+	public Integer setStateAgain(JSONObject data) {
+		dynamic dynamic = dynamicMapper.selectByPrimaryKey(data.getInteger("dynamicId"));
+		if(dynamic == null) {
+			throw new BusiException("该dynamicId不存在");
+		}
+		dynamic.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", data.getInteger("companyId")));
+		int count = dynamicMapper.updateByPrimaryKeySelective(dynamic);
+		if(count == 0) {
+			throw new BusiException("更新dynamic表失败");
+		}
+		applyRank applyRank = applyRankMapper.selectByDynamic(dynamic.getId());
+		if(applyRank == null) {
+			throw new BusiException("根据dynamicId查applyRank表失败");
+		}
+		Integer numInteger = applyRank.getCheckList().split("-").length;
+		String[] oriCheckList = applyRank.getCheckList().split("-");
+		String[] oriNoteList = applyRank.getNoteList().split("-");
+		String checkList = "";
+		String noteList = "";
+		for(int i = 0;i<numInteger;i++) {
+			if(i == applyRank.getCheckNumber()) {
+				checkList += dictMapper.selectByCodeAndStateName(CHECK_FLOW, "未审核", dynamic.getCompanyId()) + "-";
+				noteList += "未审核-";
+				continue;
+			}
+			checkList += oriCheckList[i] + "-";
+			noteList += oriNoteList[i] + "-";
+		}
+		applyRank.setCheckList(checkList);
+		applyRank.setNoteList(noteList);
+		applyRank.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", data.getInteger("companyId")));
+		count = applyRankMapper.updateByPrimaryKeySelective(applyRank);
+		if(count == 0) {
+			throw new BusiException("更新appkyRank表失败");
+		}
+		return dynamic.getId();
 	}
 }

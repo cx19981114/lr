@@ -32,4 +32,10 @@ public interface DynamicService {
 	public Integer annulDynamic(JSONObject data);
 	
 	public Page<DynamicDTO> getDynamicByCheckHistory(JSONObject data) throws ParseException;
+	
+	public Integer setStateAbnormal(JSONObject data);
+	
+	public Page<DynamicDTO> getAbnormalDynamic(JSONObject data) throws ParseException;
+	
+	public Integer setStateAgain(JSONObject data);
 }

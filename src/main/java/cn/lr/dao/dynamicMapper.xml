@@ -182,6 +182,17 @@
     from tb_dynamic
     where checkId = #{checkId,jdbcType=INTEGER} and to_days(dateTime) = to_days(now()) and state in(#{stateWSH,jdbcType=INTEGER},#{stateSHZ,jdbcType=INTEGER})
   </select>
+   <select id="selectByAbnormal" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_dynamic
+    where companyId = #{companyId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} order by dateTime desc limit #{page},#{size}
+  </select>
+  <select id="selectByAbnormalCount"  resultType="Integer">
+    select count(*)
+    from tb_dynamic
+    where companyId = #{companyId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER}
+  </select>
  	<!-- 查看今天公司所有员工的动态（申请列表）  -->
    <select id="selectByCompanyId" resultMap="BaseResultMap">
     select 
