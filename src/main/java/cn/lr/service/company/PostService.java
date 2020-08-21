@@ -23,4 +23,6 @@ public interface PostService {
 	public List<JSONObject> getPostTypeAndCount(JSONObject data);
 	
 	public PostDTO sePostDTO(post post);
+	
+	public List<JSONObject> getTaskByPostList(JSONObject data);
 }

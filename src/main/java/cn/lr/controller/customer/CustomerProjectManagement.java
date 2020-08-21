@@ -57,7 +57,7 @@ public class CustomerProjectManagement {
 	@PostMapping("/getCustomerProjectByCustomer")
 	@ResponseBody
 	public String getCustomerProjectByCustomer(@RequestBody String data, HttpSession session) {
-		LoggerUtil.LOGGER.info("-------------enter 根据顾客id获取所拥有的项目信息--------------------");
+		LoggerUtil.LOGGER.info("-------------enter 根据顾客获取所拥有的项目信息--------------------");
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
@@ -65,13 +65,13 @@ public class CustomerProjectManagement {
 		try {
 			CustomerService.getCustomer(dataJson);
 			List<JSONObject> projects= CustomerProjectService.getCustomerProjectByCustomer(dataJson);
-			return ResultJsonUtil.toJsonString(200, projects, "根据顾客id获取所拥有的项目信息成功",session.getId());
+			return ResultJsonUtil.toJsonString(200, projects, "根据顾客获取所拥有的项目信息成功",session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(),session.getId());
 		} catch (Exception e) {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误",session.getId());
 		}finally {
-			LoggerUtil.LOGGER.info("-------------end 根据顾客id获取所拥有的项目信息--------------------");
+			LoggerUtil.LOGGER.info("-------------end 根据顾客获取所拥有的项目信息--------------------");
 		}
 	}
 	@PostMapping("/deleteCustomerProject")
@@ -136,39 +136,39 @@ public class CustomerProjectManagement {
 	@PostMapping("/getCustomerProjectByEmployee")
 	@ResponseBody
 	public String getCustomerProjectByEmployee(@RequestBody String data, HttpSession session) {
-		LoggerUtil.LOGGER.info("-------------enter 根据职员id获取项目信息--------------------");
+		LoggerUtil.LOGGER.info("-------------enter 根据职员获取项目信息--------------------");
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
 		dataJson.put("companyId", session.getAttribute("companyId"));
 		try {
 			Page<CustomerProjectDTO> customerProjectDTOs = CustomerProjectService.getCustomerProjectByEmployee(dataJson);
-			return ResultJsonUtil.toJsonString(200, customerProjectDTOs, " 根据职员id获取项目信息成功", session.getId());
+			return ResultJsonUtil.toJsonString(200, customerProjectDTOs, " 根据职员获取项目信息成功", session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());
 		} catch (Exception e) {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误", session.getId());
 		} finally {
-			LoggerUtil.LOGGER.info("-------------end  根据职员id获取项目信息--------------------");
+			LoggerUtil.LOGGER.info("-------------end  根据职员获取项目信息--------------------");
 		}
 	}
 	@PostMapping("/getCustomerProject")
 	@ResponseBody
 	public String getCustomerProject(@RequestBody String data, HttpSession session) {
-		LoggerUtil.LOGGER.info("-------------enter 根据项目id获取项目信息--------------------");
+		LoggerUtil.LOGGER.info("-------------enter 根据项目获取项目信息--------------------");
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
 		dataJson.put("companyId", session.getAttribute("companyId"));
 		try {
 			JSONObject customerProjectDTOs = CustomerProjectService.getCustomerProjectDetail(dataJson);
-			return ResultJsonUtil.toJsonString(200, customerProjectDTOs, " 根据项目id获取项目信息成功", session.getId());
+			return ResultJsonUtil.toJsonString(200, customerProjectDTOs, " 根据项目获取项目信息成功", session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());
 		} catch (Exception e) {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误", session.getId());
 		} finally {
-			LoggerUtil.LOGGER.info("-------------end  根据项目id获取项目信息--------------------");
+			LoggerUtil.LOGGER.info("-------------end  根据项目获取项目信息--------------------");
 		}
 	}
 }

@@ -121,7 +121,6 @@ public class EmployeeTaskServiceImpl implements EmployeeTaskService {
 	@Override
 	public List<JSONObject> getTaskByEmployeeList(JSONObject data) {
 		employeeTask employeeTask = employeeTaskMapper.selectByEmployee(data.getInteger("employeeId"));
-		Integer pageNum = data.getInteger("pageNum");
 		String taskList = null;
 		String taskStateList = null;
 		if ("赋能思维".equals(data.getString("prevType"))) {
@@ -165,7 +164,7 @@ public class EmployeeTaskServiceImpl implements EmployeeTaskService {
 	public Integer addEmployeeTask(JSONObject data) {
 		task task = taskMapper.selectByPrimaryKey(data.getInteger("taskId"));
 		if (task == null || task.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"))) {
-			throw new BusiException("该taskId不存在");
+			throw new BusiException("该任务不存在");
 		}
 		employeeTask employeeTask = employeeTaskMapper.selectByEmployee(data.getInteger("employeeId"));
 		String taskList = "";
@@ -233,7 +232,7 @@ public class EmployeeTaskServiceImpl implements EmployeeTaskService {
 	public Integer modifyEmployeeTask(JSONObject data) {
 		task task = taskMapper.selectByPrimaryKey(data.getInteger("taskId"));
 		if (task == null || task.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"))) {
-			throw new BusiException("该taskId不存在");
+			throw new BusiException("该任务不存在");
 		}
 		JSONObject dataJSonDynamic = new JSONObject();
 		dataJSonDynamic.put("name", Type);
@@ -263,7 +262,7 @@ public class EmployeeTaskServiceImpl implements EmployeeTaskService {
 	public Integer deleteEmployeeTask(JSONObject data) {
 		task task = taskMapper.selectByPrimaryKey(data.getInteger("taskId"));
 		if (task == null || task.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"))) {
-			throw new BusiException("该taskId不存在");
+			throw new BusiException("该任务不存在");
 		}
 		JSONObject dataJSonDynamic = new JSONObject();
 		dataJSonDynamic.put("name", Type);
@@ -290,7 +289,7 @@ public class EmployeeTaskServiceImpl implements EmployeeTaskService {
 	public Integer annulEmployeeTask(JSONObject data) {
 		task task = taskMapper.selectByPrimaryKey(data.getInteger("taskId"));
 		if (task == null || task.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"))) {
-			throw new BusiException("该taskId不存在");
+			throw new BusiException("该任务不存在");
 		}
 		JSONObject dataJSonDynamic = new JSONObject();
 		dataJSonDynamic.put("name", Type);
@@ -352,7 +351,7 @@ public class EmployeeTaskServiceImpl implements EmployeeTaskService {
 	public JSONObject getEmployeeTask(JSONObject data) throws ParseException {
 		task task = taskMapper.selectByPrimaryKey(data.getInteger("taskId"));
 		if (task == null || task.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"))) {
-			throw new BusiException("该taskId不存在");
+			throw new BusiException("该任务不存在");
 		}
 		JSONObject dataJSonDynamic = new JSONObject();
 		dataJSonDynamic.put("name", Type);

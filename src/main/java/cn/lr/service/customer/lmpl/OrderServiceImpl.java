@@ -423,7 +423,7 @@ public class OrderServiceImpl implements OrderService {
 	public order getOrder(JSONObject data) {
 		order order = orderMapper.selectByPrimaryKey(data.getInteger("orderId"));
 		if(order == null || order.getApplyState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"))) {
-			throw new BusiException("该orderId不存在");
+			throw new BusiException("该预约不存在");
 		}
 		return order;
 	}
@@ -433,7 +433,7 @@ public class OrderServiceImpl implements OrderService {
 		order order = orderMapper.selectByPrimaryKey(data.getInteger("orderId"));
 		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"));
 		if(order == null) {
-			throw new BusiException("该orderId不存在");
+			throw new BusiException("该预约不存在");
 		}
 		JSONObject dataJSonDynamic = new JSONObject();
 		dataJSonDynamic.put("name", ApplyType);
@@ -525,7 +525,9 @@ public class OrderServiceImpl implements OrderService {
 		orderDetailDTO.setNote(order.getNote());
 		orderDetailDTO.setProjectName(projectMapper.selectByPrimaryKey(customerProject.getProjectId()).getName());
 		orderDetailDTO.setRank(rankMapper.selectByName(ApplyType, employee.getCompanyId(),state));
-		orderDetailDTO.setOrderState(dictMapper.selectByCodeAndStateCode(ORDER_FLOW, order.getOrderState(), employee.getCompanyId()));
+		if(order.getOrderState() != null) {
+			orderDetailDTO.setOrderState(dictMapper.selectByCodeAndStateCode(ORDER_FLOW, order.getOrderState(), employee.getCompanyId()));
+		}
 		if(order.getApplyOrderState() != null) {
 			orderDetailDTO.setApplyOrderState(dictMapper.selectByCodeAndStateCode(APPLY_FLOW, order.getApplyOrderState(), employee.getCompanyId()));
 		}

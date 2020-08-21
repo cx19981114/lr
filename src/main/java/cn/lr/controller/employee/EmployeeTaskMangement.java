@@ -89,58 +89,58 @@ public class EmployeeTaskMangement {
 	@PostMapping("/getEmployeeTaskList")
 	@ResponseBody
 	public String getEmployeeTaskList(@RequestBody String data, HttpSession session) {
-		LoggerUtil.LOGGER.info("-------------enter 根据职员id获取任务积分信息--------------------");
+		LoggerUtil.LOGGER.info("-------------enter 根据职员获取任务积分信息--------------------");
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
 		dataJson.put("companyId", session.getAttribute("companyId"));
 		try {
 			Page<task> employeeTasks = EmployeeTaskService.getTaskByEmployee(dataJson);
-			return ResultJsonUtil.toJsonString(200, employeeTasks, "根据职员id获取任务积分信息成功", session.getId());
+			return ResultJsonUtil.toJsonString(200, employeeTasks, "根据职员获取任务积分信息成功", session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());
 		} catch (Exception e) {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误", session.getId());
 		} finally {
-			LoggerUtil.LOGGER.info("-------------end 根据职员id获取任务积分信息--------------------");
+			LoggerUtil.LOGGER.info("-------------end 根据职员获取任务积分信息--------------------");
 		}
 	}
 	@PostMapping("/getEmployeeTaskJson")
 	@ResponseBody
 	public String getEmployeeTaskJson(@RequestBody String data, HttpSession session) {
-		LoggerUtil.LOGGER.info("-------------enter 根据职员id获取任务积分信息--------------------");
+		LoggerUtil.LOGGER.info("-------------enter 根据职员获取任务积分信息--------------------");
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
 		dataJson.put("companyId", session.getAttribute("companyId"));
 		try {
 			List<JSONObject> employeeTasks = EmployeeTaskService.getTaskByEmployeeList(dataJson);
-			return ResultJsonUtil.toJsonString(200, employeeTasks, "根据职员id获取任务积分信息成功", session.getId());
+			return ResultJsonUtil.toJsonString(200, employeeTasks, "根据职员获取任务积分信息成功", session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());
 		} catch (Exception e) {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误", session.getId());
 		} finally {
-			LoggerUtil.LOGGER.info("-------------end 根据职员id获取任务积分信息--------------------");
+			LoggerUtil.LOGGER.info("-------------end 根据职员获取任务积分信息--------------------");
 		}
 	}
 	@PostMapping("/getEmployeeTask")
 	@ResponseBody
 	public String getEmployeeTask(@RequestBody String data, HttpSession session) {
-		LoggerUtil.LOGGER.info("-------------enter 根据职员id获取任务积分详细信息--------------------");
+		LoggerUtil.LOGGER.info("-------------enter 根据职员获取任务积分详细信息--------------------");
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
 		dataJson.put("companyId", session.getAttribute("companyId"));
 		try {
 			JSONObject employeeTaskDTO = EmployeeTaskService.getEmployeeTask(dataJson);
-			return ResultJsonUtil.toJsonString(200, employeeTaskDTO, "根据职员id获取任务积分信息详细成功", session.getId());
+			return ResultJsonUtil.toJsonString(200, employeeTaskDTO, "根据职员获取任务积分信息详细成功", session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());
 		} catch (Exception e) {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误", session.getId());
 		} finally {
-			LoggerUtil.LOGGER.info("-------------end 根据职员id获取任务积分详细信息--------------------");
+			LoggerUtil.LOGGER.info("-------------end 根据职员获取任务积分详细信息--------------------");
 		}
 	}
 	@PostMapping("/affirmEmployeeTask")

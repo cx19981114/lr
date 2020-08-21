@@ -116,7 +116,7 @@ public class CustomerPerformanceManagement {
 	@PostMapping("/getCustomerPerformanceByEmployee")
 	@ResponseBody
 	public String getCustomerPerformanceByEmployee(@RequestBody String data, HttpSession session) {
-		LoggerUtil.LOGGER.info("-------------enter 根据顾客id和日期范围获取顾客业绩信息--------------------");
+		LoggerUtil.LOGGER.info("-------------enter 根据顾客和日期范围获取顾客业绩信息--------------------");
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
@@ -124,19 +124,19 @@ public class CustomerPerformanceManagement {
 		try {
 			EmployeeService.getEmployee(dataJson);
 			JSONObject cpJsonObject = CustomerPerformanceService.getCustomerPerformanceByEmployeeCondition(dataJson);
-			return ResultJsonUtil.toJsonString(200, cpJsonObject, "根据顾客id和日期范围获取顾客业绩信息成功",session.getId());
+			return ResultJsonUtil.toJsonString(200, cpJsonObject, "根据顾客和日期范围获取顾客业绩信息成功",session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(),session.getId());
 		} catch (Exception e) {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误",session.getId());
 		}finally {
-			LoggerUtil.LOGGER.info("-------------end 根据顾客id和日期范围获取顾客业绩信息--------------------");
+			LoggerUtil.LOGGER.info("-------------end 根据顾客和日期范围获取顾客业绩信息--------------------");
 		}
 	}
 	@PostMapping("/getCustomerPerformanceByEmployeeId")
 	@ResponseBody
 	public String getCustomerPerformanceByEmployeeId(@RequestBody String data, HttpSession session) {
-		LoggerUtil.LOGGER.info("-------------enter 根据顾客id获取顾客业绩信息--------------------");
+		LoggerUtil.LOGGER.info("-------------enter 根据顾客获取顾客业绩信息--------------------");
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
@@ -144,32 +144,32 @@ public class CustomerPerformanceManagement {
 		try {
 			EmployeeService.getEmployee(dataJson);
 			Page<CustomerPerformanceDTO> customerPerformanceDTOs = CustomerPerformanceService.getCustomerPerformanceByEmployee(dataJson);
-			return ResultJsonUtil.toJsonString(200, customerPerformanceDTOs, "根据顾客id获取顾客业绩信息成功",session.getId());
+			return ResultJsonUtil.toJsonString(200, customerPerformanceDTOs, "根据顾客获取顾客业绩信息成功",session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(),session.getId());
 		} catch (Exception e) {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误",session.getId());
 		}finally {
-			LoggerUtil.LOGGER.info("-------------end 根据顾客id获取顾客业绩信息--------------------");
+			LoggerUtil.LOGGER.info("-------------end 根据顾客获取顾客业绩信息--------------------");
 		}
 	}
 	@PostMapping("/getCustomerPerformance")
 	@ResponseBody
 	public String getCustomerPerformance(@RequestBody String data, HttpSession session) {
-		LoggerUtil.LOGGER.info("-------------enter 根据业绩id获取顾客业绩信息--------------------");
+		LoggerUtil.LOGGER.info("-------------enter 根据业绩获取顾客业绩信息--------------------");
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
 		dataJson.put("companyId", session.getAttribute("companyId"));
 		try {
 			JSONObject jsonObject = CustomerPerformanceService.getCustomerPerformanceDetail(dataJson);
-			return ResultJsonUtil.toJsonString(200, jsonObject, "根据业绩id获取顾客业绩信息成功",session.getId());
+			return ResultJsonUtil.toJsonString(200, jsonObject, "根据业绩获取顾客业绩信息成功",session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(),session.getId());
 		} catch (Exception e) {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误",session.getId());
 		}finally {
-			LoggerUtil.LOGGER.info("-------------end 根据业绩id获取顾客业绩信息--------------------");
+			LoggerUtil.LOGGER.info("-------------end 根据业绩获取顾客业绩信息--------------------");
 		}
 	}
 }

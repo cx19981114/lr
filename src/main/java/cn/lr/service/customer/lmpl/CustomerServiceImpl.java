@@ -118,7 +118,7 @@ public class CustomerServiceImpl implements CustomerService {
 	public CustomerDTO getCustomer(JSONObject data) throws ParseException {
 		customer customer = customerMapper.selectByPrimaryKey(data.getInteger("customerId"));
 		if(customer == null || customer.getState() != dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功",data.getInteger("companyId"))) {
-			throw new BusiException("该客户id不存在");
+			throw new BusiException("该客户不存在");
 		}
 		return this.sCustomerDTO(customer);
 	}

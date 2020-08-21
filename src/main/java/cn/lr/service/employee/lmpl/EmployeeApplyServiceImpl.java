@@ -216,7 +216,7 @@ public class EmployeeApplyServiceImpl implements EmployeeApplyService {
 	public JSONObject getEmployeeApply(JSONObject data) throws ParseException {
 		employeeApply employeeApply = employeeApplyMapper.selectByPrimaryKey(data.getInteger("employeeApplyId"));
 		if(employeeApply == null || employeeApply.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"))) {
-			throw new BusiException("employeeApplyId不存在");
+			throw new BusiException("该申请不存在");
 		}
 		JSONObject dataJSonDynamic = new JSONObject();
 		dataJSonDynamic.put("name", Type[employeeApply.getType()-1]);

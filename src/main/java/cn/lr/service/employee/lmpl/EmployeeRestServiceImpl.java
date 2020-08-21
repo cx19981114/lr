@@ -364,7 +364,7 @@ public class EmployeeRestServiceImpl implements EmployeeRestService {
 	public JSONObject getEmployeeRest(JSONObject data) throws ParseException {
 		employeeRest employeeRest = employeeRestMapper.selectByPrimaryKey(data.getInteger("employeeRestId"));
 		if (employeeRest == null || employeeRest.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"))) {
-			throw new BusiException("该employeeRestId不存在");
+			throw new BusiException("该每日行程不存在");
 		}
 		JSONObject dataJSonDynamic = new JSONObject();
 		dataJSonDynamic.put("name", Type);

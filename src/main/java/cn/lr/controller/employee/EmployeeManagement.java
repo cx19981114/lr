@@ -202,7 +202,7 @@ public class EmployeeManagement {
 	@PostMapping("/getEmployeeUnder")
 	@ResponseBody
 	public String getEmployeeUnder(@RequestBody String data, HttpSession session) {
-		LoggerUtil.LOGGER.info("-------------enter 根据用户Id获得所有下属信息--------------------");
+		LoggerUtil.LOGGER.info("-------------enter 根据用户获得所有下属信息--------------------");
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);

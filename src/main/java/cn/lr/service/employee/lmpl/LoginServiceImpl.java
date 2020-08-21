@@ -14,14 +14,13 @@ import cn.lr.dao.companyMapper;
 import cn.lr.dao.dictMapper;
 import cn.lr.dao.employeeMapper;
 import cn.lr.dao.postMapper;
-import cn.lr.dto.EmployeeRankDTO;
 import cn.lr.dto.employeeDTO;
 import cn.lr.exception.BusiException;
 import cn.lr.exception.EmployeeUnactiveException;
 import cn.lr.po.company;
 import cn.lr.po.employee;
-import cn.lr.po.post;
 import cn.lr.service.employee.EmployeeRankService;
+import cn.lr.service.employee.EmployeeService;
 import cn.lr.service.employee.LoginService;
 import cn.lr.util.DataVaildCheckUtil;
 import cn.lr.util.EncryptionUtil;
@@ -42,6 +41,8 @@ public class LoginServiceImpl implements LoginService {
 	
 	@Autowired
 	EmployeeRankService EmployeeRankService;
+	@Autowired
+	EmployeeService EmployeeService;
 	@Value("${employee.type}")
 	private String EMPLOYEE_TYPE;
 	@Value("${data.type}")
@@ -51,7 +52,6 @@ public class LoginServiceImpl implements LoginService {
 		String phone = data.getString("phone");
 		employee employee = employeeMapper.selectByPhone(phone);
 		company company = companyMapper.selectByPrimaryKey(employee.getCompanyId());
-		post post = postMapper.selectByPrimaryKey(employee.getPostId());
 		if(employee == null || employee.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",employee.getCompanyId())) {
 			throw new BusiException("该手机号不存在");
 		}else if(employee.getState() == dictMapper.selectByCodeAndStateName(EMPLOYEE_TYPE, "未激活",employee.getCompanyId())) {
@@ -61,34 +61,7 @@ public class LoginServiceImpl implements LoginService {
 		}else if(company.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", company.getId())) {
 			throw new BusiException("该员工不存在");
 		}
-		employeeDTO employeeDTO = new employeeDTO();
-		employeeDTO.setCompany(company.getName());
-		employeeDTO.setEmployeeId(employee.getId());
-		employeeDTO.setCompanyId(employee.getCompanyId());
-		employeeDTO.setPostId(employee.getPostId());
-		employeeDTO.setName(employee.getName());
-		employeeDTO.setPhone(employee.getPhone());
-		employeeDTO.setPic(employee.getPic());
-		employeeDTO.setPost(post.getName());
-		employeeDTO.setSex(employee.getSex());
-		employeeDTO.setState(dictMapper.selectByCodeAndStateCode(EMPLOYEE_TYPE, employee.getState(), company.getId()));
-		if(employee.getLeaderIdList() != null && !employee.getLeaderIdList().equals("")) {
-			String leaderId = employee.getLeaderIdList().split("-")[0];
-			employee employee2 = employeeMapper.selectByPrimaryKey(Integer.valueOf(leaderId));
-			if(employee2 == null || employee2.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",employee.getCompanyId())) {
-				throw new BusiException("该employeeId不存在");
-			}
-			employeeDTO.setLeaderName(employee2.getName());
-			employeeDTO.setLeaderId(Integer.valueOf(leaderId));
-		}
-		JSONObject rankJson = new JSONObject();
-		rankJson.put("companyId", employee.getCompanyId());
-		rankJson.put("employeeId", employee.getId());
-		EmployeeRankDTO employeeRankDTO = EmployeeRankService.getEmployeeRankByEmployee(rankJson);
-		employeeDTO.setRank(employeeRankDTO.getRank());
-		employeeDTO.setScore(employeeRankDTO.getAllScore());
-		employeeDTO.setPermissionList(post.getPermissionList());
-		return employeeDTO;
+		return EmployeeService.sEmployeeDTO(employee);
 	}
 	@Override
 	public Integer sendMsg(JSONObject data) throws Exception {

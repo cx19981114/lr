@@ -191,6 +191,12 @@
     select 
     <include refid="Base_Column_List" />
     from tb_task
-    where postIdList like concat('%',#{postId},'%')
+    where postIdList like concat('%',#{postId},'%') 
+    <if test="prevType != null">
+        and prevType = #{prevType,jdbcType=INTEGER}
+     </if>  
+    <if test="type != null">
+        and type = #{type,jdbcType=INTEGER}
+     </if>  
   </select>
 </mapper>

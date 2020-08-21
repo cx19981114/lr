@@ -205,7 +205,7 @@ public class EmployeeLogDayServiceImpl implements EmployeeLogDayService {
 	public JSONObject getEmployeeLogDay(JSONObject data) throws ParseException {
 		employeeLogDay employeeLogDay = employeeLogDayMapper.selectByPrimaryKey(data.getInteger("employeeLogDayId"));
 		if (employeeLogDay == null || employeeLogDay.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"))) {
-			throw new BusiException("该employeeLogDayId不存在");
+			throw new BusiException("该今日总结不存在");
 		}
 		JSONObject dataJSonDynamic = new JSONObject();
 		dataJSonDynamic.put("name", Type);

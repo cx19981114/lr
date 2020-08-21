@@ -17,6 +17,8 @@ public class PostDTO {
 	    
 	    private Integer leaderPostId;
 	    
+	    private String leaderPostName;
+	    
 	    private String taskFN;
 	    
 	    private String taskRWDay;
@@ -24,6 +26,14 @@ public class PostDTO {
 	    private String taskRWWeek;
 	    
 	    private String taskRWMon;
+
+		public String getLeaderPostName() {
+			return leaderPostName;
+		}
+
+		public void setLeaderPostName(String leaderPostName) {
+			this.leaderPostName = leaderPostName;
+		}
 
 		public Integer getId() {
 			return id;

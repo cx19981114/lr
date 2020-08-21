@@ -109,96 +109,96 @@ public class EmployeeRestManagement {
 	@PostMapping("/getEmployeeRest")
 	@ResponseBody
 	public String getEmployeeRest(@RequestBody String data, HttpSession session) {
-		LoggerUtil.LOGGER.info("-------------enter 根据id获取行程信息--------------------");
+		LoggerUtil.LOGGER.info("-------------enter 获取行程信息--------------------");
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
 		dataJson.put("companyId", session.getAttribute("companyId"));
 		try {
 			JSONObject employeeRest = EmployeeRestService.getEmployeeRest(dataJson);
-			return ResultJsonUtil.toJsonString(200, employeeRest, "根据id获取行程信息成功", session.getId());
+			return ResultJsonUtil.toJsonString(200, employeeRest, "获取行程信息成功", session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());
 		} catch (Exception e) {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误", session.getId());
 		} finally {
-			LoggerUtil.LOGGER.info("-------------end 根据id获取行程信息--------------------");
+			LoggerUtil.LOGGER.info("-------------end 获取行程信息--------------------");
 		}
 	}
 	@PostMapping("/getEmployeeRestList")
 	@ResponseBody
 	public String getEmployeeRestList(@RequestBody String data, HttpSession session) {
-		LoggerUtil.LOGGER.info("-------------enter 根据职员id获取行程信息--------------------");
+		LoggerUtil.LOGGER.info("-------------enter 根据职员获取行程信息--------------------");
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
 		dataJson.put("companyId", session.getAttribute("companyId"));
 		try {
 			Page<EmployeeRestDTO> employeeRests = EmployeeRestService.getEmployeeRestByEmployee(dataJson);
-			return ResultJsonUtil.toJsonString(200, employeeRests, "根据职员id获取行程信息成功", session.getId());
+			return ResultJsonUtil.toJsonString(200, employeeRests, "根据职员获取行程信息成功", session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());
 		} catch (Exception e) {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误", session.getId());
 		} finally {
-			LoggerUtil.LOGGER.info("-------------end 根据职员id获取行程信息--------------------");
+			LoggerUtil.LOGGER.info("-------------end 根据职员获取行程信息--------------------");
 		}
 	}
 	@PostMapping("/getEmployeeRestTypeList")
 	@ResponseBody
 	public String getEmployeeRestTypeList(@RequestBody String data, HttpSession session) {
-		LoggerUtil.LOGGER.info("-------------enter 根据职员id获每日行程总信息--------------------");
+		LoggerUtil.LOGGER.info("-------------enter 根据职员获每日行程总信息--------------------");
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
 		dataJson.put("companyId", session.getAttribute("companyId"));
 		try {
 			List<JSONObject> employeeRests = EmployeeRestService.getEmployeeRestTypeList(dataJson);
-			return ResultJsonUtil.toJsonString(200, employeeRests, "根据职员id获取每日行程总信息成功", session.getId());
+			return ResultJsonUtil.toJsonString(200, employeeRests, "根据职员获取每日行程总信息成功", session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());
 		} catch (Exception e) {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误", session.getId());
 		} finally {
-			LoggerUtil.LOGGER.info("-------------end 根据职员id获取每日行程总信息--------------------");
+			LoggerUtil.LOGGER.info("-------------end 根据职员获取每日行程总信息--------------------");
 		}
 	}
 	@PostMapping("/getEmployeeRestListTeam")
 	@ResponseBody
 	public String getEmployeeRestListTeam(@RequestBody String data, HttpSession session) {
-		LoggerUtil.LOGGER.info("-------------enter 根据职员id获团队每日行程信息--------------------");
+		LoggerUtil.LOGGER.info("-------------enter 根据职员获团队每日行程信息--------------------");
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
 		dataJson.put("companyId", session.getAttribute("companyId"));
 		try {
 			Page<EmployeeRestDTO> employeeRests = EmployeeRestService.getEmployeeRestByEmployeeTeam(dataJson);
-			return ResultJsonUtil.toJsonString(200, employeeRests, "根据职员id获取团队每日行程信息成功", session.getId());
+			return ResultJsonUtil.toJsonString(200, employeeRests, "根据职员获取团队每日行程信息成功", session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());
 		} catch (Exception e) {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误", session.getId());
 		} finally {
-			LoggerUtil.LOGGER.info("-------------end 根据职员id获取团队每日行程信息--------------------");
+			LoggerUtil.LOGGER.info("-------------end 根据职员获取团队每日行程信息--------------------");
 		}
 	}
 	@PostMapping("/getEmployeeRestListTeamList")
 	@ResponseBody
 	public String getEmployeeRestListTeamList(@RequestBody String data, HttpSession session) {
-		LoggerUtil.LOGGER.info("-------------enter 根据职员id获团队每日行程列表信息--------------------");
+		LoggerUtil.LOGGER.info("-------------enter 根据职员获团队每日行程列表信息--------------------");
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
 		dataJson.put("companyId", session.getAttribute("companyId"));
 		try {
 			List<List<JSONObject>> employeeRests = EmployeeRestService.getEmployeeRestByEmployeeTeamList(dataJson);
-			return ResultJsonUtil.toJsonString(200, employeeRests, "根据职员id获取团队每日行程列表信息成功", session.getId());
+			return ResultJsonUtil.toJsonString(200, employeeRests, "根据职员获取团队每日行程列表信息成功", session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());
 		} catch (Exception e) {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误", session.getId());
 		} finally {
-			LoggerUtil.LOGGER.info("-------------end 根据职员id获取团队每日行程列表信息--------------------");
+			LoggerUtil.LOGGER.info("-------------end 根据职员获取团队每日行程列表信息--------------------");
 		}
 	}
 	@PostMapping("/affirmEmployeeRest")
@@ -223,20 +223,20 @@ public class EmployeeRestManagement {
 	@PostMapping("/getEmployeeRestByEmployeeNew")
 	@ResponseBody
 	public String getEmployeeRestByEmployeeNew(@RequestBody String data, HttpSession session) {
-		LoggerUtil.LOGGER.info("-------------enter 根据职员id获每日行程(最新)信息--------------------");
+		LoggerUtil.LOGGER.info("-------------enter 根据职员获每日行程(最新)信息--------------------");
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
 		dataJson.put("companyId", session.getAttribute("companyId"));
 		try {
 			EmployeeRestDTO employeeRest = EmployeeRestService.getEmployeeRestByEmployeeNew(dataJson);
-			return ResultJsonUtil.toJsonString(200, employeeRest, "根据职员id获取每日行程(最新)信息成功", session.getId());
+			return ResultJsonUtil.toJsonString(200, employeeRest, "根据职员获取每日行程(最新)信息成功", session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());
 		} catch (Exception e) {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误", session.getId());
 		} finally {
-			LoggerUtil.LOGGER.info("-------------end 根据职员id获取每日行程(最新)信息--------------------");
+			LoggerUtil.LOGGER.info("-------------end 根据职员获取每日行程(最新)信息--------------------");
 		}
 	}
 }

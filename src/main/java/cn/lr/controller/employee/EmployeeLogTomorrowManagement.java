@@ -107,39 +107,39 @@ public class EmployeeLogTomorrowManagement {
 	@PostMapping("/getEmployeeLogTomorrow")
 	@ResponseBody
 	public String getEmployeeLogTomorrow(@RequestBody String data, HttpSession session) {
-		LoggerUtil.LOGGER.info("-------------enter 根据id获取明日计划信息--------------------");
+		LoggerUtil.LOGGER.info("-------------enter 获取明日计划信息--------------------");
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
 		dataJson.put("companyId", session.getAttribute("companyId"));
 		try {
 			JSONObject EmployeeLogTomorrow = EmployeeLogTomorrowService.getEmployeeLogTomorrow(dataJson);
-			return ResultJsonUtil.toJsonString(200, EmployeeLogTomorrow, "根据id获取明日计划信息成功", session.getId());
+			return ResultJsonUtil.toJsonString(200, EmployeeLogTomorrow, "获取明日计划信息成功", session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());
 		} catch (Exception e) {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误", session.getId());
 		} finally {
-			LoggerUtil.LOGGER.info("-------------end 根据id获取明日计划信息--------------------");
+			LoggerUtil.LOGGER.info("-------------end 获取明日计划信息--------------------");
 		}
 	}
 	@PostMapping("/getEmployeeLogTomorrowList")
 	@ResponseBody
 	public String getEmployeeLogTomorrowList(@RequestBody String data, HttpSession session) {
-		LoggerUtil.LOGGER.info("-------------enter 根据职员id获明日计划信息--------------------");
+		LoggerUtil.LOGGER.info("-------------enter 根据职员获明日计划信息--------------------");
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
 		dataJson.put("companyId", session.getAttribute("companyId"));
 		try {
 			Page<EmployeeLogTomorrowDTO> employeeLogTomorrows = EmployeeLogTomorrowService.getEmployeeLogTomorrowByEmployee(dataJson);
-			return ResultJsonUtil.toJsonString(200, employeeLogTomorrows, "根据职员id获取明日计划信息成功", session.getId());
+			return ResultJsonUtil.toJsonString(200, employeeLogTomorrows, "根据职员获取明日计划信息成功", session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());
 		} catch (Exception e) {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误", session.getId());
 		} finally {
-			LoggerUtil.LOGGER.info("-------------end 根据职员id获取明日计划信息--------------------");
+			LoggerUtil.LOGGER.info("-------------end 根据职员获取明日计划信息--------------------");
 		}
 	}
 	@PostMapping("/affirmEmployeeLogTomorrow")
@@ -164,20 +164,20 @@ public class EmployeeLogTomorrowManagement {
 	@PostMapping("/getEmployeeLogTomorrowByEmployeeNew")
 	@ResponseBody
 	public String getEmployeeLogTomorrowByEmployeeNew(@RequestBody String data, HttpSession session) {
-		LoggerUtil.LOGGER.info("-------------enter 根据职员id获明日计划(最新)信息--------------------");
+		LoggerUtil.LOGGER.info("-------------enter 根据职员获明日计划(最新)信息--------------------");
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
 		dataJson.put("companyId", session.getAttribute("companyId"));
 		try {
 			EmployeeLogTomorrowDTO employeeLogTomorrow = EmployeeLogTomorrowService.getEmployeeLogTomorrowByEmployeeNew(dataJson);
-			return ResultJsonUtil.toJsonString(200, employeeLogTomorrow, "根据职员id获取明日计划(最新)信息成功", session.getId());
+			return ResultJsonUtil.toJsonString(200, employeeLogTomorrow, "根据职员获取明日计划(最新)信息成功", session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());
 		} catch (Exception e) {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误", session.getId());
 		} finally {
-			LoggerUtil.LOGGER.info("-------------end 根据职员id获取明日计划(最新)信息--------------------");
+			LoggerUtil.LOGGER.info("-------------end 根据职员获取明日计划(最新)信息--------------------");
 		}
 	}
 }

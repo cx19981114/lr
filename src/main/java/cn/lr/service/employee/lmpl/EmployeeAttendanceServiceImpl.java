@@ -236,7 +236,7 @@ public class EmployeeAttendanceServiceImpl implements EmployeeAttendanceService 
 				.selectByPrimaryKey(data.getInteger("employeeAttendanceId"));
 		if (employeeAttendance == null || employeeAttendance.getState() == dictMapper
 				.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"))) {
-			throw new BusiException("employeeAttendanceId不存在");
+			throw new BusiException("每日打卡不存在");
 		}
 
 		JSONObject dataJSonDynamic = new JSONObject();

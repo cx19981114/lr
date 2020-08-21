@@ -56,7 +56,7 @@ public class DynamicServiceImpl implements DynamicService {
 	@Override
 	public Integer writeDynamic(JSONObject data) {
 		dynamic record = new dynamic();
-		record.setNote(data.getString("note"));
+		record.setNote(data.getString("note") == null ? null :"无");
 		record.setDateTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
 		record.setTb_name(data.getString("name"));
 		record.setTb_id(data.getInteger("id"));
@@ -64,7 +64,7 @@ public class DynamicServiceImpl implements DynamicService {
 		record.setPic(data.getString("pic"));
 		employee employee = employeeMapper.selectByPrimaryKey(data.getInteger("employeeId"));
 		if (employee == null || employee.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"))) {
-			throw new BusiException("该employeeId不存在");
+			throw new BusiException("该职员不存在");
 		}
 		if (employee.getLeaderIdList() != null && !"".equals(employee.getLeaderIdList())) {
 			record.setCheckId(Integer.valueOf(employee.getLeaderIdList().split("-")[0]));
@@ -205,7 +205,7 @@ public class DynamicServiceImpl implements DynamicService {
 		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"));
 		dynamic dynamic = dynamicMapper.selectByTypeAndId(data.getString("name"), data.getInteger("id"),state);
 		if (dynamic == null) {
-			throw new BusiException("dynamicId不存在");
+			throw new BusiException("该动态不存在");
 		}
 		return dynamic;
 	}
@@ -217,7 +217,7 @@ public class DynamicServiceImpl implements DynamicService {
 		dynamic dynamic = dynamicMapper.selectByTypeAndIdAndEmployeeId(data.getString("name"), data.getInteger("id"),
 				data.getInteger("employeeId"),stateSX,stateSB);
 		if (dynamic == null) {
-			throw new BusiException("dynamicId不存在");
+			throw new BusiException("该动态不存在");
 		}
 		return dynamic;
 	}
@@ -263,7 +263,7 @@ public class DynamicServiceImpl implements DynamicService {
 	public Integer setStateAbnormal(JSONObject data) {
 		dynamic dynamic = dynamicMapper.selectByPrimaryKey(data.getInteger("dynamicId"));
 		if(dynamic == null) {
-			throw new BusiException("该dynamicId不存在");
+			throw new BusiException("该动态不存在");
 		}else if(dynamic.getState() != dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核失败", data.getInteger("companyId"))) {
 			throw new BusiException("该申请不能进行申诉");
 		}
@@ -305,7 +305,7 @@ public class DynamicServiceImpl implements DynamicService {
 	public Integer setStateAgain(JSONObject data) {
 		dynamic dynamic = dynamicMapper.selectByPrimaryKey(data.getInteger("dynamicId"));
 		if(dynamic == null) {
-			throw new BusiException("该dynamicId不存在");
+			throw new BusiException("该该动态不存在");
 		}
 		dynamic.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", data.getInteger("companyId")));
 		int count = dynamicMapper.updateByPrimaryKeySelective(dynamic);

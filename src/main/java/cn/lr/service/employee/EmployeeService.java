@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.lr.dto.Page;
 import cn.lr.dto.employeeDTO;
+import cn.lr.po.employee;
 
 public interface EmployeeService {
 	
@@ -30,5 +31,7 @@ public interface EmployeeService {
 	public JSONObject getBusiness(JSONObject data);
 	
 	public JSONObject getDayMsg(JSONObject data);
+	
+	public employeeDTO sEmployeeDTO(employee employee);
 	
 }

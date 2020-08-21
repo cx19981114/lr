@@ -161,7 +161,7 @@ public class TaskServiceImpl implements TaskService {
 		for (int i = 0; i < list.length; i++) {
 			employeeTask employeeTask = employeeTaskMapper.selectByEmployee(Integer.valueOf(list[i]));
 			if (employeeTask == null) {
-				throw new BusiException("employeeTask中不存在该职员");
+				throw new BusiException("该任务中不存在该职员");
 			}
 			if (isAdd) {
 				if (prevType == dictMapper.selectByCodeAndStateName(PRETASK_TYPE, "赋能思维",companyId)) {

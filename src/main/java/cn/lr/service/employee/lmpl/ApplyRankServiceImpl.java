@@ -268,7 +268,7 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 	public void setState(Integer dynamicId, Integer state, Integer checkId,Integer companyId) {
 		dynamic dynamic = dynamicMapper.selectByPrimaryKey(dynamicId);
 		if (dynamic == null || dynamic.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",companyId)) {
-			throw new BusiException("该dynamicId不存在");
+			throw new BusiException("该动态不存在");
 		}
 		dynamic.setCheckId(checkId);
 		dynamic.setState(state);
@@ -609,7 +609,7 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 				employee employee2 = employeeMapper.selectByPrimaryKey(Integer.valueOf(leaderId));
 				if (employee2 == null
 						|| employee2.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"))) {
-					throw new BusiException("该employeeId不存在");
+					throw new BusiException("该职员不存在");
 				}
 				employeeDTO.setLeaderName(employee2.getName());
 				employeeDTO.setLeaderId(Integer.valueOf(leaderId));

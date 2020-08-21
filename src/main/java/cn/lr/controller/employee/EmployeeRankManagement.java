@@ -28,58 +28,58 @@ public class EmployeeRankManagement {
 	@PostMapping("/getEmployeeRankByCompany")
 	@ResponseBody
 	public String getEmployeeRankByCompany(@RequestBody String data, HttpSession session) {
-		LoggerUtil.LOGGER.info("-------------enter 根据公司id获取所有职员积分信息--------------------");
+		LoggerUtil.LOGGER.info("-------------enter 根据公司获取所有职员积分信息--------------------");
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
 		dataJson.put("companyId", session.getAttribute("companyId"));
 		try {
 			Page<EmployeeRankDTO> employeeRanks = EmployeeRankService.getEmployeeRankByCompany(dataJson);
-			return ResultJsonUtil.toJsonString(200, employeeRanks, "根据公司id获取所有职员积分信息成功", session.getId());
+			return ResultJsonUtil.toJsonString(200, employeeRanks, "根据公司获取所有职员积分信息成功", session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());
 		} catch (Exception e) {
 			return ResultJsonUtil.toJsonString(404, null, e.getMessage(), session.getId());
 		} finally {
-			LoggerUtil.LOGGER.info("-------------end 根据公司id获取所有职员积分信息--------------------");
+			LoggerUtil.LOGGER.info("-------------end 根据公司获取所有职员积分信息--------------------");
 		}
 	}
 	@PostMapping("/getEmployeeRankByEmployee")
 	@ResponseBody
 	public String getEmployeeRankByEmployee(@RequestBody String data, HttpSession session) {
-		LoggerUtil.LOGGER.info("-------------enter 根据职员id获取积分信息--------------------");
+		LoggerUtil.LOGGER.info("-------------enter 根据职员获取积分信息--------------------");
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
 		dataJson.put("companyId", session.getAttribute("companyId"));
 		try {
 			EmployeeRankDTO employeeRank = EmployeeRankService.getEmployeeRankByEmployee(dataJson);
-			return ResultJsonUtil.toJsonString(200, employeeRank, "根据职员id获取积分信息成功", session.getId());
+			return ResultJsonUtil.toJsonString(200, employeeRank, "根据职员获取积分信息成功", session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());
 		} catch (Exception e) {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误", session.getId());
 		} finally {
-			LoggerUtil.LOGGER.info("-------------end 根据职员id获取积分信息--------------------");
+			LoggerUtil.LOGGER.info("-------------end 根据职员获取积分信息--------------------");
 		}
 	}
 	@PostMapping("/getEmployeeRankFrist")
 	@ResponseBody
 	public String getEmployeeRankFrist(@RequestBody String data, HttpSession session) {
-		LoggerUtil.LOGGER.info("-------------enter 根据公司id获取排名第一职员姓名--------------------");
+		LoggerUtil.LOGGER.info("-------------enter 根据公司获取排名第一职员姓名--------------------");
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
 		dataJson.put("companyId", session.getAttribute("companyId"));
 		try {
 			String employee = EmployeeRankService.getEmployeeRankFrist(dataJson);
-			return ResultJsonUtil.toJsonString(200, employee, "根据公司id获取排名第一职员姓名", session.getId());
+			return ResultJsonUtil.toJsonString(200, employee, "根据公司获取排名第一职员姓名", session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());
 		} catch (Exception e) {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误", session.getId());
 		} finally {
-			LoggerUtil.LOGGER.info("-------------end 根据公司id获取排名第一职员姓名--------------------");
+			LoggerUtil.LOGGER.info("-------------end 根据公司获取排名第一职员姓名--------------------");
 		}
 	}
 }

@@ -107,13 +107,21 @@
    <select id="selectByCodeAndStateName" resultType="java.lang.Integer">
     select stateCode
     from tb_dict
-    where code = #{code} and stateName = #{stateName} and companyId = #{companyId};
+    where code = #{code} 
+     <if test="stateName != null">
+        and stateName = #{stateName}
+     </if>  
+     and companyId = #{companyId};
   </select>
   
    <select id="selectByCodeAndStateCode" resultType="string">
     select stateName
     from tb_dict
-    where code = #{code} and stateCode = #{stateCode} and companyId = #{companyId};
+    where code = #{code} 
+    <if test="stateCode != null">
+        and stateCode = #{stateCode}
+     </if> 
+     and companyId = #{companyId};
   </select>
   
    <select id="selectByName" resultMap="BaseResultMap">

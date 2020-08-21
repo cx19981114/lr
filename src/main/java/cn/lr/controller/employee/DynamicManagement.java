@@ -30,20 +30,20 @@ public class DynamicManagement {
 	@PostMapping("/getDynamic")
 	@ResponseBody
 	public String getDynamic(@RequestBody String data, HttpSession session) {
-		LoggerUtil.LOGGER.info("-------------enter 根据Id获取动态信息--------------------");
+		LoggerUtil.LOGGER.info("-------------enter 获取动态信息--------------------");
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
 		dataJson.put("companyId", session.getAttribute("companyId"));
 		try {
 			dynamic dynamic = DynamicService.getDynamic(dataJson);
-			return ResultJsonUtil.toJsonString(200, dynamic, "根据Id获取动态成功", session.getId());
+			return ResultJsonUtil.toJsonString(200, dynamic, "获取动态成功", session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());
 		} catch (Exception e) {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误", session.getId());
 		} finally {
-			LoggerUtil.LOGGER.info("-------------end 根据Id获取动态信息--------------------");
+			LoggerUtil.LOGGER.info("-------------end 获取动态信息--------------------");
 		}
 	}
 	@PostMapping("/getDynamicByCheck")
@@ -125,20 +125,20 @@ public class DynamicManagement {
 	@PostMapping("/setStateAbnormal")
 	@ResponseBody
 	public String setStateAbnormal(@RequestBody String data, HttpSession session) {
-		LoggerUtil.LOGGER.info("-------------enter 根据dynamicId获取异常申诉-------------------");
+		LoggerUtil.LOGGER.info("-------------enter 获取异常申诉-------------------");
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
 		dataJson.put("companyId", session.getAttribute("companyId"));
 		try {
 			Integer idInteger = DynamicService.setStateAbnormal(dataJson);
-			return ResultJsonUtil.toJsonString(200, idInteger, "根据dynamicId获取异常申诉成功", session.getId());
+			return ResultJsonUtil.toJsonString(200, idInteger, "获取异常申诉成功", session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());
 		} catch (Exception e) {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误", session.getId());
 		} finally {
-			LoggerUtil.LOGGER.info("-------------end 根据dynamicId获取异常申诉--------------------");
+			LoggerUtil.LOGGER.info("-------------end 获取异常申诉--------------------");
 		}
 	}
 	@PostMapping("/getAbnormalDynamic")

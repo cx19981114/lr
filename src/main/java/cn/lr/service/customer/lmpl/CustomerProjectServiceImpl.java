@@ -154,7 +154,7 @@ public class CustomerProjectServiceImpl implements CustomerProjectService {
 	public customerProject getCustomerProject(JSONObject data) {
 		customerProject customerProject = customerProjectMapper.selectByPrimaryKey(data.getInteger("customerProjectId"));
 		if(customerProject == null || customerProject.getState() != dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"))) {
-			throw new BusiException("该customerProjectId不存在");
+			throw new BusiException("该客户项目不存在");
 		}
 		return customerProject;
 	}
@@ -353,7 +353,7 @@ public class CustomerProjectServiceImpl implements CustomerProjectService {
 	public JSONObject getCustomerProjectDetail(JSONObject data) throws ParseException {
 		customerProject customerProject = customerProjectMapper.selectByPrimaryKey(data.getInteger("customerProjectId"));
 		if(customerProject == null || customerProject.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"))) {
-			throw new BusiException("该customerProjectId不存在");
+			throw new BusiException("该客户项目不存在");
 		}
 		JSONObject dataJSonDynamic = new JSONObject();
 		dataJSonDynamic.put("name", Type);
@@ -363,6 +363,7 @@ public class CustomerProjectServiceImpl implements CustomerProjectService {
 		dataJSonDynamic.put("dynamicId", dynamic.getId());
 		
 		JSONObject dataJson = new JSONObject();
+//		dataJson.put("customerProject", this.sCustomerProjectDetailDTO(customerProject));
 		dataJson.put("order", this.sCustomerProjectDetailDTO(customerProject));
 		dataJson.put("dynamicId", dynamic.getId());
 		dataJson.put("ApplyRankDTO", ApplyRankService.getApplyRankByDynamic(dataJSonDynamic));

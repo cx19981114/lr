@@ -107,39 +107,39 @@ public class EmployeeApplyManagement {
 	@PostMapping("/getEmployeeApply")
 	@ResponseBody
 	public String getEmployeeApply(@RequestBody String data, HttpSession session) {
-		LoggerUtil.LOGGER.info("-------------enter 根据id获取申请信息--------------------");
+		LoggerUtil.LOGGER.info("-------------enter 获取申请信息--------------------");
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
 		dataJson.put("companyId", session.getAttribute("companyId"));
 		try {
 			JSONObject employeeApply = EmployeeApplyService.getEmployeeApply(dataJson);
-			return ResultJsonUtil.toJsonString(200, employeeApply, "根据id获取申请信息成功", session.getId());
+			return ResultJsonUtil.toJsonString(200, employeeApply, "获取申请信息成功", session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());
 		} catch (Exception e) {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误", session.getId());
 		} finally {
-			LoggerUtil.LOGGER.info("-------------end 根据id获取申请信息--------------------");
+			LoggerUtil.LOGGER.info("-------------end 获取申请信息--------------------");
 		}
 	}
 	@PostMapping("/getEmployeeApplyList")
 	@ResponseBody
 	public String getEmployeeApplyList(@RequestBody String data, HttpSession session) {
-		LoggerUtil.LOGGER.info("-------------enter 根据职员id获取申请信息--------------------");
+		LoggerUtil.LOGGER.info("-------------enter 根据职员获取申请信息--------------------");
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
 		dataJson.put("companyId", session.getAttribute("companyId"));
 		try {
 			Page<EmployeeApplyDTO> employeeApplys = EmployeeApplyService.getEmployeeApplyByEmployee(dataJson);
-			return ResultJsonUtil.toJsonString(200, employeeApplys, "根据职员id获取申请信息成功", session.getId());
+			return ResultJsonUtil.toJsonString(200, employeeApplys, "根据职员获取申请信息成功", session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());
 		} catch (Exception e) {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误", session.getId());
 		} finally {
-			LoggerUtil.LOGGER.info("-------------end 根据职员id获取申请信息--------------------");
+			LoggerUtil.LOGGER.info("-------------end 根据职员获取申请信息--------------------");
 		}
 	}
 	@PostMapping("/affirmEmployeeApply")

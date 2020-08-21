@@ -217,7 +217,7 @@ public class CustomerPerformanceServiceImpl implements CustomerPerformanceServic
 	public customerPerformance getCustomerPerformance(JSONObject data) {
 		customerPerformance customerPerformance = customerPerformanceMapper.selectByPrimaryKey(data.getInteger("customerPerformanceId"));
 		if(customerPerformance == null || customerPerformance.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"))) {
-			throw new BusiException("该customerPerformanceId不存在"); 
+			throw new BusiException("该客户业绩不存在"); 
 		}
 		return customerPerformance;
 	}
@@ -318,7 +318,7 @@ public class CustomerPerformanceServiceImpl implements CustomerPerformanceServic
 	public JSONObject getCustomerPerformanceDetail(JSONObject data) throws ParseException {
 		customerPerformance customerPerformance = customerPerformanceMapper.selectByPrimaryKey(data.getInteger("customerPerformanceId"));
 		if(customerPerformance == null || customerPerformance.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"))) {
-			throw new BusiException("该customerPerformanceId不存在");
+			throw new BusiException("该客户业绩不存在");
 		}
 		JSONObject dataJSonDynamic = new JSONObject();
 		dataJSonDynamic.put("name", dictMapper.selectByCodeAndStateCode(CUSTOMERPERFORMAN_TYPE, customerPerformance.getType(), data.getInteger("companyId")));
@@ -328,6 +328,7 @@ public class CustomerPerformanceServiceImpl implements CustomerPerformanceServic
 		dataJSonDynamic.put("dynamicId", dynamic.getId());
 		
 		JSONObject dataJson = new JSONObject();
+//		dataJson.put("customerPerformance", this.sCustomerPerformanceDTO(customerPerformance));
 		dataJson.put("order", this.sCustomerPerformanceDTO(customerPerformance));
 		dataJson.put("dynamicId", dynamic.getId());
 		dataJson.put("ApplyRankDTO", ApplyRankService.getApplyRankByDynamic(dataJSonDynamic));

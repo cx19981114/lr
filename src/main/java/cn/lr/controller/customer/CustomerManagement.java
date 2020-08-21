@@ -69,96 +69,96 @@ public class CustomerManagement {
 	@PostMapping("/getCustomer")
 	@ResponseBody
 	public String getCustomer(@RequestBody String data, HttpSession session) {
-		LoggerUtil.LOGGER.info("-------------enter 根据id获取客户信息--------------------");
+		LoggerUtil.LOGGER.info("-------------enter 获取客户信息--------------------");
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
 		dataJson.put("companyId", session.getAttribute("companyId"));
 		try {
 			CustomerDTO customerDTO = CustomerService.getCustomer(dataJson);
-			return ResultJsonUtil.toJsonString(200, customerDTO, "根据id获取客户信息成功",session.getId());
+			return ResultJsonUtil.toJsonString(200, customerDTO, "获取客户信息成功",session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(),session.getId());
 		} catch (Exception e) {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误",session.getId());
 		}finally {
-			LoggerUtil.LOGGER.info("-------------end 根据id获取客户信息--------------------");
+			LoggerUtil.LOGGER.info("-------------end 获取客户信息--------------------");
 		}
 	}
 	@PostMapping("/getCustomerByEmployee")
 	@ResponseBody
 	public String getCustomerByEmployee(@RequestBody String data, HttpSession session) {
-		LoggerUtil.LOGGER.info("-------------enter 根据职员id获取客户信息--------------------");
+		LoggerUtil.LOGGER.info("-------------enter 根据职员获取客户信息--------------------");
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
 		dataJson.put("companyId", session.getAttribute("companyId"));
 		try {
 			Page<JSONObject> customers = CustomerService.getCustomerByEmployee(dataJson);
-			return ResultJsonUtil.toJsonString(200, customers, "根据职员id获取客户信息成功",session.getId());
+			return ResultJsonUtil.toJsonString(200, customers, "根据职员获取客户信息成功",session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(),session.getId());
 		} catch (Exception e) {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误",session.getId());
 		}finally {
-			LoggerUtil.LOGGER.info("-------------end 根据职员id获取客户信息--------------------");
+			LoggerUtil.LOGGER.info("-------------end 根据职员获取客户信息--------------------");
 		}
 	}
 	@PostMapping("/getCustomerByEmployeeList")
 	@ResponseBody
 	public String getCustomerByEmployeeList(@RequestBody String data, HttpSession session) {
-		LoggerUtil.LOGGER.info("-------------enter 根据职员id获取客户部分信息--------------------");
+		LoggerUtil.LOGGER.info("-------------enter 根据职员获取客户部分信息--------------------");
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
 		dataJson.put("companyId", session.getAttribute("companyId"));
 		try {
 			List<JSONObject> customers = CustomerService.getCustomerByEmployeeList(dataJson);
-			return ResultJsonUtil.toJsonString(200, customers, "根据职员id获取客户部分信息成功",session.getId());
+			return ResultJsonUtil.toJsonString(200, customers, "根据职员获取客户部分信息成功",session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(),session.getId());
 		} catch (Exception e) {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误",session.getId());
 		}finally {
-			LoggerUtil.LOGGER.info("-------------end 根据职员id获取客户部分信息--------------------");
+			LoggerUtil.LOGGER.info("-------------end 根据职员获取客户部分信息--------------------");
 		}
 	}
 	@PostMapping("/getNewCustomerType")
 	@ResponseBody
 	public String getNewCustomerType(@RequestBody String data, HttpSession session) {
-		LoggerUtil.LOGGER.info("-------------enter 根据职员id获取客户类型信息--------------------");
+		LoggerUtil.LOGGER.info("-------------enter 根据职员获取客户类型信息--------------------");
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
 		dataJson.put("companyId", session.getAttribute("companyId"));
 		try {
 			List<JSONObject> customers = CustomerService.getNewCustomerTypeByEmployee(dataJson);
-			return ResultJsonUtil.toJsonString(200, customers, "根据职员id获取客户类型信息成功",session.getId());
+			return ResultJsonUtil.toJsonString(200, customers, "根据职员获取客户类型信息成功",session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(),session.getId());
 		} catch (Exception e) {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误",session.getId());
 		}finally {
-			LoggerUtil.LOGGER.info("-------------end 根据职员id获取客户类型信息--------------------");
+			LoggerUtil.LOGGER.info("-------------end 根据职员获取客户类型信息--------------------");
 		}
 	}
 	@PostMapping("/getNewCustomerList")
 	@ResponseBody
 	public String getNewCustomerList(@RequestBody String data, HttpSession session) {
-		LoggerUtil.LOGGER.info("-------------enter 根据职员id和时间段获取客户信息--------------------");
+		LoggerUtil.LOGGER.info("-------------enter 根据职员和时间段获取客户信息--------------------");
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
 		dataJson.put("companyId", session.getAttribute("companyId"));
 		try {
 			Page<JSONObject> customers = CustomerService.getNewCustomerByEmployeeTime(dataJson);
-			return ResultJsonUtil.toJsonString(200, customers, "根据职员id和时间段获取客户信息成功",session.getId());
+			return ResultJsonUtil.toJsonString(200, customers, "根据职员和时间段获取客户信息成功",session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(),session.getId());
 		} catch (Exception e) {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误",session.getId());
 		}finally {
-			LoggerUtil.LOGGER.info("-------------end 根据职员id和时间段获取客户信息--------------------");
+			LoggerUtil.LOGGER.info("-------------end 根据职员和时间段获取客户信息--------------------");
 		}
 	}
 }
