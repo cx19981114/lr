@@ -15,9 +15,11 @@
     <result column="dateTime" jdbcType="VARCHAR" property="dateTime" />
     <result column="pic" jdbcType="VARCHAR" property="pic" />
     <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="activeConsumeTime" jdbcType="VARCHAR" property="activeConsumeTime" />
+    <result column="activeServiceTime" jdbcType="VARCHAR" property="activeServiceTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, name, sex, birth, phone, employeeId, habit, plan, note, money, dateTime, state, pic
+    id, name, sex, birth, phone, employeeId, habit, plan, note, money, dateTime, state, pic, activeConsumeTime, activeServiceTime
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -33,13 +35,13 @@
     insert into tb_customer (id, name, sex, 
       birth, phone, employeeId, 
       habit, plan, note, 
-      money, dateTime, state, pic
+      money, dateTime, state, pic, activeConsumeTime, activeServiceTime
       )
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, 
       #{birth,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{employeeId,jdbcType=INTEGER}, 
       #{habit,jdbcType=VARCHAR}, #{plan,jdbcType=VARCHAR}, #{note,jdbcType=VARCHAR}, 
       #{money,jdbcType=INTEGER}, #{dateTime,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER},
-      #{pic,jdbcType=VARCHAR}
+      #{pic,jdbcType=VARCHAR}, #{activeConsumeTime,jdbcType=VARCHAR}, #{activeServiceTime,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="cn.lr.po.customer" useGeneratedKeys="true" keyProperty="id">
@@ -84,6 +86,12 @@
       <if test="pic != null">
         pic,
       </if>
+      <if test="activeConsumeTime != null">
+        activeConsumeTime,
+      </if>
+      <if test="activeServiceTime != null">
+        activeServiceTime,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -124,6 +132,12 @@
       </if>
        <if test="pic != null">
         #{pic,jdbcType=VARCHAR},
+      </if>
+       <if test="activeConsumeTime != null">
+        #{activeConsumeTime,jdbcType=VARCHAR},
+      </if>
+       <if test="activeServiceTime != null">
+        #{activeServiceTime,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -166,6 +180,12 @@
       <if test="pic != null">
         pic = #{pic,jdbcType=VARCHAR},
       </if>
+      <if test="activeConsumeTime != null">
+        activeConsumeTime = #{activeConsumeTime,jdbcType=VARCHAR},
+      </if>
+      <if test="activeServiceTime != null">
+        activeServiceTime = #{activeServiceTime,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -182,7 +202,9 @@
       money = #{money,jdbcType=INTEGER},
       dateTime = #{dateTime,jdbcType=VARCHAR},
       state = #{state,jdbcType=INTEGER},
-      pic = #{pic,jdbcType=VARCHAR}
+      pic = #{pic,jdbcType=VARCHAR},
+      activeConsumeTime = #{activeConsumeTime,jdbcType=VARCHAR},
+      activeServiceTime = #{activeServiceTime,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
   
@@ -252,5 +274,53 @@
     select count(*)
     from tb_customer
     where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and YEAR(dateTime)=YEAR(NOW())
+  </select>
+  
+     <select id="selectByConsumeMon" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_customer
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and DATE_FORMAT( activeConsumeTime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' ) limit #{page},#{size}
+  </select>
+  <select id="selectByConsumeMonCount"  resultType="Integer">
+    select count(*)
+    from tb_customer
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and DATE_FORMAT( activeConsumeTime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' )
+  </select>
+  
+   <select id="selectByConsumeQtr" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_customer
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and QUARTER(activeConsumeTime)=QUARTER(now()) limit #{page},#{size}
+  </select>
+   <select id="selectByConsumeQtrCount"  resultType="Integer">
+    select count(*)
+    from tb_customer
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state =  #{state,jdbcType=INTEGER} and QUARTER(activeConsumeTime)=QUARTER(now())
+  </select>
+  
+     <select id="selectByServiceMon" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_customer
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and DATE_FORMAT( activeServiceTime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' ) limit #{page},#{size}
+  </select>
+  <select id="selectByServiceMonCount"  resultType="Integer">
+    select count(*)
+    from tb_customer
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and DATE_FORMAT( activeServiceTime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' )
+  </select>
+  
+   <select id="selectByServiceQtr" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_customer
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and QUARTER(activeServiceTime)=QUARTER(now()) limit #{page},#{size}
+  </select>
+   <select id="selectByServiceQtrCount"  resultType="Integer">
+    select count(*)
+    from tb_customer
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state =  #{state,jdbcType=INTEGER} and QUARTER(activeServiceTime)=QUARTER(now())
   </select>
 </mapper>

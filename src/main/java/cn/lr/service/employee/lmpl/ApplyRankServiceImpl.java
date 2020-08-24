@@ -351,6 +351,7 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 				customer customer = customerMapper.selectByPrimaryKey(customerProject.getCustomerId());
 				project project = projectMapper.selectByPrimaryKey(customerProject.getProjectId());
 				customer.setMoney(customer.getMoney()-project.getMoney());
+				customer.setActiveConsumeTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
 				count = customerMapper.updateByPrimaryKeySelective(customer);
 				if (count == 0) {
 					throw new BusiException("更新customer表失败");
@@ -373,6 +374,9 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 				throw new BusiException("该顾客不存在");
 			}
 			customer.setState(state);
+			if(state == dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", companyId)) {
+				customer.setActiveConsumeTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
+			}
 			count = customerMapper.updateByPrimaryKeySelective(customer);
 			if (count == 0) {
 				throw new BusiException("修改顾客状态失败");
@@ -391,6 +395,7 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 			if(state == dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", companyId)) {
 				customer customer = customerMapper.selectByPrimaryKey(customerPerformance.getCustomerId());
 				customer.setMoney(customer.getMoney()+customerPerformance.getMoney());
+				customer.setActiveConsumeTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
 				count = customerMapper.updateByPrimaryKeySelective(customer);
 				if(count == 0) {
 					throw new BusiException("更新customer表失败");
@@ -406,6 +411,12 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 			order.setApplyState(state);
 			if(state == dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", companyId)) {
 				order.setOrderState(dictMapper.selectByCodeAndStateName(ORDER_FLOW, "未开始", companyId));
+				customer customer = customerMapper.selectByPrimaryKey(order.getCustomerId());
+				customer.setActiveServiceTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
+				count = customerMapper.updateByPrimaryKeySelective(customer);
+				if (count == 0) {
+					throw new BusiException("修改顾客活跃时间失败");
+				}
 			}
 			count = orderMapper.updateByPrimaryKeySelective(order);
 			if (count == 0) {
@@ -429,6 +440,12 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 				count = customerProjectMapper.updateByPrimaryKeySelective(customerProject);
 				if (count == 0) {
 					throw new BusiException("修改项目剩余数量失败");
+				}
+				customer customer = customerMapper.selectByPrimaryKey(customerProject.getCustomerId());
+				customer.setActiveServiceTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
+				count = customerMapper.updateByPrimaryKeySelective(customer);
+				if (count == 0) {
+					throw new BusiException("修改顾客活跃时间失败");
 				}
 			}
 		}

@@ -176,6 +176,6 @@
     select 
     <include refid="Base_Column_List" />
     from tb_employeeapply
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state > #{stateSX,jdbcType=INTEGER}  and state &lt; #{stateCG,jdbcType=INTEGER} and TO_DAYS( endDate ) - TO_DAYS( now()) &lt;= 1
+    where employeeId = #{employeeId,jdbcType=INTEGER} and state > #{stateSX,jdbcType=INTEGER}  and state &lt; #{stateCG,jdbcType=INTEGER} and TO_DAYS( startDate ) - TO_DAYS( now()) &lt;= 1
   </select>
 </mapper>

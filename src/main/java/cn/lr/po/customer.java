@@ -27,7 +27,27 @@ public class customer {
 
     private String pic;
     
-    public String getPic() {
+    private String activeConsumeTime;
+    
+    private String activeServiceTime;
+
+	public String getActiveConsumeTime() {
+		return activeConsumeTime;
+	}
+
+	public void setActiveConsumeTime(String activeConsumeTime) {
+		this.activeConsumeTime = activeConsumeTime;
+	}
+
+	public String getActiveServiceTime() {
+		return activeServiceTime;
+	}
+
+	public void setActiveServiceTime(String activeServiceTime) {
+		this.activeServiceTime = activeServiceTime;
+	}
+
+	public String getPic() {
 		return pic;
 	}
 

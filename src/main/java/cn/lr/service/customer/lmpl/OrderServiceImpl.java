@@ -690,9 +690,6 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public Integer annulOrderFinish(JSONObject data) {
 		order order = orderMapper.selectByPrimaryKey(data.getInteger("orderId"));
-		if(order.getApplyOrderState() != dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核",data.getInteger("companyId"))) {
-			throw new BusiException("该预约完成已无法撤回");
-		}
 		order.setApplyOrderState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核失败",data.getInteger("companyId")));
 		int count = orderMapper.updateByPrimaryKeySelective(order);
 		if (count == 0) {

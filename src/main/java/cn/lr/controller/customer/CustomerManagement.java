@@ -161,4 +161,42 @@ public class CustomerManagement {
 			LoggerUtil.LOGGER.info("-------------end 根据职员和时间段获取客户信息--------------------");
 		}
 	}
+	@PostMapping("/getCustomerByService")
+	@ResponseBody
+	public String getCustomerByService(@RequestBody String data, HttpSession session) {
+		LoggerUtil.LOGGER.info("-------------enter 根据职员获取最近服务顾客--------------------");
+		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
+		LoggerUtil.LOGGER.debug("data : {}", data);
+		JSONObject dataJson = JSON.parseObject(data);
+		dataJson.put("companyId", session.getAttribute("companyId"));
+		try {
+			Page<JSONObject> customers = CustomerService.getCustomerByService(dataJson);
+			return ResultJsonUtil.toJsonString(200, customers, "根据职员获取最近服务顾客成功",session.getId());
+		} catch (BusiException e) {
+			return ResultJsonUtil.toJsonString(101, null, e.getMessage(),session.getId());
+		} catch (Exception e) {
+			return ResultJsonUtil.toJsonString(404, null, "系统未知错误",session.getId());
+		}finally {
+			LoggerUtil.LOGGER.info("-------------end 根据职员获取最近服务顾客--------------------");
+		}
+	}
+	@PostMapping("/getCustomerByConsume")
+	@ResponseBody
+	public String getCustomerByConsume(@RequestBody String data, HttpSession session) {
+		LoggerUtil.LOGGER.info("-------------enter 根据职员获取最近消费顾客--------------------");
+		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
+		LoggerUtil.LOGGER.debug("data : {}", data);
+		JSONObject dataJson = JSON.parseObject(data);
+		dataJson.put("companyId", session.getAttribute("companyId"));
+		try {
+			Page<JSONObject> customers = CustomerService.getCustomerByConsume(dataJson);
+			return ResultJsonUtil.toJsonString(200, customers, "根据职员获取最近消费顾客成功",session.getId());
+		} catch (BusiException e) {
+			return ResultJsonUtil.toJsonString(101, null, e.getMessage(),session.getId());
+		} catch (Exception e) {
+			return ResultJsonUtil.toJsonString(404, null, "系统未知错误",session.getId());
+		}finally {
+			LoggerUtil.LOGGER.info("-------------end 根据职员获取最近消费顾客--------------------");
+		}
+	}
 }

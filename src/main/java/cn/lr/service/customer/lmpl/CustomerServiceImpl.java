@@ -249,6 +249,112 @@ public class CustomerServiceImpl implements CustomerService {
 		page.setList(jsonObjects);
 		return page;
 	}
+	@Override
+	public Page<JSONObject> getCustomerByConsume(JSONObject data) throws ParseException {
+		Integer employeeId = data.getInteger("employeeId");
+		Integer pageNum = data.getInteger("pageNum");
+		String type = data.getString("type");
+		String search = data.getString("search");
+		Integer state = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		List<customer> customers = new ArrayList<>();
+		List<JSONObject> jsonObjects = new ArrayList<>();
+		int total = 0;
+		if(type.equals("mon")) {
+			customers = customerMapper.selectByConsumeMon(employeeId,state,(pageNum-1)*PAGESIZE,PAGESIZE);
+			total = customerMapper.selectByConsumeMonCount(employeeId,state);
+		}else if(type.equals("qtr")) {
+			customers = customerMapper.selectByConsumeQtr(employeeId,state,(pageNum-1)*PAGESIZE,PAGESIZE);
+			total = customerMapper.selectByConsumeQtrCount(employeeId,state);
+		}
+		int count = 0;
+		for(customer c:customers) {
+			if(!"".equals(search)) {
+				if(c.getName().contains(search)) {
+					count++;
+					JSONObject customer = new JSONObject();
+					customer.put("id", c.getId());
+					customer.put("pic", c.getPic());
+					customer.put("name", c.getName());
+					customer.put("phone", c.getPhone());
+					customer.put("dateTime", TimeFormatUtil.stringToTimeStamp(c.getActiveConsumeTime()));
+					customer.put("employeeName", employeeMapper.selectByPrimaryKey(c.getEmployeeId()).getName());
+					jsonObjects.add(customer);
+				}
+			}else {
+				JSONObject customer = new JSONObject();
+				customer.put("id", c.getId());
+				customer.put("pic", c.getPic());
+				customer.put("name", c.getName());
+				customer.put("phone", c.getPhone());
+				customer.put("employeeName", employeeMapper.selectByPrimaryKey(c.getEmployeeId()).getName());
+				customer.put("dateTime", TimeFormatUtil.stringToTimeStamp(c.getActiveConsumeTime()));
+				jsonObjects.add(customer);
+			}
+		}
+		Page<JSONObject> page = new Page<JSONObject>();
+		page.setPageNum(pageNum);
+		page.setPageSize(PAGESIZE);
+		if(!"".equals(search)) {
+			page.setTotal(count);
+		}else {
+			page.setTotal(total);
+		}
+		page.setList(jsonObjects);
+		return page;
+	}
+	@Override
+	public Page<JSONObject> getCustomerByService(JSONObject data) throws ParseException {
+		Integer employeeId = data.getInteger("employeeId");
+		Integer pageNum = data.getInteger("pageNum");
+		String type = data.getString("type");
+		String search = data.getString("search");
+		Integer state = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		List<customer> customers = new ArrayList<>();
+		List<JSONObject> jsonObjects = new ArrayList<>();
+		int total = 0;
+		if(type.equals("mon")) {
+			customers = customerMapper.selectByServiceMon(employeeId,state,(pageNum-1)*PAGESIZE,PAGESIZE);
+			total = customerMapper.selectByServiceMonCount(employeeId,state);
+		}else if(type.equals("qtr")) {
+			customers = customerMapper.selectByServiceQtr(employeeId,state,(pageNum-1)*PAGESIZE,PAGESIZE);
+			total = customerMapper.selectByServiceQtrCount(employeeId,state);
+		}
+		int count = 0;
+		for(customer c:customers) {
+			if(!"".equals(search)) {
+				if(c.getName().contains(search)) {
+					count++;
+					JSONObject customer = new JSONObject();
+					customer.put("id", c.getId());
+					customer.put("pic", c.getPic());
+					customer.put("name", c.getName());
+					customer.put("phone", c.getPhone());
+					customer.put("employeeName", employeeMapper.selectByPrimaryKey(c.getEmployeeId()).getName());
+					customer.put("dateTime", TimeFormatUtil.stringToTimeStamp(c.getActiveServiceTime()));
+					jsonObjects.add(customer);
+				}
+			}else {
+				JSONObject customer = new JSONObject();
+				customer.put("id", c.getId());
+				customer.put("pic", c.getPic());
+				customer.put("name", c.getName());
+				customer.put("phone", c.getPhone());
+				customer.put("employeeName", employeeMapper.selectByPrimaryKey(c.getEmployeeId()).getName());
+				customer.put("dateTime", TimeFormatUtil.stringToTimeStamp(c.getActiveServiceTime()));
+				jsonObjects.add(customer);
+			}
+		}
+		Page<JSONObject> page = new Page<JSONObject>();
+		page.setPageNum(pageNum);
+		page.setPageSize(PAGESIZE);
+		if(!"".equals(search)) {
+			page.setTotal(count);
+		}else {
+			page.setTotal(total);
+		}
+		page.setList(jsonObjects);
+		return page;
+	}
 	public CustomerDTO sCustomerDTO(customer customer) throws ParseException {
 		employee employee = employeeMapper.selectByPrimaryKey(customer.getEmployeeId());
 		Integer stateInteger = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", employee.getCompanyId());

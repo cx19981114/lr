@@ -190,9 +190,6 @@ public class CustomerProjectServiceImpl implements CustomerProjectService {
 	@Override
 	public Integer annulCustomerProject(JSONObject data) {
 		customerProject customerProject = customerProjectMapper.selectByPrimaryKey(data.getInteger("customerProjectId"));
-		if(customerProject.getState() != dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核",data.getInteger("companyId"))) {
-			throw new BusiException("该服务顾客项目已无法撤回");
-		}
 		customerProject.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核失败",data.getInteger("companyId")));
 		int count = customerProjectMapper.updateByPrimaryKeySelective(customerProject);
 		if (count == 0) {

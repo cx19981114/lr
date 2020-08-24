@@ -157,9 +157,6 @@ public class EmployeeLogTomorrowServiceImpl implements EmployeeLogTomorrowServic
 	@Override
 	public Integer annulEmployeeLogTomorrow(JSONObject data) {
 		employeeLogTomorrow record = employeeLogTomorrowMapper.selectByPrimaryKey(data.getInteger("employeeLogTomorrowId"));
-		if(record.getState() != dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核",data.getInteger("companyId"))) {
-			throw new BusiException("该申请已无法撤回");
-		}
 		record.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核失败",data.getInteger("companyId")));
 		int count = employeeLogTomorrowMapper.updateByPrimaryKeySelective(record);
 		if (count == 0) {

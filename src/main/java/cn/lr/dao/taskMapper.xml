@@ -197,6 +197,32 @@
      </if>  
     <if test="type != null">
         and type = #{type,jdbcType=INTEGER}
+     </if>
+     and state = #{state}
+  </select>
+   <select id="selectByPostAndStep" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_task
+    where postIdList like concat('%',#{postId},'%') 
+    <if test="prevType != null">
+        and prevType = #{prevType,jdbcType=INTEGER}
      </if>  
+    <if test="type != null">
+        and type = #{type,jdbcType=INTEGER}
+     </if> 
+     and step >= #{step} and state = #{state}
+  </select>
+   <select id="selectByPostAndStepMax" resultType="Integer">
+    select max(step)
+    from tb_task
+    where postIdList like concat('%',#{postId},'%') 
+    <if test="prevType != null">
+        and prevType = #{prevType,jdbcType=INTEGER}
+     </if>  
+    <if test="type != null">
+        and type = #{type,jdbcType=INTEGER}
+     </if> 
+     and state = #{state} 
   </select>
 </mapper>

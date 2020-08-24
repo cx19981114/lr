@@ -335,9 +335,6 @@ public class EmployeeRestServiceImpl implements EmployeeRestService {
 	@Override
 	public Integer annulEmployeeRest(JSONObject data) {
 		employeeRest employeeRest = employeeRestMapper.selectByPrimaryKey(data.getInteger("employeeRestId"));
-		if(employeeRest.getState() != dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核",data.getInteger("companyId"))) {
-			throw new BusiException("该行程已无法撤回");
-		}
 		employeeRest.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核失败",data.getInteger("companyId")));
 		int count = employeeRestMapper.updateByPrimaryKeySelective(employeeRest);
 		if (count == 0) {

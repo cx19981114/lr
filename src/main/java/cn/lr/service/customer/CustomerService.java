@@ -27,4 +27,7 @@ public interface CustomerService {
 	
 	public List<JSONObject> getCustomerByEmployeeList(JSONObject data);
 	
+	public Page<JSONObject> getCustomerByService(JSONObject data)  throws ParseException;
+	
+	public Page<JSONObject> getCustomerByConsume(JSONObject data)  throws ParseException;
 }

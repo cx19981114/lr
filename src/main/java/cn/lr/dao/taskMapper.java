@@ -28,5 +28,12 @@ public interface taskMapper {
 	task selectByCompanyAndPrevTypeAndTypeAndStep(@Param("companyId") Integer companyId,@Param("prevType") Integer prevType,
 	    		@Param("type") Integer type);
 	
-	List<task> selectByPost(@Param("postId")Integer postId,@Param("prevType")Integer prevType,@Param("type")Integer type);
+	List<task> selectByPost(@Param("postId")Integer postId,@Param("prevType")Integer prevType,
+			@Param("type")Integer type,@Param("state")Integer state);
+	
+	List<task> selectByPostAndStep(@Param("postId")Integer postId,@Param("prevType")Integer prevType,
+			@Param("type")Integer type,@Param("state")Integer state,@Param("step")Integer step);
+	
+	Integer selectByPostAndStepMax(@Param("postId")Integer postId,@Param("prevType")Integer prevType,
+			@Param("type")Integer type,@Param("state")Integer state);
 }

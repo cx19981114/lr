@@ -73,7 +73,7 @@ public class LoginServiceImpl implements LoginService {
 		String [] params = SendMessageUtil.sendMsgByTxPlatform(phone);
 		LoggerUtil.LOGGER.info("发送验证码成功");
 		employee.setVerficationCode(params[0]);
-		employee.setValidTime(TimeFormatUtil.timeStampToString(new Date().getTime()+ 180000));
+		employee.setValidTime(TimeFormatUtil.timeStampToString(new Date().getTime()+ 60000));
 		int count = employeeMapper.updateByPrimaryKeySelective(employee);
 		LoggerUtil.LOGGER.info("更新表成功");
 		if(count == 0) {

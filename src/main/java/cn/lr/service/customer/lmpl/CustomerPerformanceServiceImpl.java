@@ -106,9 +106,6 @@ public class CustomerPerformanceServiceImpl implements CustomerPerformanceServic
 	@Override
 	public Integer annulCustomerPerformance(JSONObject data) {
 		customerPerformance customerPerformance = customerPerformanceMapper.selectByPrimaryKey(data.getInteger("customerPerformanceId"));
-		if(customerPerformance.getState() != dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核",data.getInteger("companyId"))) {
-			throw new BusiException("该业绩已无法撤回");
-		}
 		customerPerformance.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核失败",data.getInteger("companyId")));
 		int count = customerPerformanceMapper.updateByPrimaryKeySelective(customerPerformance);
 		if (count == 0) {

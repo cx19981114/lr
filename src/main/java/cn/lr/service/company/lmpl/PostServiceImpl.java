@@ -18,7 +18,6 @@ import cn.lr.dao.taskMapper;
 import cn.lr.dto.Page;
 import cn.lr.dto.PostDTO;
 import cn.lr.exception.BusiException;
-import cn.lr.po.employeeTask;
 import cn.lr.po.post;
 import cn.lr.po.postTask;
 import cn.lr.po.task;
@@ -85,64 +84,64 @@ public class PostServiceImpl implements PostService {
 		if (count == 0) {
 			throw new BusiException("更新post表失败");
 		}
-		String prevType = data.getString("prevType");
-		String type = data.getString("type");
-		String taskIdList = data.getString("taskIdList");
-		if (!"".equals(prevType) && prevType != null) {
-			JSONObject taskJsonObject = TaskService.testType(data);
-			List<task> taskList = taskMapper.selectByPost(test2.getId(), taskJsonObject.getInteger("prevType"),
-					taskJsonObject.getInteger("type"));
-			for (task t : taskList) {
-				t.setPostIdList(t.getPostIdList().replace(test2.getId() + "-", ""));
-				count = taskMapper.updateByPrimaryKeySelective(t);
-				if (count == 0) {
-					throw new BusiException("更新task表失败");
-				}
-			}
-
-			if (!"".equals(taskIdList) && taskIdList != null) {
-				String[] taskId = taskIdList.split("-");
-				for (int i = 0; i < taskId.length; i++) {
-					System.out.println(Integer.valueOf(taskId[i]));
-					task task = taskMapper.selectByPrimaryKey(Integer.valueOf(taskId[i]));
-					if (task == null || task.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",
-							test2.getCompanyId())) {
-						throw new BusiException("该任务不存在");
-					}
-					if (task.getPrevType() != dictMapper.selectByCodeAndStateName(PRETASK_TYPE, prevType,
-							test2.getCompanyId())) {
-						throw new BusiException("该任务不属于" + prevType);
-					}
-					if ("任务清单".equals(prevType)) {
-						if (task.getType() != dictMapper.selectByCodeAndStateName(TASK_TYPE, type,
-								test2.getCompanyId())) {
-							throw new BusiException("该任务不属于" + type);
-						}
-					}
-					task.setPostIdList(test2.getId() + "-" + task.getPostIdList());
-					count = taskMapper.updateByPrimaryKeySelective(task);
-					if (count == 0) {
-						throw new BusiException("更新task表失败");
-					}
-				}
-				postTask postTask = postTaskMapper.selectByPost(test2.getId());
-				if ("赋能思维".equals(prevType)) {
-					postTask.setTaskIdListFN(data.getString("taskIdList") + "-");
-				} else if ("任务清单".equals(prevType)) {
-					if ("日流程".equals(type)) {
-						postTask.setTaskIdListRWDay(data.getString("taskIdList") + "-");
-					} else if ("周安排".equals(type)) {
-						postTask.setTaskIdListRWWeek(data.getString("taskIdList") + "-");
-					} else if ("月计划".equals(type)) {
-						postTask.setTaskIdListRWMon(data.getString("taskIdList") + "-");
-					}
-				}
-				count = postTaskMapper.updateByPrimaryKeySelective(postTask);
-				if (count == 0) {
-					throw new BusiException("更新postTask表失败");
-				}
-			}
-		}
+//		String prevType = data.getString("prevType");
+//		String type = data.getString("type");
+//		String taskIdList = data.getString("taskIdList");
+//		if (!"".equals(prevType) && prevType != null) {
+//			JSONObject taskJsonObject = TaskService.testType(data);
+//			List<task> taskList = taskMapper.selectByPost(test2.getId(), taskJsonObject.getInteger("prevType"),
+//					taskJsonObject.getInteger("type"),state);
+//			for (task t : taskList) {
+//				t.setPostIdList(t.getPostIdList().replace(test2.getId() + "-", ""));
+//				count = taskMapper.updateByPrimaryKeySelective(t);
+//				if (count == 0) {
+//					throw new BusiException("更新task表失败");
+//				}
+//			}
+//
+//			if (!"".equals(taskIdList) && taskIdList != null) {
+//				String[] taskId = taskIdList.split("-");
+//				for (int i = 0; i < taskId.length; i++) {
+//					System.out.println(Integer.valueOf(taskId[i]));
+//					task task = taskMapper.selectByPrimaryKey(Integer.valueOf(taskId[i]));
+//					if (task == null || task.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",
+//							test2.getCompanyId())) {
+//						throw new BusiException("该任务不存在");
+//					}
+//					if (task.getPrevType() != dictMapper.selectByCodeAndStateName(PRETASK_TYPE, prevType,
+//							test2.getCompanyId())) {
+//						throw new BusiException("该任务不属于" + prevType);
+//					}
+//					if ("任务清单".equals(prevType)) {
+//						if (task.getType() != dictMapper.selectByCodeAndStateName(TASK_TYPE, type,
+//								test2.getCompanyId())) {
+//							throw new BusiException("该任务不属于" + type);
+//						}
+//					}
+//					task.setPostIdList(test2.getId() + "-" + task.getPostIdList());
+//					count = taskMapper.updateByPrimaryKeySelective(task);
+//					if (count == 0) {
+//						throw new BusiException("更新task表失败");
+//					}
+//				}
+//				postTask postTask = postTaskMapper.selectByPost(test2.getId());
+//				if ("赋能思维".equals(prevType)) {
+//					postTask.setTaskIdListFN(data.getString("taskIdList") + "-");
+//				} else if ("任务清单".equals(prevType)) {
+//					if ("日流程".equals(type)) {
+//						postTask.setTaskIdListRWDay(data.getString("taskIdList") + "-");
+//					} else if ("周安排".equals(type)) {
+//						postTask.setTaskIdListRWWeek(data.getString("taskIdList") + "-");
+//					} else if ("月计划".equals(type)) {
+//						postTask.setTaskIdListRWMon(data.getString("taskIdList") + "-");
+//					}
+//				}
+//				count = postTaskMapper.updateByPrimaryKeySelective(postTask);
+//				if (count == 0) {
+//					throw new BusiException("更新postTask表失败");
+//				}
+//			}
+//		}
 		return test2.getId();
 	}
 
@@ -225,13 +224,13 @@ public class PostServiceImpl implements PostService {
 		postDTO.setPermissionList(post.getPermissionList());
 		postDTO.setPic(post.getPic());
 		postDTO.setState(dictMapper.selectByCodeAndStateCode(DATA_TYPE, post.getState(), post.getCompanyId()));
-		postDTO.setTaskFN(postTask.getTaskIdListFN() == null ? null
+		postDTO.setTaskFN(postTask.getTaskIdListFN() == null || "".equals(postTask.getTaskIdListFN()) ? null
 				: postTask.getTaskIdListFN().substring(0, postTask.getTaskIdListFN().length() - 1));
-		postDTO.setTaskRWDay(postTask.getTaskIdListRWDay() == null ? null
+		postDTO.setTaskRWDay(postTask.getTaskIdListRWDay() == null || "".equals(postTask.getTaskIdListRWDay())? null
 				: postTask.getTaskIdListRWDay().substring(0, postTask.getTaskIdListRWDay().length() - 1));
-		postDTO.setTaskRWWeek(postTask.getTaskIdListRWWeek() == null ? null
+		postDTO.setTaskRWWeek(postTask.getTaskIdListRWWeek() == null || "".equals(postTask.getTaskIdListRWWeek())? null
 				: postTask.getTaskIdListRWWeek().substring(0, postTask.getTaskIdListRWWeek().length() - 1));
-		postDTO.setTaskRWMon(postTask.getTaskIdListRWMon() == null ? null
+		postDTO.setTaskRWMon(postTask.getTaskIdListRWMon() == null || "".equals(postTask.getTaskIdListRWMon())? null
 				: postTask.getTaskIdListRWMon().substring(0, postTask.getTaskIdListRWMon().length() - 1));
 		return postDTO;
 	}

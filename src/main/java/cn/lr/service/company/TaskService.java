@@ -19,9 +19,11 @@ public interface TaskService {
 	
 	public JSONObject testType(JSONObject data);
 
-	public void changePostList(String idList, Integer taskId, boolean isAdd,Integer prevType,Integer type,Integer companyId);
+	public void changePostList(Integer idList, Integer taskId, Integer step,boolean isAdd, Integer prevType, Integer type,Integer companyId);
 	
-	public void changeEmployeeList(String idList, Integer taskId, boolean isAdd,Integer prevType,Integer type,Integer companyId);
+	public void changeEmployeeList(String idList, Integer taskId,Integer state, Integer step, boolean isAdd,Integer prevType,Integer type,Integer companyId);
 	
 	public Page<task> getTaskByPost(JSONObject data);
+	
+	public Integer maxStep(JSONObject data);
 }

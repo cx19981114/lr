@@ -46,4 +46,24 @@ public interface customerMapper {
 			@Param("size") Integer size);
 	
 	int selectByEmployeeIdYearCount(@Param("employeeId") Integer employeeId,@Param("state") Integer state);
+	
+	List<customer> selectByConsumeMon(@Param("employeeId") Integer employeeId,@Param("state") Integer state,@Param("page") Integer page,
+			@Param("size") Integer size);
+	
+	int selectByConsumeMonCount(@Param("employeeId") Integer employeeId,@Param("state") Integer state);
+	
+	List<customer> selectByConsumeQtr(@Param("employeeId") Integer employeeId,@Param("state") Integer state,@Param("page") Integer page,
+			@Param("size") Integer size);
+	
+	int selectByConsumeQtrCount(@Param("employeeId") Integer employeeId,@Param("state") Integer state);
+	
+	List<customer> selectByServiceMon(@Param("employeeId") Integer employeeId,@Param("state") Integer state,@Param("page") Integer page,
+			@Param("size") Integer size);
+	
+	int selectByServiceMonCount(@Param("employeeId") Integer employeeId,@Param("state") Integer state);
+	
+	List<customer> selectByServiceQtr(@Param("employeeId") Integer employeeId,@Param("state") Integer state,@Param("page") Integer page,
+			@Param("size") Integer size);
+	
+	int selectByServiceQtrCount(@Param("employeeId") Integer employeeId,@Param("state") Integer state);
 }

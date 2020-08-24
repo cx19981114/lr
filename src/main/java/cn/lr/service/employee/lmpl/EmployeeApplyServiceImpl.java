@@ -188,9 +188,6 @@ public class EmployeeApplyServiceImpl implements EmployeeApplyService {
 	@Override
 	public Integer annulEmployeeApply(JSONObject data) {
 		employeeApply employeeApply = employeeApplyMapper.selectByPrimaryKey(data.getInteger("employeeApplyId"));
-		if(employeeApply.getState() != dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核",data.getInteger("companyId"))) {
-			throw new BusiException("该申请已无法撤回");
-		}
 		employeeApply.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核失败",data.getInteger("companyId")));
 		int count = employeeApplyMapper.updateByPrimaryKeySelective(employeeApply);
 		if(count == 0) {

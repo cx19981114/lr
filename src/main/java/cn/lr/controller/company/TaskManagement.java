@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
+import cn.lr.dao.taskMapper;
 import cn.lr.dto.Page;
 import cn.lr.exception.BusiException;
 import cn.lr.po.task;
@@ -152,6 +153,26 @@ public class TaskManagement {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误",session.getId());
 		}finally {
 			LoggerUtil.LOGGER.info("-------------end 获得任务信息--------------------");
+		}
+	}
+	@PostMapping("/getMaxStep")
+	@ResponseBody
+	public String getMaxStep(@RequestBody String data, HttpSession session) {
+		LoggerUtil.LOGGER.info("-------------enter 根据岗位和任务类型获取最大任务序号--------------------");
+		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}, companyId : {}", session.getId(), session.getAttribute("employeeId"),session.getAttribute("comapnyId"));
+		LoggerUtil.LOGGER.debug("data : {}", data);
+		JSONObject dataJson = JSON.parseObject(data);
+		dataJson.put("companyId", session.getAttribute("companyId"));
+		try {
+			PostService.getPost(dataJson);
+			Integer stepInteger = TaskService.maxStep(dataJson);
+			return ResultJsonUtil.toJsonString(200, stepInteger, "根据岗位和任务类型获取最大任务序号成功",session.getId());
+		} catch (BusiException e) {
+			return ResultJsonUtil.toJsonString(101, null, e.getMessage(),session.getId());
+		} catch (Exception e) {
+			return ResultJsonUtil.toJsonString(404, null, "系统未知错误",session.getId());
+		}finally {
+			LoggerUtil.LOGGER.info("-------------end 根据岗位和任务类型获取最大任务序号--------------------");
 		}
 	}
 	

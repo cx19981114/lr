@@ -204,9 +204,6 @@ public class EmployeeAttendanceServiceImpl implements EmployeeAttendanceService 
 	public Integer annulEmployeeAttendance(JSONObject data) {
 		employeeAttendance employeeAttendance = employeeAttendanceMapper
 				.selectByPrimaryKey(data.getInteger("employeeAttendanceId"));
-		if (employeeAttendance.getState() != dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核",data.getInteger("companyId"))) {
-			throw new BusiException("该打卡已无法撤回");
-		}
 		employeeAttendance
 				.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核失败", data.getInteger("companyId")));
 		int count = employeeAttendanceMapper.updateByPrimaryKeySelective(employeeAttendance);
