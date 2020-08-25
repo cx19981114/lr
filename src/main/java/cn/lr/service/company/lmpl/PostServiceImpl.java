@@ -264,6 +264,7 @@ public class PostServiceImpl implements PostService {
 			taskJsonObject.put("id", t.getId());
 			taskJsonObject.put("name", t.getName());
 			taskJsonObject.put("content", t.getContent());
+			taskJsonObject.put("step", t.getStep());
 			taskJsonList.add(taskJsonObject);
 		}
 		return taskJsonList;

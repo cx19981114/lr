@@ -452,19 +452,16 @@ public class TaskServiceImpl implements TaskService {
 			}
 		}
 		String[] taskId = taskIdList.split("-");
+		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"));
 		System.out.println(taskId.length);
 		List<task> tasks = new ArrayList<task>();
-		int total = 0;
+		int total = taskId.length;
 		if (!taskId[0].equals("")) {
-			if (taskId.length > (pageNum - 1) * PAGESIZE) {
-				total = PAGESIZE;
-			} else {
-				total = taskId.length - (pageNum - 2) * PAGESIZE;
-			}
+			if (taskId.length > (pageNum - 1) * PAGESIZE) 
+				total = Integer.min(taskId.length,pageNum*PAGESIZE);
 			for (int i = (pageNum - 1) * PAGESIZE; i < total; i++) {
 				task task = taskMapper.selectByPrimaryKey(Integer.valueOf(taskId[i]));
-				if (task == null || task.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",
-						data.getInteger("companyId"))) {
+				if (task == null || task.getState() == state) {
 					throw new BusiException("数据有误，有任务不存在");
 				}
 				tasks.add(task);
@@ -481,7 +478,11 @@ public class TaskServiceImpl implements TaskService {
 	public Integer maxStep(JSONObject data) {
 		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
 		JSONObject dataJson = this.testType(data);
-		return taskMapper.selectByPostAndStepMax(data.getInteger("postId"), dataJson.getInteger("prevType"),
+		Integer numInteger = taskMapper.selectByPostAndStepMax(data.getInteger("postId"), dataJson.getInteger("prevType"),
 				dataJson.getInteger("type"), state);
+		if(numInteger == null) {
+			return 1;
+		}
+		return numInteger+1;
 	}
 }
