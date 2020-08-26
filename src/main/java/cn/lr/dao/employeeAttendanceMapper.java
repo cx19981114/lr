@@ -21,11 +21,11 @@ public interface employeeAttendanceMapper {
     
     employeeAttendance selectByEmployeeId(Integer employeeId);
     
-    List<employeeAttendance> selectByEmployeeId(@Param("employeeId") Integer employeeId,@Param("state") Integer state,@Param("page") Integer page,
+    List<employeeAttendance> selectByEmployeeId(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state,@Param("page") Integer page,
 			@Param("size") Integer size);
 
-	int selectByEmployeeIdCount(@Param("employeeId") Integer employeeId,@Param("state") Integer state);
+	int selectByEmployeeIdCount(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state);
 	
-	employeeAttendance selectByEmployeeIdNew(@Param("employeeId")Integer employeeId,@Param("stateSX") Integer stateSX,@Param("stateSB") Integer stateSB);
+	employeeAttendance selectByEmployeeIdNew(@Param("employeeId")Integer employeeId,@Param("state") List<Integer> state);
 
 }

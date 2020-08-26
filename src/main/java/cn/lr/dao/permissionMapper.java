@@ -19,5 +19,5 @@ public interface permissionMapper {
 
     int updateByPrimaryKey(permission record);
     
-    List<permission> selectByCompany(@Param("companyId")Integer companyId,@Param("state")Integer state);
+    List<permission> selectByCompany(@Param("companyId")Integer companyId,@Param("state")List<Integer> state);
 }

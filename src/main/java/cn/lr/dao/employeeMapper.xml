@@ -197,22 +197,48 @@
     select 
     <include refid="Base_Column_List" />
     from tb_employee
-    where companyId = #{companyId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER} limit #{page},#{size}
+    where companyId = #{companyId,jdbcType=INTEGER} 
+    <if test="state != null">
+    	and state not in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    limit #{page},#{size}
   </select>
   <select id="selectByCompanyCount"  resultType="Integer">
     select count(*)
     from tb_employee
-    where companyId = #{companyId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER}
+    where companyId = #{companyId,jdbcType=INTEGER} 
+    <if test="state != null">
+    	and state not in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
   </select>
    <select id="selectByPostId" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from tb_employee
-    where companyId = #{companyId,jdbcType=INTEGER} and postId = #{postId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER} limit #{page},#{size}
+    where companyId = #{companyId,jdbcType=INTEGER} and postId = #{postId,jdbcType=INTEGER} 
+    <if test="state != null">
+    	and state not in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>  
+    limit #{page},#{size}
   </select>
   <select id="selectByPostCount"  resultType="Integer">
     select count(*)
     from tb_employee
-    where companyId = #{companyId,jdbcType=INTEGER} and postId = #{postId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER}
+    where companyId = #{companyId,jdbcType=INTEGER} and postId = #{postId,jdbcType=INTEGER} 
+    <if test="state != null">
+    	and state not in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
   </select>
 </mapper>

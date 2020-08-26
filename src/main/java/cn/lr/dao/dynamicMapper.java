@@ -19,27 +19,27 @@ public interface dynamicMapper {
 
     int updateByPrimaryKey(dynamic record);
     
-    List<dynamic> selectByEmployeeId(@Param("employeeId") Integer employeeId,@Param("state") Integer state,@Param("page") Integer page,@Param("size") Integer size);
+    List<dynamic> selectByEmployeeId(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state,@Param("page") Integer page,@Param("size") Integer size);
 
-   	int selectByEmployeeCount(@Param("employeeId")Integer employeeId,@Param("state") Integer state);
+   	int selectByEmployeeCount(@Param("employeeId")Integer employeeId,@Param("state") List<Integer> state);
    	
-   	List<dynamic> selectByCheckId(@Param("checkId") Integer checkId,@Param("stateWSH") Integer stateWHS,@Param("stateSHZ") Integer stateSHZ,@Param("page") Integer page,@Param("size") Integer size);
+   	List<dynamic> selectByCheckId(@Param("checkId") Integer checkId,@Param("state") List<Integer> state,@Param("page") Integer page,@Param("size") Integer size);
    	
-   	int selectByCheckCount(@Param("checkId")Integer checkId,@Param("stateWSH") Integer stateWHS,@Param("stateSHZ") Integer stateSHZ);
+   	int selectByCheckCount(@Param("checkId")Integer checkId,@Param("state") List<Integer> state);
    	
-   	List<dynamic> selectByAbnormal(@Param("companyId") Integer companyId,@Param("state") Integer state,@Param("page") Integer page,@Param("size") Integer size);
+   	List<dynamic> selectByAbnormal(@Param("companyId") Integer companyId,@Param("state") List<Integer> state,@Param("page") Integer page,@Param("size") Integer size);
    	
-   	int selectByAbnormalCount(@Param("companyId")Integer companyId,@Param("state") Integer state);
+   	int selectByAbnormalCount(@Param("companyId")Integer companyId,@Param("state") List<Integer> state);
    	
-   	List<dynamic> selectByCompanyId(@Param("companyId") Integer companyId,@Param("state") Integer state,@Param("page") Integer page,@Param("size") Integer size);
+   	List<dynamic> selectByCompanyId(@Param("companyId") Integer companyId,@Param("state") List<Integer> state,@Param("page") Integer page,@Param("size") Integer size);
    	
-   	int selectByCompanyCount(@Param("companyId")Integer companyId,@Param("state") Integer state);
+   	int selectByCompanyCount(@Param("companyId")Integer companyId,@Param("state") List<Integer> state);
    	
-   	dynamic selectByTypeAndId(@Param("name")String name,@Param("id")Integer id,@Param("state") Integer state);
+   	dynamic selectByTypeAndId(@Param("name")String name,@Param("id")Integer id,@Param("state") List<Integer> state);
    	
-   	List<dynamic> selectByTypeAndIdVaild(@Param("name")String name,@Param("id")Integer id,@Param("state") Integer state);
+   	List<dynamic> selectByTypeAndIdVaild(@Param("name")String name,@Param("id")Integer id,@Param("state") List<Integer> state);
 
-   	dynamic selectByTypeAndIdAndEmployeeId(@Param("name")String name,@Param("id")Integer id,@Param("employeeId") Integer emlpoyeeId,@Param("stateSX") Integer stateSX,@Param("stateSB") Integer stateSB);
+   	dynamic selectByTypeAndIdAndEmployeeId(@Param("name")String name,@Param("id")Integer id,@Param("employeeId") Integer emlpoyeeId,@Param("state") List<Integer> state);
    
    	List<dynamic> selectByTypeAndEmployeeId(@Param("name")String name,@Param("employeeId") Integer employeeId,@Param("page") Integer page,@Param("size") Integer size);
    	

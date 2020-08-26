@@ -212,115 +212,245 @@
     select 
     <include refid="Base_Column_List" />
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} 
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
     and name like concat('%',#{search},'%') limit #{page},#{size}
   </select>
   <select id="selectByEmployeeIdCount"  resultType="Integer">
     select count(*)
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER}
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
     and name like concat('%',#{search},'%')
   </select>
    <select id="selectByEmployeeIdList" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER}  
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>  
   </select>
   
    <select id="selectByEmployeeIdDay" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and to_days(dateTime) = to_days(now()) limit #{page},#{size}
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    and to_days(dateTime) = to_days(now()) limit #{page},#{size}
   </select>
   <select id="selectByEmployeeIdDayCount"  resultType="Integer">
     select count(*)
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and to_days(dateTime) = to_days(now())
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    and to_days(dateTime) = to_days(now())
   </select>
   
    <select id="selectByEmployeeIdMon" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and DATE_FORMAT( dateTime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' ) limit #{page},#{size}
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    and DATE_FORMAT( dateTime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' ) limit #{page},#{size}
   </select>
   <select id="selectByEmployeeIdMonCount"  resultType="Integer">
     select count(*)
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and DATE_FORMAT( dateTime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' )
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>  
+    and DATE_FORMAT( dateTime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' )
   </select>
   
    <select id="selectByEmployeeIdQtr" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and QUARTER(dateTime)=QUARTER(now()) limit #{page},#{size}
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>  
+    and QUARTER(dateTime)=QUARTER(now()) limit #{page},#{size}
   </select>
    <select id="selectByEmployeeIdQtrCount"  resultType="Integer">
     select count(*)
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state =  #{state,jdbcType=INTEGER} and QUARTER(dateTime)=QUARTER(now())
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    and QUARTER(dateTime)=QUARTER(now())
   </select>
   
    <select id="selectByEmployeeIdYear" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and YEAR(dateTime)=YEAR(NOW()) limit #{page},#{size}
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    and YEAR(dateTime)=YEAR(NOW()) limit #{page},#{size}
   </select>
    <select id="selectByEmployeeIdYearCount"  resultType="Integer">
     select count(*)
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and YEAR(dateTime)=YEAR(NOW())
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    and YEAR(dateTime)=YEAR(NOW())
   </select>
   
      <select id="selectByConsumeMon" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and DATE_FORMAT( activeConsumeTime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' ) limit #{page},#{size}
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>  
+    and DATE_FORMAT( activeConsumeTime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' ) limit #{page},#{size}
   </select>
   <select id="selectByConsumeMonCount"  resultType="Integer">
     select count(*)
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and DATE_FORMAT( activeConsumeTime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' )
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    and DATE_FORMAT( activeConsumeTime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' )
   </select>
   
    <select id="selectByConsumeQtr" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and QUARTER(activeConsumeTime)=QUARTER(now()) limit #{page},#{size}
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    and QUARTER(activeConsumeTime)=QUARTER(now()) limit #{page},#{size}
   </select>
    <select id="selectByConsumeQtrCount"  resultType="Integer">
     select count(*)
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state =  #{state,jdbcType=INTEGER} and QUARTER(activeConsumeTime)=QUARTER(now())
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>  
+    and QUARTER(activeConsumeTime)=QUARTER(now())
   </select>
   
      <select id="selectByServiceMon" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and DATE_FORMAT( activeServiceTime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' ) limit #{page},#{size}
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    and DATE_FORMAT( activeServiceTime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' ) limit #{page},#{size}
   </select>
   <select id="selectByServiceMonCount"  resultType="Integer">
     select count(*)
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and DATE_FORMAT( activeServiceTime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' )
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    and DATE_FORMAT( activeServiceTime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' )
   </select>
   
    <select id="selectByServiceQtr" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and QUARTER(activeServiceTime)=QUARTER(now()) limit #{page},#{size}
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    and QUARTER(activeServiceTime)=QUARTER(now()) limit #{page},#{size}
   </select>
    <select id="selectByServiceQtrCount"  resultType="Integer">
     select count(*)
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state =  #{state,jdbcType=INTEGER} and QUARTER(activeServiceTime)=QUARTER(now())
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    and QUARTER(activeServiceTime)=QUARTER(now())
   </select>
 </mapper>

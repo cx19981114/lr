@@ -68,7 +68,9 @@ public class ProjectServiceImpl implements ProjectService {
 	public Integer deleteProject(JSONObject data) {
 		project project = projectMapper.selectByPrimaryKey(data.getInteger("projectId"));
 		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
-		List<customerProject> customerProjects = customerProjectMapper.selectByProject(project.getId(), state);
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(state);
+		List<customerProject> customerProjects = customerProjectMapper.selectByProject(project.getId(), stateList);
 		if(!customerProjects.isEmpty()) {
 			throw new BusiException("该项目下有客人，无法删除");
 		}
@@ -93,9 +95,11 @@ public class ProjectServiceImpl implements ProjectService {
 	public Page<project> getProjectByCompany(JSONObject data) {
 		Integer companyId = data.getInteger("companyId");
 		Integer pageNum = data.getInteger("pageNum");
-		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
-		List<project> projects = projectMapper.selectByCompanyId(companyId,state,(pageNum-1)*PAGESIZE,PAGESIZE);
-		int total = projectMapper.selectByCompanyCount(companyId,state);
+		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(stateWSX);
+		List<project> projects = projectMapper.selectByCompanyId(companyId,stateList,(pageNum-1)*PAGESIZE,PAGESIZE);
+		int total = projectMapper.selectByCompanyCount(companyId,stateList);
 		Page<project> page = new Page<project>();
 		page.setPageNum(pageNum);
 		page.setPageSize(PAGESIZE);
@@ -106,8 +110,10 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	public List<JSONObject> getProjectByCompanyJson(JSONObject data) {
 		Integer companyId = data.getInteger("companyId");
-		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
-		List<project> projects = projectMapper.selectByCompanyId(companyId,state,0,Integer.MAX_VALUE);
+		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(stateWSX);
+		List<project> projects = projectMapper.selectByCompanyId(companyId,stateList,0,Integer.MAX_VALUE);
 		List<JSONObject> projectJsonList = new ArrayList<JSONObject>();
 		for(project p:projects) {
 			JSONObject projectJsonObject = new JSONObject();

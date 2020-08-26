@@ -129,7 +129,9 @@ public class CustomerServiceImpl implements CustomerService {
 		Integer pageNum = data.getInteger("pageNum");
 		String searchString = data.getString("search");
 		Integer state = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
-		List<customer> customers = customerMapper.selectByEmployeeId(employeeId,state,searchString,(pageNum-1)*PAGESIZE,PAGESIZE);
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(state);
+		List<customer> customers = customerMapper.selectByEmployeeId(employeeId,stateList,searchString,(pageNum-1)*PAGESIZE,PAGESIZE);
 		List<JSONObject> jsonObjects = new ArrayList<JSONObject>();
 		for(customer c : customers) {
 			JSONObject customer = new JSONObject();
@@ -141,7 +143,7 @@ public class CustomerServiceImpl implements CustomerService {
 			customer.put("employeeName", employeeMapper.selectByPrimaryKey(c.getEmployeeId()).getName());
 			jsonObjects.add(customer);
 		}
-		int total = customerMapper.selectByEmployeeIdCount(employeeId,state,searchString);
+		int total = customerMapper.selectByEmployeeIdCount(employeeId,stateList,searchString);
 		Page<JSONObject> page = new Page<JSONObject>();
 		page.setPageNum(pageNum);
 		page.setPageSize(PAGESIZE);
@@ -154,7 +156,9 @@ public class CustomerServiceImpl implements CustomerService {
 	public List<JSONObject> getCustomerByEmployeeList(JSONObject data) {
 		Integer employeeId = data.getInteger("employeeId");
 		Integer state = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
-		List<customer> customers = customerMapper.selectByEmployeeIdList(employeeId,state);
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(state);
+		List<customer> customers = customerMapper.selectByEmployeeIdList(employeeId,stateList);
 		List<JSONObject> jsonObjects = new ArrayList<JSONObject>();
 		for(customer c : customers) {
 			JSONObject customerJson = new JSONObject();
@@ -168,10 +172,12 @@ public class CustomerServiceImpl implements CustomerService {
 	public List<JSONObject> getNewCustomerTypeByEmployee(JSONObject data) {
 		Integer employeeId = data.getInteger("employeeId");
 		Integer state = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
-		int day = customerMapper.selectByEmployeeIdDayCount(employeeId,state);
-		int mon = customerMapper.selectByEmployeeIdMonCount(employeeId,state);
-		int qtr = customerMapper.selectByEmployeeIdQtrCount(employeeId,state);
-		int year = customerMapper.selectByEmployeeIdYearCount(employeeId,state);
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(state);
+		int day = customerMapper.selectByEmployeeIdDayCount(employeeId,stateList);
+		int mon = customerMapper.selectByEmployeeIdMonCount(employeeId,stateList);
+		int qtr = customerMapper.selectByEmployeeIdQtrCount(employeeId,stateList);
+		int year = customerMapper.selectByEmployeeIdYearCount(employeeId,stateList);
 		List<JSONObject> customerTypeList = new ArrayList<>();
 		JSONObject customerType = new JSONObject();
 		customerType.put("value", "本日");
@@ -199,21 +205,23 @@ public class CustomerServiceImpl implements CustomerService {
 		String type = data.getString("type");
 		String search = data.getString("search");
 		Integer state = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(state);
 		List<customer> customers = new ArrayList<>();
 		List<JSONObject> jsonObjects = new ArrayList<>();
 		int total = 0;
 		if(type.equals("day")) {
-			customers = customerMapper.selectByEmployeeIdDay(employeeId,state,(pageNum-1)*PAGESIZE,PAGESIZE);
-			total = customerMapper.selectByEmployeeIdDayCount(employeeId,state);
+			customers = customerMapper.selectByEmployeeIdDay(employeeId,stateList,(pageNum-1)*PAGESIZE,PAGESIZE);
+			total = customerMapper.selectByEmployeeIdDayCount(employeeId,stateList);
 		}else if(type.equals("mon")) {
-			customers = customerMapper.selectByEmployeeIdMon(employeeId,state,(pageNum-1)*PAGESIZE,PAGESIZE);
-			total = customerMapper.selectByEmployeeIdMonCount(employeeId,state);
+			customers = customerMapper.selectByEmployeeIdMon(employeeId,stateList,(pageNum-1)*PAGESIZE,PAGESIZE);
+			total = customerMapper.selectByEmployeeIdMonCount(employeeId,stateList);
 		}else if(type.equals("qtr")) {
-			customers = customerMapper.selectByEmployeeIdQtr(employeeId,state,(pageNum-1)*PAGESIZE,PAGESIZE);
-			total = customerMapper.selectByEmployeeIdQtrCount(employeeId,state);
+			customers = customerMapper.selectByEmployeeIdQtr(employeeId,stateList,(pageNum-1)*PAGESIZE,PAGESIZE);
+			total = customerMapper.selectByEmployeeIdQtrCount(employeeId,stateList);
 		}else if(type.equals("year")) {
-			customers = customerMapper.selectByEmployeeIdYear(employeeId,state,(pageNum-1)*PAGESIZE,PAGESIZE);
-			total = customerMapper.selectByEmployeeIdYearCount(employeeId,state);
+			customers = customerMapper.selectByEmployeeIdYear(employeeId,stateList,(pageNum-1)*PAGESIZE,PAGESIZE);
+			total = customerMapper.selectByEmployeeIdYearCount(employeeId,stateList);
 		}
 		int count = 0;
 		for(customer c:customers) {
@@ -256,15 +264,17 @@ public class CustomerServiceImpl implements CustomerService {
 		String type = data.getString("type");
 		String search = data.getString("search");
 		Integer state = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(state);
 		List<customer> customers = new ArrayList<>();
 		List<JSONObject> jsonObjects = new ArrayList<>();
 		int total = 0;
 		if(type.equals("mon")) {
-			customers = customerMapper.selectByConsumeMon(employeeId,state,(pageNum-1)*PAGESIZE,PAGESIZE);
-			total = customerMapper.selectByConsumeMonCount(employeeId,state);
+			customers = customerMapper.selectByConsumeMon(employeeId,stateList,(pageNum-1)*PAGESIZE,PAGESIZE);
+			total = customerMapper.selectByConsumeMonCount(employeeId,stateList);
 		}else if(type.equals("qtr")) {
-			customers = customerMapper.selectByConsumeQtr(employeeId,state,(pageNum-1)*PAGESIZE,PAGESIZE);
-			total = customerMapper.selectByConsumeQtrCount(employeeId,state);
+			customers = customerMapper.selectByConsumeQtr(employeeId,stateList,(pageNum-1)*PAGESIZE,PAGESIZE);
+			total = customerMapper.selectByConsumeQtrCount(employeeId,stateList);
 		}
 		int count = 0;
 		for(customer c:customers) {
@@ -309,15 +319,17 @@ public class CustomerServiceImpl implements CustomerService {
 		String type = data.getString("type");
 		String search = data.getString("search");
 		Integer state = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(state);
 		List<customer> customers = new ArrayList<>();
 		List<JSONObject> jsonObjects = new ArrayList<>();
 		int total = 0;
 		if(type.equals("mon")) {
-			customers = customerMapper.selectByServiceMon(employeeId,state,(pageNum-1)*PAGESIZE,PAGESIZE);
-			total = customerMapper.selectByServiceMonCount(employeeId,state);
+			customers = customerMapper.selectByServiceMon(employeeId,stateList,(pageNum-1)*PAGESIZE,PAGESIZE);
+			total = customerMapper.selectByServiceMonCount(employeeId,stateList);
 		}else if(type.equals("qtr")) {
-			customers = customerMapper.selectByServiceQtr(employeeId,state,(pageNum-1)*PAGESIZE,PAGESIZE);
-			total = customerMapper.selectByServiceQtrCount(employeeId,state);
+			customers = customerMapper.selectByServiceQtr(employeeId,stateList,(pageNum-1)*PAGESIZE,PAGESIZE);
+			total = customerMapper.selectByServiceQtrCount(employeeId,stateList);
 		}
 		int count = 0;
 		for(customer c:customers) {
@@ -357,8 +369,10 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 	public CustomerDTO sCustomerDTO(customer customer) throws ParseException {
 		employee employee = employeeMapper.selectByPrimaryKey(customer.getEmployeeId());
-		Integer stateInteger = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", employee.getCompanyId());
-		List<customerProject> projectList = customerProjectMapper.selectByCustomer(customer.getId(), stateInteger);
+		Integer state = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", employee.getCompanyId());
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(state);
+		List<customerProject> projectList = customerProjectMapper.selectByCustomer(customer.getId(), stateList);
 		CustomerDTO customerDTO = new CustomerDTO();
 		customerDTO.setProjectNum(projectList.size());
 		customerDTO.setBirth(customer.getBirth());

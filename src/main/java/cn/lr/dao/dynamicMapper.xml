@@ -164,71 +164,142 @@
     select 
     <include refid="Base_Column_List" />
     from tb_dynamic
-    where employeeId = #{employeeId,jdbcType=INTEGER} and to_days(dateTime) = to_days(now()) and state > #{state,jdbcType=INTEGER} limit #{page},#{size}
+    where employeeId = #{employeeId,jdbcType=INTEGER} and to_days(dateTime) = to_days(now()) 
+     <if test="state != null">
+    	and state not in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    limit #{page},#{size}
   </select>
   <select id="selectByEmployeeCount"  resultType="Integer">
     select count(*)
     from tb_dynamic
-    where employeeId = #{employeeId,jdbcType=INTEGER} and to_days(dateTime) = to_days(now()) and state > #{state,jdbcType=INTEGER}
+    where employeeId = #{employeeId,jdbcType=INTEGER} and to_days(dateTime) = to_days(now()) 
+    <if test="state != null">
+    	and state not in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
   </select>
    <select id="selectByCheckId" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from tb_dynamic
-    where checkId = #{checkId,jdbcType=INTEGER} and to_days(dateTime) = to_days(now()) and state in(#{stateWSH,jdbcType=INTEGER},#{stateSHZ,jdbcType=INTEGER}) order by dateTime desc limit #{page},#{size}
+    where checkId = #{checkId,jdbcType=INTEGER} and to_days(dateTime) = to_days(now()) 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    order by dateTime desc limit #{page},#{size}
   </select>
   <select id="selectByCheckCount"  resultType="Integer">
     select count(*)
     from tb_dynamic
-    where checkId = #{checkId,jdbcType=INTEGER} and to_days(dateTime) = to_days(now()) and state in(#{stateWSH,jdbcType=INTEGER},#{stateSHZ,jdbcType=INTEGER})
+    where checkId = #{checkId,jdbcType=INTEGER} and to_days(dateTime) = to_days(now()) 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
   </select>
    <select id="selectByAbnormal" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from tb_dynamic
-    where companyId = #{companyId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} order by dateTime desc limit #{page},#{size}
+    where companyId = #{companyId,jdbcType=INTEGER}  
+    <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>  
+    order by dateTime desc limit #{page},#{size}
   </select>
   <select id="selectByAbnormalCount"  resultType="Integer">
     select count(*)
     from tb_dynamic
-    where companyId = #{companyId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER}
+    where companyId = #{companyId,jdbcType=INTEGER} 
+ <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
   </select>
  	<!-- 查看今天公司所有员工的动态（申请列表）  -->
    <select id="selectByCompanyId" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from tb_dynamic
-    where companyId = #{companyId,jdbcType=INTEGER} and to_days(dateTime) = to_days(now()) and state > #{state,jdbcType=INTEGER} order by dateTime desc limit #{page},#{size}
+    where companyId = #{companyId,jdbcType=INTEGER} and to_days(dateTime) = to_days(now()) 
+     <if test="state != null">
+    	and state not in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>  
+    order by dateTime desc limit #{page},#{size}
   </select>
   <select id="selectByCompanyCount"  resultType="Integer">
     select count(*)
     from tb_dynamic
-    where companyId = #{companyId,jdbcType=INTEGER} and to_days(dateTime) = to_days(now()) and state > #{state,jdbcType=INTEGER}
+    where companyId = #{companyId,jdbcType=INTEGER} and to_days(dateTime) = to_days(now()) 
+     <if test="state != null">
+    	and state not in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
   </select>
   <select id="selectByTypeAndId" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from tb_dynamic
-    where tb_name = #{name,jdbcType=VARCHAR} and tb_id = #{id,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER}
+    where tb_name = #{name,jdbcType=VARCHAR} and tb_id = #{id,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state not in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
   </select>
   <select id="selectByTypeAndIdVaild" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from tb_dynamic
-    where tb_name = #{name,jdbcType=VARCHAR} and tb_id = #{id,jdbcType=INTEGER} and to_days(dateTime) = to_days(now()) and state > #{state,jdbcType=INTEGER} 
+    where tb_name = #{name,jdbcType=VARCHAR} and tb_id = #{id,jdbcType=INTEGER} and to_days(dateTime) = to_days(now()) 
+    <if test="state != null">
+    	and state not in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>  
   </select>
   <select id="selectByTypeAndIdAndEmployeeId" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from tb_dynamic
     where tb_name = #{name,jdbcType=VARCHAR} and tb_id = #{id,jdbcType=INTEGER} 
-    and employeeId = #{employeeId,jdbcType=INTEGER} and to_days(dateTime) = to_days(now()) and state > #{stateSX,jdbcType=INTEGER} and state &lt; #{stateSB,jdbcType=INTEGER}
+    and employeeId = #{employeeId,jdbcType=INTEGER} and to_days(dateTime) = to_days(now()) 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>  
   </select>
   <select id="selectByTypeAndEmployeeId" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from tb_dynamic
-    where tb_name = #{name,jdbcType=VARCHAR} and employeeId = #{employeeId,jdbcType=INTEGER} and to_days(dateTime) = to_days(now()) limit #{page},#{size}
+    where tb_name = #{name,jdbcType=VARCHAR} and employeeId = #{employeeId,jdbcType=INTEGER} and to_days(dateTime) = to_days(now()) 
+    limit #{page},#{size}
   </select>
   <select id="selectByTypeAndEmployeeIdCount"  resultType="Integer">
     select count(*)

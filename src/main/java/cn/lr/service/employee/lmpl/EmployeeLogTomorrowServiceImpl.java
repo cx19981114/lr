@@ -61,9 +61,19 @@ public class EmployeeLogTomorrowServiceImpl implements EmployeeLogTomorrowServic
 
 	@Override
 	public Integer addEmployeeLogTomorrow(JSONObject data) {
-		Integer stateSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
-		Integer stateSB = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核失败", data.getInteger("companyId"));
-		employeeLogTomorrow employeeLogTomorrow = employeeLogTomorrowMapper.selectByEmployeeIdNew(data.getInteger("employeeId"),stateSX,stateSB);
+		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
+		Integer stateWSQ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未申请",data.getInteger("companyId"));
+		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
+		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", data.getInteger("companyId"));
+		Integer stateSHZ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", data.getInteger("companyId"));
+		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(stateWSQ);
+		stateList.add(stateCG);
+		stateList.add(stateSHZ);
+		stateList.add(stateWSH);
+		stateList.add(stateWTJ);
+		employeeLogTomorrow employeeLogTomorrow = employeeLogTomorrowMapper.selectByEmployeeIdNew(data.getInteger("employeeId"),stateList);
 		if(employeeLogTomorrow != null) {
 			throw new BusiException("职员已填写明日计划");
 		}
@@ -85,7 +95,9 @@ public class EmployeeLogTomorrowServiceImpl implements EmployeeLogTomorrowServic
 		dataJSonDynamic.put("id", record.getId());
 		dataJSonDynamic.put("companyId", data.getInteger("companyId"));
 		dataJSonDynamic.put("employeeId", data.getInteger("employeeId"));
-		dataJSonDynamic.put("rank", rankMapper.selectByName(Type,data.getInteger("companyId"),stateSX));
+		stateList.clear();
+		stateList.add(stateWSX);
+		dataJSonDynamic.put("rank", rankMapper.selectByName(Type,data.getInteger("companyId"),stateList));
 		int dynamicId = DynamicService.writeDynamic(dataJSonDynamic);
 		
 		JSONObject dataJSonApply = new JSONObject();
@@ -184,14 +196,16 @@ public class EmployeeLogTomorrowServiceImpl implements EmployeeLogTomorrowServic
 		Integer employeeId = data.getInteger("employeeId");
 		Integer pageNum = data.getInteger("pageNum");
 		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
-		List<employeeLogTomorrow> employeeLogTomorrows = employeeLogTomorrowMapper.selectByEmployeeId(employeeId,state, (pageNum - 1) * PAGESIZE,
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(state);
+		List<employeeLogTomorrow> employeeLogTomorrows = employeeLogTomorrowMapper.selectByEmployeeId(employeeId,stateList, (pageNum - 1) * PAGESIZE,
 				PAGESIZE);
 		List<EmployeeLogTomorrowDTO> jsonObjects = new ArrayList<EmployeeLogTomorrowDTO>();
 		for (employeeLogTomorrow e : employeeLogTomorrows) {
 			EmployeeLogTomorrowDTO employeeLogTomorrowDTO = this.sEmployeeLogTomorrowDTO(e);
 			jsonObjects.add(employeeLogTomorrowDTO);
 		}
-		int total = employeeLogTomorrowMapper.selectByEmployeeIdCount(employeeId,state);
+		int total = employeeLogTomorrowMapper.selectByEmployeeIdCount(employeeId,stateList);
 		Page<EmployeeLogTomorrowDTO> page = new Page<EmployeeLogTomorrowDTO>();
 		page.setPageNum(pageNum);
 		page.setPageSize(PAGESIZE);
@@ -273,9 +287,18 @@ public class EmployeeLogTomorrowServiceImpl implements EmployeeLogTomorrowServic
 	@Override
 	public EmployeeLogTomorrowDTO getEmployeeLogTomorrowByEmployeeNew(JSONObject data) throws ParseException {
 		Integer employeeId = data.getInteger("employeeId");
-		Integer stateSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
-		Integer stateSB = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核失败", data.getInteger("companyId"));
-		employeeLogTomorrow employeeLogTomorrow = employeeLogTomorrowMapper.selectByEmployeeIdNew(employeeId,stateSX,stateSB);
+		Integer stateWSQ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未申请",data.getInteger("companyId"));
+		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
+		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", data.getInteger("companyId"));
+		Integer stateSHZ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", data.getInteger("companyId"));
+		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(stateWSQ);
+		stateList.add(stateCG);
+		stateList.add(stateSHZ);
+		stateList.add(stateWSH);
+		stateList.add(stateWTJ);
+		employeeLogTomorrow employeeLogTomorrow = employeeLogTomorrowMapper.selectByEmployeeIdNew(employeeId,stateList);
 		if(employeeLogTomorrow != null) {
 			return this.sEmployeeLogTomorrowDTO(employeeLogTomorrow);
 		}

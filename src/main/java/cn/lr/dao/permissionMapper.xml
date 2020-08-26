@@ -84,6 +84,12 @@
     select 
     <include refid="Base_Column_List" />
     from tb_permission
-    where companyId = #{companyId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER}
+    where companyId = #{companyId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
   </select>
 </mapper>

@@ -69,13 +69,15 @@ public class EmployeeApplyServiceImpl implements EmployeeApplyService {
 		Integer pageNum = data.getInteger("pageNum");
 		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
 		Integer type = dictMapper.selectByCodeAndStateName(APPLY_TYPE, data.getString("type"),data.getInteger("companyId"));
-		List<employeeApply> employeeApplys = employeeApplyMapper.selectByEmployeeIdAndType(employeeId,state,type,(pageNum-1)*PAGESIZE,PAGESIZE);
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(state);
+		List<employeeApply> employeeApplys = employeeApplyMapper.selectByEmployeeIdAndType(employeeId,stateList,type,(pageNum-1)*PAGESIZE,PAGESIZE);
 		List<EmployeeApplyDTO> jsonObjects = new ArrayList<EmployeeApplyDTO>();
 		for(employeeApply e : employeeApplys) {
 			EmployeeApplyDTO employeeApplyDTO = this.sEmployeeDTO(e);
 			jsonObjects.add(employeeApplyDTO);
 		}
-		int total = employeeApplyMapper.selectByEmployeeIdAndTypeCount(employeeId,state,type);
+		int total = employeeApplyMapper.selectByEmployeeIdAndTypeCount(employeeId,stateList,type);
 		Page<EmployeeApplyDTO> page = new Page<EmployeeApplyDTO>();
 		page.setPageNum(pageNum);
 		page.setPageSize(PAGESIZE);
@@ -87,7 +89,9 @@ public class EmployeeApplyServiceImpl implements EmployeeApplyService {
 	@Override
 	public Integer addEmployeeApply(JSONObject data) {
 		employeeApply employeeApply = new employeeApply();
-		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
+		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
+		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
 		employeeApply.setEmployeeId(data.getInteger("employeeId"));
 		employeeApply.setName(data.getString("name"));
 		employeeApply.setStartDate(TimeFormatUtil.dateToString(data.getDate("startDate")));
@@ -97,7 +101,7 @@ public class EmployeeApplyServiceImpl implements EmployeeApplyService {
 		employeeApply.setNote(data.getString("note"));
 		employeeApply.setDateTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
 		employeeApply.setType(dictMapper.selectByCodeAndStateName(APPLY_TYPE, data.getString("type"),data.getInteger("companyId")));
-		employeeApply.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交",data.getInteger("companyId")));
+		employeeApply.setState(stateWTJ);
 		int count = employeeApplyMapper.insertSelective(employeeApply);
 		if(count == 0) {
 			throw new BusiException("插入employeeApply表失败");
@@ -109,7 +113,9 @@ public class EmployeeApplyServiceImpl implements EmployeeApplyService {
 		dataJSonDynamic.put("id", employeeApply.getId());
 		dataJSonDynamic.put("employeeId", data.getInteger("employeeId"));
 		dataJSonDynamic.put("companyId", data.getInteger("companyId"));
-		dataJSonDynamic.put("rank",  rankMapper.selectByName(Type[employeeApply.getType()-1],data.getInteger("companyId"),state));
+		stateList.clear();
+		stateList.add(stateWSX);
+		dataJSonDynamic.put("rank",  rankMapper.selectByName(Type[employeeApply.getType()-1],data.getInteger("companyId"),stateList));
 		Integer dynamicId = DynamicService.writeDynamic(dataJSonDynamic);
 		JSONObject dataJSonApply = new JSONObject();
 		dataJSonApply.put("employeeId", data.getInteger("employeeId"));
@@ -122,8 +128,10 @@ public class EmployeeApplyServiceImpl implements EmployeeApplyService {
 	@Override
 	public Integer modifyEmployeeApply(JSONObject data) {
 		employeeApply employeeApply = employeeApplyMapper.selectByPrimaryKey(data.getInteger("employeeApplyId"));
-		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
-		if(employeeApply.getState() != dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交",data.getInteger("companyId"))) {
+		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
+		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();;
+		if(employeeApply.getState() != stateWTJ) {
 			throw new BusiException("该申请不能修改");
 		}
 		employeeApply.setName(data.getString("name"));
@@ -143,7 +151,9 @@ public class EmployeeApplyServiceImpl implements EmployeeApplyService {
 			employeeApply.setType(dictMapper.selectByCodeAndStateName(APPLY_TYPE, data.getString("type"),data.getInteger("companyId")));
 			dataJSonDynamic.put("name", Type[employeeApply.getType()-1]);
 			dataJSonDynamic.put("note", data.getString("note"));
-			dataJSonDynamic.put("rank",  rankMapper.selectByName(Type[employeeApply.getType()-1],data.getInteger("companyId"),state));
+			stateList.clear();
+			stateList.add(stateWSX);
+			dataJSonDynamic.put("rank",  rankMapper.selectByName(Type[employeeApply.getType()-1],data.getInteger("companyId"),stateList));
 			dataJSonDynamic.put("dynamicId",  dynamic.getId());
 			dataJSonDynamic.put("time", now);
 			int count = DynamicService.modifyDynamic(dataJSonDynamic);

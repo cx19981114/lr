@@ -141,33 +141,60 @@
     select 
     <include refid="Base_Column_List" />
     from tb_customerproject
-    where customerId = #{customerId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER}
+    where customerId = #{customerId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
   </select>
-  <select id="selectByEmployeeWTJ"  resultMap="BaseResultMap">
+  <select id="selectByEmployeeState"  resultMap="BaseResultMap">
     select <include refid="Base_Column_List" />
     from tb_customerproject
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and to_days(dateTime) = to_days(now()) 
-  </select>
-  <select id="selectByEmployeeWSHAndSHZ"  resultMap="BaseResultMap">
-    select <include refid="Base_Column_List" />
-    from tb_customerproject
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state in (#{stateWSH,jdbcType=INTEGER},#{stateSHZ,jdbcType=INTEGER}) and to_days(dateTime) = to_days(now()) 
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>  
+    and to_days(dateTime) = to_days(now()) 
   </select>
   <select id="selectByEmployee"  resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from tb_customerproject
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER} order by dateTime desc limit #{page},#{size}
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state not in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+     order by dateTime desc limit #{page},#{size}
   </select>
   <select id="selectByEmployeeCount"  resultType="Integer">
     select count(*)
     from tb_customerproject
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER}
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    <if test="state != null">
+    	and state not in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
   </select>
   <select id="selectByProject"  resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from tb_customerproject
-    where projectId = #{projectId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER}
+    where projectId = #{projectId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state not in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
   </select>
 </mapper>

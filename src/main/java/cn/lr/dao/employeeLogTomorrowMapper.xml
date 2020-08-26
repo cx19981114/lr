@@ -130,17 +130,37 @@
     select 
     <include refid="Base_Column_List" />
     from tb_employeelogtomorrow
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER}  order by dateTime desc limit #{page},#{size}
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state not in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>  
+    order by dateTime desc limit #{page},#{size}
   </select>
   <select id="selectByEmployeeIdCount"  resultType="Integer">
     select count(*)
     from tb_employeelogtomorrow
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER} 
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state not in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
   </select>
      <select id="selectByEmployeeIdNew" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from tb_employeelogtomorrow
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state > #{stateSX,jdbcType=INTEGER} and state &lt; #{stateSB,jdbcType=INTEGER} and to_days(dateTime) = to_days(now()) 
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>  
+    and to_days(dateTime) = to_days(now()) 
   </select>
 </mapper>

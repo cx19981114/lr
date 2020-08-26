@@ -170,7 +170,13 @@
     <if test="type != null">
         and type = #{type,jdbcType=INTEGER}
      </if>  
-     and state > #{state,jdbcType=INTEGER} order by step desc limit #{page},#{size} 
+      <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>  
+     order by step desc limit #{page},#{size} 
   </select>
   <select id="selectByCompanyCount"  resultType="Integer">
     select count(*)
@@ -178,7 +184,13 @@
     where companyId = #{companyId,jdbcType=INTEGER} and  prevType = #{prevType,jdbcType=INTEGER}  
    <if test="type != null">
         and type = #{type,jdbcType=INTEGER}
-   </if>  and state > #{state,jdbcType=INTEGER}
+   </if>  
+    <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
   </select>
    <select id="selectByCompanyAndPrevTypeAndTypeAndStep" resultMap="BaseResultMap">
     select 
@@ -198,7 +210,12 @@
     <if test="type != null">
         and type = #{type,jdbcType=INTEGER}
      </if>
-     and state = #{state}
+      <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
   </select>
    <select id="selectByPostAndStep" resultMap="BaseResultMap">
     select 
@@ -211,7 +228,13 @@
     <if test="type != null">
         and type = #{type,jdbcType=INTEGER}
      </if> 
-     and step >= #{step} and state = #{state}
+     and step >= #{step} 
+      <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
   </select>
    <select id="selectByPostAndStepMax" resultType="Integer">
     select max(step)
@@ -223,6 +246,11 @@
     <if test="type != null">
         and type = #{type,jdbcType=INTEGER}
      </if> 
-     and state = #{state} 
+      <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
   </select>
 </mapper>

@@ -95,6 +95,12 @@
    <select id="selectByName" resultType="Integer">
     select score
     from tb_rank
-    where name = #{name,jdbcType=VARCHAR} and companyId = #{companyId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER}
+    where name = #{name,jdbcType=VARCHAR} and companyId = #{companyId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
   </select>
 </mapper>

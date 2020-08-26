@@ -19,10 +19,11 @@ public interface employeeLogDayMapper {
 
     int updateByPrimaryKey(employeeLogDay record);
     
-    List<employeeLogDay> selectByEmployeeId(@Param("employeeId") Integer employeeId,@Param("state") Integer state,@Param("page") Integer page,
+    List<employeeLogDay> selectByEmployeeId(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state,@Param("page") Integer page,
 			@Param("size") Integer size);
+    
+    int selectByEmployeeIdCount(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state);
 
-    employeeLogDay selectByEmployeeIdNew(@Param("employeeId")Integer employeeId,@Param("stateSX") Integer stateSX,@Param("stateSB") Integer stateSB);
+    employeeLogDay selectByEmployeeIdNew(@Param("employeeId")Integer employeeId,@Param("state") List<Integer> state);
 
-	int selectByEmployeeIdCount(@Param("employeeId") Integer employeeId,@Param("state") Integer state);
 }

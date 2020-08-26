@@ -126,69 +126,139 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   
-  <select id="selectByEmployeeWTJ"  resultMap="BaseResultMap">
+  <select id="selectByEmployeeState"  resultMap="BaseResultMap">
     select <include refid="Base_Column_List" />
     from tb_customerperformance
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and TO_DAYS(dateTime) = TO_DAYS(now()) 
-  </select>
-  <select id="selectByEmployeeWSHAndSHZ"  resultMap="BaseResultMap">
-    select <include refid="Base_Column_List" />
-    from tb_customerperformance
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state in (#{stateWSH,jdbcType=INTEGER},#{stateSHZ,jdbcType=INTEGER})  and TO_DAYS(dateTime) = TO_DAYS(now()) 
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    and TO_DAYS(dateTime) = TO_DAYS(now()) 
   </select>
   
   <select id="selectByEmployeeConditionDay"  resultMap="BaseResultMap">
     select <include refid="Base_Column_List" />
     from tb_customerperformance
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and TO_DAYS(dateTime) = TO_DAYS(#{date,jdbcType=INTEGER}) order by dateTime desc limit #{page},#{size}
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    and TO_DAYS(dateTime) = TO_DAYS(#{date,jdbcType=INTEGER}) order by dateTime desc limit #{page},#{size}
   </select>
   <select id="selectByEmployeeConditionDayCount"  resultType="Integer">
     select count(*)
     from tb_customerperformance
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and TO_DAYS(dateTime) = TO_DAYS(#{date,jdbcType=INTEGER}) order by dateTime desc
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>  
+    and TO_DAYS(dateTime) = TO_DAYS(#{date,jdbcType=INTEGER})
   </select>
   
   <select id="selectByEmployeeConditionMon"  resultMap="BaseResultMap">
     select <include refid="Base_Column_List" />
     from tb_customerperformance
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and DATE_FORMAT( dateTime, '%Y%m' ) = DATE_FORMAT( #{date,jdbcType=INTEGER} , '%Y%m' )  order by dateTime desc limit #{page},#{size}
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    and DATE_FORMAT( dateTime, '%Y%m' ) = DATE_FORMAT( #{date,jdbcType=INTEGER} , '%Y%m' )  order by dateTime desc limit #{page},#{size}
   </select>
   <select id="selectByEmployeeConditionMonCount"  resultType="Integer">
     select count(*)
     from tb_customerperformance
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and DATE_FORMAT( dateTime, '%Y%m' ) = DATE_FORMAT( #{date,jdbcType=INTEGER} , '%Y%m' ) order by dateTime desc
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    and DATE_FORMAT( dateTime, '%Y%m' ) = DATE_FORMAT( #{date,jdbcType=INTEGER} , '%Y%m' )
   </select>
   
   <select id="selectByEmployeeConditionYear"  resultMap="BaseResultMap">
     select <include refid="Base_Column_List" />
     from tb_customerperformance
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and YEAR(dateTime)=YEAR(#{date,jdbcType=INTEGER})  order by dateTime desc limit #{page},#{size}
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    and YEAR(dateTime)=YEAR(#{date,jdbcType=INTEGER})  order by dateTime desc limit #{page},#{size}
   </select>
   <select id="selectByEmployeeConditionYearCount"  resultType="Integer">
     select count(*)
     from tb_customerperformance
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER} and YEAR(dateTime)=YEAR(#{date,jdbcType=INTEGER}) order by dateTime desc
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>  
+    and YEAR(dateTime)=YEAR(#{date,jdbcType=INTEGER})
   </select>
   
   <select id="selectByEmployeeCondition"  resultMap="BaseResultMap">
     select <include refid="Base_Column_List" />
     from tb_customerperformance
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER}  order by dateTime desc limit #{page},#{size}
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>  
+    order by dateTime desc limit #{page},#{size}
   </select>
   <select id="selectByEmployeeConditionCount">
     select count(*)
     from tb_customerperformance
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state = #{state,jdbcType=INTEGER}  order by dateTime desc
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>  
   </select>
     <select id="selectByEmployee"  resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from tb_customerperformance
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER} order by dateTime desc limit #{page},#{size}
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state not in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    order by dateTime desc limit #{page},#{size}
   </select>
   <select id="selectByEmployeeCount"  resultType="Integer">
     select count(*)
     from tb_customerperformance
-    where employeeId = #{employeeId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER}
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state not in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
   </select>
 </mapper>

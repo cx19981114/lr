@@ -298,7 +298,14 @@
    <select id="selectByEmployeeIdDate"  resultMap="BaseResultMap">
     select <include refid="Base_Column_List" />
     from tb_order
-     where employeeId = #{employeeId,jdbcType=INTEGER}  and applyState = #{state,jdbcType=INTEGER} and to_days(date) = to_days(#{date,jdbcType=VARCHAR})
+     where employeeId = #{employeeId,jdbcType=INTEGER} 
+      <if test="state != null">
+    	and applyState in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+     and to_days(date) = to_days(#{date,jdbcType=VARCHAR})
   </select>
   <select id="selectByEmployeeIdCount"  resultType="Integer">
     select count(*)
@@ -310,40 +317,103 @@
 	         #{item,jdbcType=INTEGER}
 	    </foreach>
     </if>
-    and applyState = #{state,jdbcType=INTEGER} and to_days(date) = to_days(now())
+     <if test="state != null">
+    	and applyState in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    and to_days(date) = to_days(now())
   </select>
    <select id="selectByEmployeeIdHistory" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from tb_order
-    where employeeId = #{employeeId,jdbcType=INTEGER} and applyState = #{applyState,jdbcType=INTEGER} 
-    and orderState = #{orderState,jdbcType=INTEGER}
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    <if test="applyState != null">
+    	and applyState in
+	    <foreach collection="applyState" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    <if test="orderState != null">
+    	and orderState in
+	    <foreach collection="orderState" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
     order by date,startTime limit #{page},#{size}
   </select>
    <select id="selectByEmployeeIdHistoryCount" resultType="Integer">
     select count(*)
     from tb_order
-    where employeeId = #{employeeId,jdbcType=INTEGER} and applyState = #{applyState,jdbcType=INTEGER} and orderState = #{orderState,jdbcType=INTEGER} order by date,startTime 
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    <if test="applyState != null">
+    	and applyState in
+	    <foreach collection="applyState" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    <if test="orderState != null">
+    	and orderState in
+	    <foreach collection="orderState" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
   </select>
    <select id="selectByCustomerIdHistory" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from tb_order
-    where customerId = #{customerId,jdbcType=INTEGER} and applyState = #{applyState,jdbcType=INTEGER} 
-    and orderState = #{orderState,jdbcType=INTEGER} 
+    where customerId = #{customerId,jdbcType=INTEGER} 
+   <if test="applyState != null">
+    	and applyState in
+	    <foreach collection="applyState" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    <if test="orderState != null">
+    	and orderState in
+	    <foreach collection="orderState" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
     order by date,startTime limit #{page},#{size}
   </select>
    <select id="selectByCustomerIdHistoryCount" resultType="Integer">
     select count(*)
     from tb_order
-    where customerId = #{customerId,jdbcType=INTEGER} and applyState = #{applyState,jdbcType=INTEGER} and orderState = #{orderState,jdbcType=INTEGER} order by date,startTime 
+    where customerId = #{customerId,jdbcType=INTEGER} 
+    <if test="applyState != null">
+    	and applyState in
+	    <foreach collection="applyState" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    <if test="orderState != null">
+    	and orderState in
+	    <foreach collection="orderState" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
   </select>
    <select id="selectByProjectIdHistory" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from tb_order
-    where customerProjectId = #{customerProjectId,jdbcType=INTEGER} and applyState = #{applyState,jdbcType=INTEGER} 
-    and orderState = #{orderState,jdbcType=INTEGER} 
+    where customerProjectId = #{customerProjectId,jdbcType=INTEGER} 
+    <if test="applyState != null">
+    	and applyState in
+	    <foreach collection="applyState" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    <if test="orderState != null">
+    	and orderState in
+	    <foreach collection="orderState" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
     order by date,startTime 
   </select>
   <select id="selectByProjectCount"  resultMap="BaseResultMap">
@@ -356,7 +426,13 @@
 	         #{item,jdbcType=INTEGER}
 	    </foreach>
     </if>
-     and applyState = #{state,jdbcType=INTEGER} and to_days(date) = to_days(now())  group by projectId
+     <if test="state != null">
+    	and applyState in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>  
+     and to_days(date) = to_days(now())  group by projectId
   </select>
   <select id="selectByProjectDayCount"  resultMap="BaseResultMap">
     select <include refid="Base_Column_List" />
@@ -368,7 +444,13 @@
 	         #{item,jdbcType=INTEGER}
 	    </foreach>
     </if> 
-    and applyState = #{state,jdbcType=INTEGER} and date = #{date,jdbcType=VARCHAR}  group by projectId
+    <if test="state != null">
+    	and applyState in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>
+    and date = #{date,jdbcType=VARCHAR}  group by projectId
   </select>
   <select id="selectByProjectMonCount"  resultMap="BaseResultMap">
     select <include refid="Base_Column_List" />
@@ -380,7 +462,13 @@
 	         #{item,jdbcType=INTEGER}
 	    </foreach>
     </if>
-     and applyState = #{state,jdbcType=INTEGER} and DATE_FORMAT( date, '%Y%m' ) = DATE_FORMAT( #{date,jdbcType=VARCHAR} , '%Y%m' )  group by projectId
+     <if test="state != null">
+    	and applyState in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>
+     and DATE_FORMAT( date, '%Y%m' ) = DATE_FORMAT( #{date,jdbcType=VARCHAR} , '%Y%m' )  group by projectId
   </select>
   <select id="selectByProjectYearCount"  resultMap="BaseResultMap">
     select <include refid="Base_Column_List" />
@@ -392,7 +480,13 @@
 	         #{item,jdbcType=INTEGER}
 	    </foreach>
     </if>
-     and applyState = #{state,jdbcType=INTEGER} and YEAR(date)=YEAR(#{date,jdbcType=VARCHAR})  group by projectId
+    <if test="state != null">
+    	and applyState in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>
+     and YEAR(date)=YEAR(#{date,jdbcType=VARCHAR})  group by projectId
   </select>
   <select id="selectByProjectDay"  resultMap="BaseResultMap">
     select <include refid="Base_Column_List" />
@@ -404,7 +498,13 @@
 	         #{item,jdbcType=INTEGER}
 	    </foreach>
     </if>
-     and applyState = #{state,jdbcType=INTEGER} and date = #{date,jdbcType=VARCHAR}  and projectId = #{projectId,jdbcType=INTEGER}
+     <if test="state != null">
+    	and applyState in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+     and date = #{date,jdbcType=VARCHAR}  and projectId = #{projectId,jdbcType=INTEGER}
   </select>
   <select id="selectByProjectMon"  resultMap="BaseResultMap">
     select <include refid="Base_Column_List" />
@@ -416,7 +516,13 @@
 	         #{item,jdbcType=INTEGER}
 	    </foreach>
     </if>
-     and applyState = #{state,jdbcType=INTEGER} and DATE_FORMAT( date, '%Y%m' ) = DATE_FORMAT( #{date,jdbcType=VARCHAR} , '%Y%m' ) and projectId = #{projectId,jdbcType=INTEGER}
+    <if test="state != null">
+    	and applyState in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>
+     and DATE_FORMAT( date, '%Y%m' ) = DATE_FORMAT( #{date,jdbcType=VARCHAR} , '%Y%m' ) and projectId = #{projectId,jdbcType=INTEGER}
   </select>
   <select id="selectByProjectYear"  resultMap="BaseResultMap">
     select <include refid="Base_Column_List" />
@@ -428,9 +534,50 @@
 	         #{item,jdbcType=INTEGER}
 	    </foreach>
     </if>
-     and applyState = #{state,jdbcType=INTEGER} and YEAR(date)=YEAR(#{date,jdbcType=VARCHAR}) and projectId = #{projectId,jdbcType=INTEGER}
+     <if test="state != null">
+    	and applyState in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>
+     and YEAR(date)=YEAR(#{date,jdbcType=VARCHAR}) and projectId = #{projectId,jdbcType=INTEGER}
   </select>
-  
+  <select id="selectByProjectAllCount"  resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from tb_order
+     where 1=1
+    <if test="employeeId != null">
+    	and employeeId in
+	    <foreach collection="employeeId" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>
+    <if test="state != null">
+    	and applyState in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>
+    group by projectId
+  </select>
+  <select id="selectByProjectAll"  resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from tb_order
+     where 1=1
+    <if test="employeeId != null">
+    	and employeeId in
+	    <foreach collection="employeeId" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>
+     <if test="state != null">
+    	and applyState in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+     and projectId = #{projectId,jdbcType=INTEGER}
+  </select>
    <select id="selectByEmployeeCXApply"  resultMap="BaseResultMap">
     select <include refid="Base_Column_List" />
     from tb_order
@@ -445,83 +592,117 @@
   <select id="selectByEmployeeCXOrder"  resultMap="BaseResultMap">
     select <include refid="Base_Column_List" />
     from tb_order
-    where employeeId = #{employeeId,jdbcType=INTEGER} and applyState = #{applyState,jdbcType=INTEGER}
-    and orderState = #{orderState,jdbcType=INTEGER}
+    where employeeId = #{employeeId,jdbcType=INTEGER}
+    <if test="applyState != null">
+    	and applyState in
+	    <foreach collection="applyState" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>
+    <if test="orderState != null">
+    	and orderState in
+	    <foreach collection="orderState" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>
   </select>
   <select id="selectByEmployeeCXOrderApply"  resultMap="BaseResultMap">
     select <include refid="Base_Column_List" />
     from tb_order
-    where employeeId = #{employeeId,jdbcType=INTEGER} and applyState = #{applyState,jdbcType=INTEGER}
-    and orderState = #{orderState,jdbcType=INTEGER} 
-    and applyOrderState = in
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    <if test="applyState != null">
+    	and applyState in
+	    <foreach collection="applyState" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>
+    <if test="orderState != null">
+    	and orderState in
+	    <foreach collection="orderState" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>
+    <if test="applyOrderState != null">
+    	and applyOrderState in
 	    <foreach collection="applyOrderState" item="item" open="(" close=")" index="index" separator=",">
 	         #{item,jdbcType=INTEGER}
 	    </foreach>
+	 </if>
   </select>
-   <select id="selectByEmployeeWKS"  resultMap="BaseResultMap">
+   <select id="selectByEmployeeOrder"  resultMap="BaseResultMap">
     select <include refid="Base_Column_List" />
     from tb_order
-    where employeeId = #{employeeId,jdbcType=INTEGER} and applyState = #{applyState,jdbcType=INTEGER} and to_days(date) = to_days(#{date,jdbcType=VARCHAR}) and orderState = #{orderState,jdbcType=INTEGER}
-  </select>
-  <select id="selectByEmployeeWTJ"  resultMap="BaseResultMap">
-    select <include refid="Base_Column_List" />
-    from tb_order
-    where employeeId = #{employeeId,jdbcType=INTEGER} and applyState = #{state,jdbcType=INTEGER} and to_days(date) - to_days(#{date,jdbcType=VARCHAR}) &lt;= 1
-  </select>
-  <select id="selectByEmployeeWSHAndSHZ"  resultMap="BaseResultMap">
-    select <include refid="Base_Column_List" />
-    from tb_order
-    where employeeId = #{employeeId,jdbcType=INTEGER} and applyState in(#{stateWSH,jdbcType=INTEGER},#{stateSHZ,jdbcType=INTEGER}) and to_days(date) - to_days(#{date,jdbcType=VARCHAR}) &lt;= 1
-  </select>
-  <select id="selectByEmployeeFinishWTJ"  resultMap="BaseResultMap">
-    select <include refid="Base_Column_List" />
-    from tb_order
-    where employeeId = #{employeeId,jdbcType=INTEGER} and applyOrderState = #{state,jdbcType=INTEGER} and to_days(date) - to_days(now()) &lt;= 1
-  </select>
-  <select id="selectByEmployeeFinishWSHAndSHZ"  resultMap="BaseResultMap">
-    select <include refid="Base_Column_List" />
-    from tb_order
-    where employeeId = #{employeeId,jdbcType=INTEGER} and applyOrderState in (#{stateWSH,jdbcType=INTEGER},#{stateSHZ,jdbcType=INTEGER}) and to_days(date) - to_days(now()) &lt;= 1
-  </select>
-   <select id="selectByProjectAllCount"  resultMap="BaseResultMap">
-    select <include refid="Base_Column_List" />
-    from tb_order
-     where 1=1
-    <if test="employeeId != null">
-    	and employeeId in
-	    <foreach collection="employeeId" item="item" open="(" close=")" index="index" separator=",">
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    <if test="applyState != null">
+    	and applyState in
+	    <foreach collection="applyState" item="item" open="(" close=")" index="index" separator=",">
 	         #{item,jdbcType=INTEGER}
 	    </foreach>
     </if>
-     and applyState = #{state,jdbcType=INTEGER}  group by projectId
-  </select>
-  <select id="selectByProjectAll"  resultMap="BaseResultMap">
-    select <include refid="Base_Column_List" />
-    from tb_order
-     where 1=1
-    <if test="employeeId != null">
-    	and employeeId in
-	    <foreach collection="employeeId" item="item" open="(" close=")" index="index" separator=",">
+    <if test="orderState != null">
+    	and orderState in
+	    <foreach collection="orderState" item="item" open="(" close=")" index="index" separator=",">
 	         #{item,jdbcType=INTEGER}
 	    </foreach>
     </if>
-     and applyState = #{state,jdbcType=INTEGER} and projectId = #{projectId,jdbcType=INTEGER}
+    and to_days(date) = to_days(#{date,jdbcType=VARCHAR}) 
   </select>
+  <select id="selectByEmployeeStateApply"  resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from tb_order
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    and applyState = #{state,jdbcType=INTEGER} 
+    and to_days(date) - to_days(#{date,jdbcType=VARCHAR}) &lt;= 1
+  </select>
+ 
+  <select id="selectByEmployeeFinishState"  resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from tb_order
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    <if test="state != null">
+    	and applyOrderState in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>
+    and to_days(date) - to_days(now()) &lt;= 1
+  </select>
+  
+   
   <select id="selectByProject"  resultMap="BaseResultMap">
     select <include refid="Base_Column_List" />
     from tb_order
-    where employeeId = #{employeeId,jdbcType=INTEGER} and applyState = #{applyState,jdbcType=INTEGER} 
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+   <if test="state != null">
+    	and applyState not in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>
     and customerProjectId = #{customerProjectId,jdbcType=INTEGER}
   </select>
    <select id="selectByEmployee"  resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from tb_order
-    where employeeId = #{employeeId,jdbcType=INTEGER} and applyState > #{state,jdbcType=INTEGER} limit #{page},#{size}
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    <if test="state != null">
+    	and applyState not in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    limit #{page},#{size}
   </select>
   <select id="selectByEmployeeCount"  resultType="Integer">
     select count(*)
     from tb_order
-    where employeeId = #{employeeId,jdbcType=INTEGER} and applyState > #{state,jdbcType=INTEGER}
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and applyState not in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>
   </select>
 </mapper>

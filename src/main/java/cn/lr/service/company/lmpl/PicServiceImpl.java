@@ -39,8 +39,10 @@ public class PicServiceImpl implements PicService {
 	@Override
 	public JSONObject getPicByCompany(JSONObject data){
 		Integer companyId = data.getInteger("companyId");
-		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
-		List<pic> pics = picMapper.selectByCompanyId(companyId,state);
+		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(stateWSX);
+		List<pic> pics = picMapper.selectByCompanyId(companyId,stateList);
 		JSONObject dataJson = new JSONObject();
 		List<JSONObject> fileListJSON = new ArrayList<JSONObject>();
 		List<String> urlList = new ArrayList<String>();

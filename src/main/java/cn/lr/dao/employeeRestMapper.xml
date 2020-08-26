@@ -130,12 +130,26 @@
     select 
     <include refid="Base_Column_List" />
     from tb_employeerest
-    where operatorId = #{employeeId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER} and to_days(operatorTime) = to_days(now()) order by dateTime desc limit #{page},#{size}
+    where operatorId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state not in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>  
+    and to_days(operatorTime) = to_days(now()) order by dateTime desc limit #{page},#{size}
   </select>
   <select id="selectByEmployeeIdCount"  resultType="Integer">
     select count(*)
     from tb_employeerest
-    where operatorId = #{employeeId,jdbcType=INTEGER} and state > #{state,jdbcType=INTEGER} and to_days(operatorTime) = to_days(now())
+    where operatorId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state not in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>  
+    and to_days(operatorTime) = to_days(now())
   </select>
   <select id="selectByEmployeeList" resultMap="BaseResultMap">
     select 
@@ -148,7 +162,13 @@
 	         #{employeeId,jdbcType=INTEGER}
 	    </foreach>
     </if>
-    and state >  #{stateSX,jdbcType=INTEGER} and state &lt; #{stateSB,jdbcType=INTEGER}  and to_days(operatorTime) = to_days(#{date,jdbcType=VARCHAR}) order by operatorTime desc
+    <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>    
+    and to_days(operatorTime) = to_days(#{date,jdbcType=VARCHAR}) order by operatorTime desc
   </select>
   <select id="selectByEmployeeTeam" resultMap="BaseResultMap">
     select 
@@ -161,7 +181,12 @@
 	         #{employeeId,jdbcType=INTEGER}
 	    </foreach>
     </if> 
-    and state >  #{stateSX,jdbcType=INTEGER} and state &lt; #{stateSB,jdbcType=INTEGER} 
+    <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>    
     and schedule in
    <foreach collection="type" item="item" open="(" close=")" index="index" separator=",">
         #{item,jdbcType=INTEGER}
@@ -178,7 +203,12 @@
 	         #{employeeId,jdbcType=INTEGER}
 	    </foreach>
     </if> 
-    and state >  #{stateSX,jdbcType=INTEGER} and state &lt; #{stateSB,jdbcType=INTEGER}
+    <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>   
     and schedule in
    <foreach collection="type" item="item" open="(" close=")" index="index" separator=",">
         #{item,jdbcType=INTEGER}
@@ -189,6 +219,13 @@
     select 
     <include refid="Base_Column_List" />
     from tb_employeerest
-    where operatorId = #{employeeId,jdbcType=INTEGER} and state >  #{stateSX,jdbcType=INTEGER} and state &lt; #{stateSB,jdbcType=INTEGER} and to_days(operatorTime) = to_days(#{date,jdbcType=VARCHAR}) 
+    where operatorId = #{employeeId,jdbcType=INTEGER} 
+    <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>   
+    and to_days(operatorTime) = to_days(#{date,jdbcType=VARCHAR}) 
   </select>
 </mapper>

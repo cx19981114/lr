@@ -20,20 +20,21 @@ public interface taskMapper {
     int updateByPrimaryKey(task record);
     
     List<task> selectByCompanyId(@Param("companyId") Integer companyId,@Param("prevType") Integer prevType,
-    		@Param("type") Integer type,@Param("state") Integer state,@Param("page") Integer page,@Param("size") Integer size);
+    		@Param("type") Integer type,@Param("state") List<Integer> state,@Param("page") Integer page,
+    		@Param("size") Integer size);
 
 	int selectByCompanyCount(@Param("companyId")Integer companyId,@Param("prevType") Integer prevType,
-    		@Param("type") Integer type,@Param("state") Integer state);
+    		@Param("type") Integer type,@Param("state") List<Integer> state);
 	
-	task selectByCompanyAndPrevTypeAndTypeAndStep(@Param("companyId") Integer companyId,@Param("prevType") Integer prevType,
-	    		@Param("type") Integer type);
+	task selectByCompanyAndPrevTypeAndTypeAndStep(@Param("companyId") Integer companyId,
+			@Param("prevType") Integer prevType,@Param("type") Integer type);
 	
 	List<task> selectByPost(@Param("postId")Integer postId,@Param("prevType")Integer prevType,
-			@Param("type")Integer type,@Param("state")Integer state);
+			@Param("type")Integer type,@Param("state")List<Integer> state);
 	
 	List<task> selectByPostAndStep(@Param("postId")Integer postId,@Param("prevType")Integer prevType,
-			@Param("type")Integer type,@Param("state")Integer state,@Param("step")Integer step);
+			@Param("type")Integer type,@Param("step")Integer step,@Param("state")List<Integer> state);
 	
 	Integer selectByPostAndStepMax(@Param("postId")Integer postId,@Param("prevType")Integer prevType,
-			@Param("type")Integer type,@Param("state")Integer state);
+			@Param("type")Integer type,@Param("state")List<Integer> state);
 }

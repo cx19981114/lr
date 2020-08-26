@@ -1,5 +1,6 @@
 package cn.lr.service.company.lmpl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +36,11 @@ public class NoticeServiceImpl implements NoticeService {
 	public Page<notice> getNoticeByCompany(JSONObject data) {
 		Integer companyId = data.getInteger("companyId");
 		Integer pageNum = data.getInteger("pageNum");
-		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
-		List<notice> notices = noticeMapper.selectByCompanyId(companyId,state,(pageNum-1)*PAGESIZE,PAGESIZE);
-		int total = noticeMapper.selectByCompanyCount(companyId,state);
+		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(stateWSX);
+		List<notice> notices = noticeMapper.selectByCompanyId(companyId,stateList,(pageNum-1)*PAGESIZE,PAGESIZE);
+		int total = noticeMapper.selectByCompanyCount(companyId,stateList);
 		Page<notice> page = new Page<notice>();
 		page.setPageNum(pageNum);
 		page.setPageSize(PAGESIZE);
@@ -47,8 +50,10 @@ public class NoticeServiceImpl implements NoticeService {
 	}
 	public List<notice> getNoticeByCompanyList(JSONObject data) {
 		Integer companyId = data.getInteger("companyId");
-		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
-		List<notice> notices = noticeMapper.selectByCompanyId(companyId,state,0,Integer.MAX_VALUE);
+		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(stateWSX);
+		List<notice> notices = noticeMapper.selectByCompanyId(companyId,stateList,0,Integer.MAX_VALUE);
 		return notices;
 	}
 	@Override

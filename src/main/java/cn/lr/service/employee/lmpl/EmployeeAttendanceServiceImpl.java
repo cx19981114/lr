@@ -75,14 +75,16 @@ public class EmployeeAttendanceServiceImpl implements EmployeeAttendanceService 
 		Integer employeeId = data.getInteger("employeeId");
 		Integer pageNum = data.getInteger("pageNum");
 		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
-		List<employeeAttendance> employeeAttendances = employeeAttendanceMapper.selectByEmployeeId(employeeId,state,
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(state);
+		List<employeeAttendance> employeeAttendances = employeeAttendanceMapper.selectByEmployeeId(employeeId,stateList,
 				(pageNum - 1) * PAGESIZE, PAGESIZE);
 		List<EmployeeAttendanceDTO> jsonObjects = new ArrayList<EmployeeAttendanceDTO>();
 		for (employeeAttendance e : employeeAttendances) {
 			EmployeeAttendanceDTO employeeAttendanceDTO = this.sEmployeeAttendanceDTO(e);
 			jsonObjects.add(employeeAttendanceDTO);
 		}
-		int total = employeeAttendanceMapper.selectByEmployeeIdCount(employeeId,state);
+		int total = employeeAttendanceMapper.selectByEmployeeIdCount(employeeId,stateList);
 		Page<EmployeeAttendanceDTO> page = new Page<EmployeeAttendanceDTO>();
 		page.setPageNum(pageNum);
 		page.setPageSize(PAGESIZE);
@@ -95,7 +97,9 @@ public class EmployeeAttendanceServiceImpl implements EmployeeAttendanceService 
 	@Override
 	public Integer addEmployeeAttendance(JSONObject data) throws ParseException {
 		EmployeeAttendanceDTO employeeAttendanceDTO = this.getEmployeeAttendanceByEmployeeNew(data);
-		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
+		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
+		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
 		if (employeeAttendanceDTO != null) {
 			throw new BusiException("该用户今日已打卡");
 		}
@@ -110,8 +114,7 @@ public class EmployeeAttendanceServiceImpl implements EmployeeAttendanceService 
 			picString += o.toString() + "-";
 		}
 		employeeAttendance.setPic(picString);
-		employeeAttendance
-				.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId")));
+		employeeAttendance.setState(stateWTJ);
 		int count = employeeAttendanceMapper.insertSelective(employeeAttendance);
 		if (count == 0) {
 			throw new BusiException("插入employeeAttendance表失败");
@@ -122,7 +125,9 @@ public class EmployeeAttendanceServiceImpl implements EmployeeAttendanceService 
 		dataJSonDynamic.put("id", employeeAttendance.getId());
 		dataJSonDynamic.put("employeeId", data.getInteger("employeeId"));
 		dataJSonDynamic.put("companyId", data.getInteger("companyId"));
-		dataJSonDynamic.put("rank", rankMapper.selectByName(Type, data.getInteger("companyId"),state));
+		stateList.clear();
+		stateList.add(stateWSX);
+		dataJSonDynamic.put("rank", rankMapper.selectByName(Type, data.getInteger("companyId"),stateList));
 		int dynamicId = DynamicService.writeDynamic(dataJSonDynamic);
 
 		JSONObject dataJSonApply = new JSONObject();
@@ -327,9 +332,18 @@ public class EmployeeAttendanceServiceImpl implements EmployeeAttendanceService 
 	@Override
 	public EmployeeAttendanceDTO getEmployeeAttendanceByEmployeeNew(JSONObject data) throws ParseException {
 		Integer employeeId = data.getInteger("employeeId");
-		Integer stateSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
-		Integer stateSB = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核失败", data.getInteger("companyId"));
-		employeeAttendance employeeAttendance = employeeAttendanceMapper.selectByEmployeeIdNew(employeeId,stateSX,stateSB);
+		Integer stateWSQ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未申请",data.getInteger("companyId"));
+		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
+		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", data.getInteger("companyId"));
+		Integer stateSHZ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", data.getInteger("companyId"));
+		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(stateWSQ);
+		stateList.add(stateCG);
+		stateList.add(stateSHZ);
+		stateList.add(stateWSH);
+		stateList.add(stateWTJ);
+		employeeAttendance employeeAttendance = employeeAttendanceMapper.selectByEmployeeIdNew(employeeId,stateList);
 		if (employeeAttendance != null) {
 			return this.sEmployeeAttendanceDTO(employeeAttendance);
 		}

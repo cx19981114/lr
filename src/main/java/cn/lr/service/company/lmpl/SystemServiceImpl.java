@@ -1,5 +1,6 @@
 package cn.lr.service.company.lmpl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,9 +81,11 @@ public class SystemServiceImpl implements SystemService {
 	public Page<system> getSystemByCompany(JSONObject data) {
 		Integer companyId = data.getInteger("companyId");
 		Integer pageNum = data.getInteger("pageNum");
-		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
-		List<system> systems = systemMapper.selectByCompanyId(companyId,state,(pageNum-1)*PAGESIZE,PAGESIZE);
-		int total = systemMapper.selectByCompanyCount(companyId,state);
+		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(stateWSX);
+		List<system> systems = systemMapper.selectByCompanyId(companyId,stateList,(pageNum-1)*PAGESIZE,PAGESIZE);
+		int total = systemMapper.selectByCompanyCount(companyId,stateList);
 		Page<system> page = new Page<system>();
 		page.setPageNum(pageNum);
 		page.setPageSize(PAGESIZE);

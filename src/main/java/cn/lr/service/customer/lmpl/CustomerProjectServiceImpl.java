@@ -83,7 +83,9 @@ public class CustomerProjectServiceImpl implements CustomerProjectService {
 	public Integer addCustomerProject(JSONObject data) {
 		customer customer = customerMapper.selectByPrimaryKey(data.getInteger("customerId"));
 		project project = projectMapper.selectByPrimaryKey(data.getInteger("projectId"));
-		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
+		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
+		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
 		if(customer.getMoney() < project.getMoney()) {
 			throw new BusiException("该顾客余额不足");
 		}
@@ -94,7 +96,7 @@ public class CustomerProjectServiceImpl implements CustomerProjectService {
 		customerProject.setProjectId(project.getId());
 		customerProject.setEmployeeId(customer.getEmployeeId());
 		customerProject.setRestCount(project.getNum());
-		customerProject.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId")));
+		customerProject.setState(stateWTJ);
 		int count =  customerProjectMapper.insertSelective(customerProject);
 		if(count == 0) {
 			throw new BusiException("插入customerProject表失败");
@@ -106,7 +108,9 @@ public class CustomerProjectServiceImpl implements CustomerProjectService {
 		dataJSonDynamic.put("id", customerProject.getId());
 		dataJSonDynamic.put("employeeId", data.getInteger("employeeId"));
 		dataJSonDynamic.put("companyId", data.getInteger("companyId"));
-		dataJSonDynamic.put("rank", rankMapper.selectByName(Type,data.getInteger("companyId"),state));
+		stateList.clear();
+		stateList.add(stateWSX);
+		dataJSonDynamic.put("rank", rankMapper.selectByName(Type,data.getInteger("companyId"),stateList));
 		int dynamicId = DynamicService.writeDynamic(dataJSonDynamic);
 
 		JSONObject dataJSonApply = new JSONObject();
@@ -124,7 +128,13 @@ public class CustomerProjectServiceImpl implements CustomerProjectService {
 	public List<JSONObject> getCustomerProjectByCustomer(JSONObject data) throws ParseException {
 		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
 		Integer stateYWC = dictMapper.selectByCodeAndStateName(ORDER_FLOW, "已完成", data.getInteger("companyId"));
-		List<customerProject> customerProjects = customerProjectMapper.selectByCustomer(data.getInteger("customerId"),stateCG);
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(stateCG);
+		List<Integer> stateListApply = new ArrayList<Integer>();
+		stateListApply.add(stateCG);
+		List<Integer> stateListOrder = new ArrayList<Integer>();
+		stateListOrder.add(stateYWC);
+		List<customerProject> customerProjects = customerProjectMapper.selectByCustomer(data.getInteger("customerId"),stateList);
 		List<JSONObject> jsonCustomers  = new ArrayList<JSONObject>();
 		for(customerProject c:customerProjects) {
 			project project = projectMapper.selectByPrimaryKey(c.getProjectId());
@@ -134,7 +144,7 @@ public class CustomerProjectServiceImpl implements CustomerProjectService {
 			jsonCustomer.put("count", c.getCount());
 			jsonCustomer.put("restCount", c.getRestCount());
 			jsonCustomer.put("money", project.getMoney());
-			List<order> orders = orderMapper.selectByProjectIdHistory(c.getId(),stateCG,stateYWC);
+			List<order> orders = orderMapper.selectByProjectIdHistory(c.getId(),stateListApply,stateListOrder);
 			List<JSONObject> orderJsonList = new ArrayList<>();
 			for(order o: orders) {
 				JSONObject orderJson = new JSONObject();
@@ -252,13 +262,15 @@ public class CustomerProjectServiceImpl implements CustomerProjectService {
 		Integer employeeId = data.getInteger("employeeId");
 		Integer pageNum = data.getInteger("pageNum");
 		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
-		List<customerProject> customerProjects = customerProjectMapper.selectByEmployee(employeeId,state,(pageNum-1)*PAGESIZE, PAGESIZE);
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(state);
+		List<customerProject> customerProjects = customerProjectMapper.selectByEmployee(employeeId,stateList,(pageNum-1)*PAGESIZE, PAGESIZE);
 		List<CustomerProjectDTO> jsonObjects = new ArrayList<CustomerProjectDTO>();
 		for(customerProject c:customerProjects) {
 			CustomerProjectDTO customerProjectDTO = this.sCustomerProjectDTO(c);
 			jsonObjects.add(customerProjectDTO);
 		}
-		int total = customerProjectMapper.selectByEmployeeCount(employeeId,state);
+		int total = customerProjectMapper.selectByEmployeeCount(employeeId,stateList);
 		Page<CustomerProjectDTO> page = new Page<CustomerProjectDTO>();
 		page.setPageNum(pageNum);
 		page.setPageSize(PAGESIZE);
@@ -289,8 +301,10 @@ public class CustomerProjectServiceImpl implements CustomerProjectService {
 		employee employee = employeeMapper.selectByPrimaryKey(customerProject.getEmployeeId());
 		project project = projectMapper.selectByPrimaryKey(customerProject.getProjectId());
 		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", employee.getCompanyId());
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(stateCG);
 		List<JSONObject> orderJsonList = new ArrayList<>();
-		List<order> orders = orderMapper.selectByProject(employee.getId(), customerProject.getId(),stateCG);
+		List<order> orders = orderMapper.selectByProject(employee.getId(), customerProject.getId(),stateList);
 		customerProjectDetailDTO.setCount(customerProject.getCount());
 		customerProjectDetailDTO.setCustomerName(customer.getName());
 		customerProjectDetailDTO.setDateTime(TimeFormatUtil.stringToTimeStamp(customerProject.getDateTime()));

@@ -21,11 +21,13 @@ public interface employeeMapper {
     
     employee selectByPhone(String phone);
     
-    List<employee> selectByCompanyId(@Param("companyId") Integer companyId,@Param("state") Integer state,@Param("page") Integer page,@Param("size") Integer size);
+    List<employee> selectByCompanyId(@Param("companyId") Integer companyId,@Param("state") List<Integer> state,@Param("page") Integer page,@Param("size") Integer size);
 
-	int selectByCompanyCount(@Param("companyId")Integer companyId,@Param("state") Integer state);
+	int selectByCompanyCount(@Param("companyId")Integer companyId,@Param("state") List<Integer> state);
 
-	List<employee> selectByPostId(@Param("companyId") Integer companyId,@Param("postId") Integer postId,@Param("state") Integer state,@Param("page") Integer page,@Param("size") Integer size);
+	List<employee> selectByPostId(@Param("companyId") Integer companyId,@Param("postId") Integer postId,
+			@Param("state") List<Integer> state,@Param("page") Integer page,@Param("size") Integer size);
 	
-	int selectByPostCount(@Param("companyId")Integer companyId,@Param("postId") Integer postId,@Param("state") Integer state);
+	int selectByPostCount(@Param("companyId")Integer companyId,@Param("postId") Integer postId,
+			@Param("state") List<Integer> state);
 }

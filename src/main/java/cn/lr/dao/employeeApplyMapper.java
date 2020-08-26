@@ -19,10 +19,10 @@ public interface employeeApplyMapper {
 
 	int updateByPrimaryKey(employeeApply record);
 
-	List<employeeApply> selectByEmployeeIdAndType(@Param("employeeId") Integer employeeId,@Param("state") Integer state, @Param("type") Integer type,@Param("page") Integer page,
+	List<employeeApply> selectByEmployeeIdAndType(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state, @Param("type") Integer type,@Param("page") Integer page,
 			@Param("size") Integer size);
 
-	int selectByEmployeeIdAndTypeCount(@Param("employeeId") Integer employeeId,@Param("state") Integer state, @Param("type") Integer type);
+	int selectByEmployeeIdAndTypeCount(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state, @Param("type") Integer type);
 	
-	List<employeeApply> selectByEmployeeId(@Param("employeeId") Integer employeeId,@Param("stateSX") Integer stateSX,@Param("stateCG") Integer stateCG);
+	List<employeeApply> selectByEmployeeId(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state);
 }

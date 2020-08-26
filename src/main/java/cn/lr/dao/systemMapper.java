@@ -19,7 +19,7 @@ public interface systemMapper {
 
     int updateByPrimaryKey(system record);
     
-    List<system> selectByCompanyId(@Param("companyId")Integer companyId,@Param("state")Integer state,@Param("page")Integer page,@Param("size")Integer size);
+    List<system> selectByCompanyId(@Param("companyId")Integer companyId,@Param("state")List<Integer> state,@Param("page")Integer page,@Param("size")Integer size);
     
-    int selectByCompanyCount(@Param("companyId")Integer companyId,@Param("state")Integer state);
+    int selectByCompanyCount(@Param("companyId")Integer companyId,@Param("state")List<Integer> state);
 }

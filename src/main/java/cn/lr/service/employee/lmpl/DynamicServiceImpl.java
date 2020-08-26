@@ -103,8 +103,10 @@ public class DynamicServiceImpl implements DynamicService {
 		Integer employeeId = data.getInteger("employeeId");
 		Integer pageNum = data.getInteger("pageNum");
 		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
-		List<dynamic> dynamics = dynamicMapper.selectByEmployeeId(employeeId,state, (pageNum - 1) * PAGESIZE, PAGESIZE);
-		int total = dynamicMapper.selectByEmployeeCount(employeeId,state);
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(state);
+		List<dynamic> dynamics = dynamicMapper.selectByEmployeeId(employeeId,stateList, (pageNum - 1) * PAGESIZE, PAGESIZE);
+		int total = dynamicMapper.selectByEmployeeCount(employeeId,stateList);
 		List<DynamicDTO> dynamicDTOs = new ArrayList<DynamicDTO>();
 		for(dynamic d:dynamics) {
 			DynamicDTO dynamicDTO = this.sDynamicDTO(d);
@@ -124,8 +126,11 @@ public class DynamicServiceImpl implements DynamicService {
 		Integer pageNum = data.getInteger("pageNum");
 		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", data.getInteger("companyId"));
 		Integer stateSHZ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", data.getInteger("companyId"));
-		List<dynamic> dynamics = dynamicMapper.selectByCheckId(employeeId,stateWSH,stateSHZ, (pageNum - 1) * PAGESIZE, PAGESIZE);
-		int total = dynamicMapper.selectByCheckCount(employeeId,stateWSH,stateSHZ);
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(stateWSH);
+		stateList.add(stateSHZ);
+		List<dynamic> dynamics = dynamicMapper.selectByCheckId(employeeId,stateList, (pageNum - 1) * PAGESIZE, PAGESIZE);
+		int total = dynamicMapper.selectByCheckCount(employeeId,stateList);
 		List<DynamicDTO> dynamicDTOs = new ArrayList<DynamicDTO>();
 		for(dynamic d:dynamics) {
 			DynamicDTO dynamicDTO = this.sDynamicDTO(d);
@@ -185,13 +190,15 @@ public class DynamicServiceImpl implements DynamicService {
 		Integer companyId = data.getInteger("companyId");
 		Integer pageNum = data.getInteger("pageNum");
 		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
-		List<dynamic> dynamics = dynamicMapper.selectByCompanyId(companyId,state, (pageNum - 1) * PAGESIZE, PAGESIZE);
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(state);
+		List<dynamic> dynamics = dynamicMapper.selectByCompanyId(companyId,stateList, (pageNum - 1) * PAGESIZE, PAGESIZE);
 		List<DynamicDTO> dynamicDTOs = new ArrayList<DynamicDTO>();
 		for(dynamic d:dynamics) {
 			DynamicDTO dynamicDTO = this.sDynamicDTO(d);
 			dynamicDTOs.add(dynamicDTO);
 		}
-		int total = dynamicMapper.selectByCompanyCount(companyId,state);
+		int total = dynamicMapper.selectByCompanyCount(companyId,stateList);
 		Page<DynamicDTO> page = new Page<DynamicDTO>();
 		page.setPageNum(pageNum);
 		page.setPageSize(PAGESIZE);
@@ -203,7 +210,9 @@ public class DynamicServiceImpl implements DynamicService {
 	@Override
 	public dynamic getDynamicByTypeAndId(JSONObject data) {
 		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"));
-		dynamic dynamic = dynamicMapper.selectByTypeAndId(data.getString("name"), data.getInteger("id"),state);
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(state);
+		dynamic dynamic = dynamicMapper.selectByTypeAndId(data.getString("name"), data.getInteger("id"),stateList);
 		if (dynamic == null) {
 			throw new BusiException("该动态不存在");
 		}
@@ -212,10 +221,19 @@ public class DynamicServiceImpl implements DynamicService {
 	
 	@Override
 	public dynamic selectByTypeAndIdAndEmployeeId(JSONObject data) {
-		Integer stateSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"));
-		Integer stateSB = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核失败",data.getInteger("companyId"));
+		Integer stateWSQ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未申请",data.getInteger("companyId"));
+		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
+		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", data.getInteger("companyId"));
+		Integer stateSHZ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", data.getInteger("companyId"));
+		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(stateWSQ);
+		stateList.add(stateCG);
+		stateList.add(stateSHZ);
+		stateList.add(stateWSH);
+		stateList.add(stateWTJ);
 		dynamic dynamic = dynamicMapper.selectByTypeAndIdAndEmployeeId(data.getString("name"), data.getInteger("id"),
-				data.getInteger("employeeId"),stateSX,stateSB);
+				data.getInteger("employeeId"),stateList);
 		if (dynamic == null) {
 			throw new BusiException("该动态不存在");
 		}
@@ -287,8 +305,10 @@ public class DynamicServiceImpl implements DynamicService {
 	public Page<DynamicDTO> getAbnormalDynamic(JSONObject data) throws ParseException {
 		Integer state = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核异常", data.getInteger("companyId"));
 		Integer pageNum = data.getInteger("pageNum");
-		List<dynamic> dynamics = dynamicMapper.selectByAbnormal(data.getInteger("companyId"),state, (pageNum-1)*PAGESIZE, PAGESIZE);
-		int total = dynamicMapper.selectByAbnormalCount(data.getInteger("companyId"),state);
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(state);
+		List<dynamic> dynamics = dynamicMapper.selectByAbnormal(data.getInteger("companyId"),stateList, (pageNum-1)*PAGESIZE, PAGESIZE);
+		int total = dynamicMapper.selectByAbnormalCount(data.getInteger("companyId"),stateList);
 		List<DynamicDTO> dynamicDTOs = new ArrayList<DynamicDTO>();
 		for(dynamic d:dynamics) {
 			DynamicDTO dynamicDTO = this.sDynamicDTO(d);

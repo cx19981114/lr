@@ -21,8 +21,8 @@ public interface postMapper {
     
     post selectByCompanyIdAndPostName(post record);
 
-	List<post> selectByCompany(@Param("companyId") Integer companyId,@Param("state") Integer state, @Param("page") Integer page,
+	List<post> selectByCompany(@Param("companyId") Integer companyId,@Param("state") List<Integer> state, @Param("page") Integer page,
 			@Param("size") Integer size);
 
-	int selectByCompanyCount(@Param("companyId")Integer companyId,@Param("state") Integer state);
+	int selectByCompanyCount(@Param("companyId")Integer companyId,@Param("state") List<Integer> state);
 }

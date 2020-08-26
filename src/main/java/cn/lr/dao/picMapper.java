@@ -19,7 +19,7 @@ public interface picMapper {
 
     int updateByPrimaryKey(pic record);
     
-    List<pic> selectByCompanyId(@Param("companyId")Integer companyId,@Param("state")Integer state);
+    List<pic> selectByCompanyId(@Param("companyId")Integer companyId,@Param("state")List<Integer> state);
     
     pic selectByPic(String pic);
     

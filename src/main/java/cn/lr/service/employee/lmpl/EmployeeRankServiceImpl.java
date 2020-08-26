@@ -40,8 +40,10 @@ public class EmployeeRankServiceImpl implements EmployeeRankService {
 		Integer companyId = data.getInteger("companyId");
 		Integer pageNum = data.getInteger("pageNum");
 		String type = data.getString("type");
-		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
-		List<employee> employees = employeeMapper.selectByCompanyId(companyId,state, 0, Integer.MAX_VALUE);
+		Integer stateYSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(stateYSX);
+		List<employee> employees = employeeMapper.selectByCompanyId(companyId,stateList, 0, Integer.MAX_VALUE);
 		List<EmployeeRankDTO> employeeRankDTOs = new ArrayList<EmployeeRankDTO>();
 		List<EmployeeRankDTO> employeeRankDTOSorts = new ArrayList<EmployeeRankDTO>();
 		List<employeeRank> employeeRanks = new ArrayList<>();
@@ -109,8 +111,10 @@ public class EmployeeRankServiceImpl implements EmployeeRankService {
 	public EmployeeRankDTO getEmployeeRankByEmployee(JSONObject data) {
 		Integer employeeId = data.getInteger("employeeId");
 		Integer companyId = data.getInteger("companyId");
-		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
-		List<employee> employees = employeeMapper.selectByCompanyId(companyId,state, 0, Integer.MAX_VALUE);
+		Integer stateYSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(stateYSX);
+		List<employee> employees = employeeMapper.selectByCompanyId(companyId,stateList, 0, Integer.MAX_VALUE);
 		List<EmployeeRankDTO> employeeRankDTOs = new ArrayList<EmployeeRankDTO>();
 		List<employeeRank> employeeRanks = new ArrayList<>();
 		for(employee e:employees) {

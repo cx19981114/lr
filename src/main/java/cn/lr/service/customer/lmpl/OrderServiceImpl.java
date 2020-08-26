@@ -148,7 +148,8 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public Integer addOrder(JSONObject data) {
 		customerProject customerProject = customerProjectMapper.selectByPrimaryKey(data.getInteger("customerProjectId"));
-		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
+		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
 		if(customerProject.getRestCount()-customerProject.getIngCount() == 0) {
 			throw new BusiException("该项目剩余消费次数为0");
 		}
@@ -182,7 +183,9 @@ public class OrderServiceImpl implements OrderService {
 		dataJSonDynamic.put("id", order.getId());
 		dataJSonDynamic.put("employeeId", data.getInteger("employeeId"));
 		dataJSonDynamic.put("companyId", data.getInteger("companyId"));
-		dataJSonDynamic.put("rank", rankMapper.selectByName(ApplyType,data.getInteger("companyId"),state));
+		stateList.clear();
+		stateList.add(stateWSX);
+		dataJSonDynamic.put("rank", rankMapper.selectByName(ApplyType,data.getInteger("companyId"),stateList));
 		int dynamicId = DynamicService.writeDynamic(dataJSonDynamic);
 
 		JSONObject dataJSonApply = new JSONObject();
@@ -361,6 +364,7 @@ public class OrderServiceImpl implements OrderService {
 	public List<JSONObject> getOrderByProjectType(JSONObject data) throws ParseException{
 		Integer employeeId = data.getInteger("employeeId");
 		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
 		employee employee = employeeMapper.selectByPrimaryKey(employeeId);
 		List<Integer> employeeIdList = new ArrayList<>();
 		employeeIdList.add(employee.getId());
@@ -379,14 +383,15 @@ public class OrderServiceImpl implements OrderService {
 		if(!type.equals("all")) {
 			date = TimeFormatUtil.dateToString(data.getTimestamp("date"));
 		}
+		stateList.add(stateCG);
 		if(type.equals("day")) {
-			orders = orderMapper.selectByProjectDayCount(employeeIdList,date,stateCG);
+			orders = orderMapper.selectByProjectDayCount(employeeIdList,date,stateList);
 		}else if(type.equals("mon")) {
-			orders = orderMapper.selectByProjectMonCount(employeeIdList,date,stateCG);
+			orders = orderMapper.selectByProjectMonCount(employeeIdList,date,stateList);
 		}else if(type.equals("year")) {
-			orders = orderMapper.selectByProjectYearCount(employeeIdList,date,stateCG);
+			orders = orderMapper.selectByProjectYearCount(employeeIdList,date,stateList);
 		}else if(type.equals("all")) {
-			orders = orderMapper.selectByProjectAllCount(employeeIdList,stateCG);
+			orders = orderMapper.selectByProjectAllCount(employeeIdList,stateList);
 		}
 		for(order o:orders) {
 			project project = projectMapper.selectByPrimaryKey(o.getProjectId());
@@ -394,13 +399,13 @@ public class OrderServiceImpl implements OrderService {
 			projectJson.put("type", project.getName());
 			List<order> orderProject = new ArrayList<>();
 			if(type.equals("day")) {
-				orderProject = orderMapper.selectByProjectDay(employeeIdList, project.getId(),date,stateCG);
+				orderProject = orderMapper.selectByProjectDay(employeeIdList, project.getId(),date,stateList);
 			}else if(type.equals("mon")) {
-				orderProject = orderMapper.selectByProjectMon(employeeIdList, project.getId(),date,stateCG);
+				orderProject = orderMapper.selectByProjectMon(employeeIdList, project.getId(),date,stateList);
 			}else if(type.equals("year")) {
-				orderProject = orderMapper.selectByProjectYear(employeeIdList, project.getId(),date,stateCG);
+				orderProject = orderMapper.selectByProjectYear(employeeIdList, project.getId(),date,stateList);
 			}else if(type.equals("all")) {
-				orderProject = orderMapper.selectByProjectAll(employeeIdList, project.getId(),stateCG);
+				orderProject = orderMapper.selectByProjectAll(employeeIdList, project.getId(),stateList);
 			}
 			List<OrderDTO> jsonObjects1 = new ArrayList<OrderDTO>();
 			List<OrderDTO> jsonObjects2 = new ArrayList<OrderDTO>();
@@ -432,6 +437,7 @@ public class OrderServiceImpl implements OrderService {
 	public JSONObject getOrderDetail(JSONObject data) throws ParseException {
 		order order = orderMapper.selectByPrimaryKey(data.getInteger("orderId"));
 		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
 		if(order == null) {
 			throw new BusiException("该预约不存在");
 		}
@@ -446,8 +452,8 @@ public class OrderServiceImpl implements OrderService {
 		dataJson.put("order", this.sOrderDetailDTO(order));
 		dataJson.put("dynamicId", dynamic.getId());
 		dataJson.put("ApplyRankDTOApply", ApplyRankService.getApplyRankByDynamic(dataJSonDynamic));
-		
-		dynamic = dynamicMapper.selectByTypeAndId(OrderType, order.getId(),state);
+		stateList.add(state);
+		dynamic = dynamicMapper.selectByTypeAndId(OrderType, order.getId(),stateList);
 		if(dynamic == null) {
 			dataJson.put("ApplyRankDTOOrder", null);
 		}else {
@@ -464,7 +470,9 @@ public class OrderServiceImpl implements OrderService {
 		String date = TimeFormatUtil.dateToString(data.getTimestamp("date"));
 		System.out.println(date);
 		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
-		List<order> orders = orderMapper.selectByEmployeeIdDate(data.getInteger("employeeId"), date,stateCG);
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(stateCG);
+		List<order> orders = orderMapper.selectByEmployeeIdDate(data.getInteger("employeeId"), date,stateList);
 		company company = companyMapper.selectByPrimaryKey(data.getInteger("companyId"));
 	    List<String> list = DateUtil.cutDate(company.getStartTime(), company.getEndTime());
 	    List<JSONObject> timeVaildList = new ArrayList<>();
@@ -497,7 +505,8 @@ public class OrderServiceImpl implements OrderService {
 	public OrderDTO sOrderDTO(order order) throws ParseException {
 		OrderDTO orderDTO = new OrderDTO();
 		employee employee = employeeMapper.selectByPrimaryKey(order.getEmployeeId());
-		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", employee.getCompanyId());
+		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", employee.getCompanyId());
+		List<Integer> stateList = new ArrayList<Integer>();
 		customerProject customerProject = customerProjectMapper.selectByPrimaryKey(order.getCustomerProjectId());
 		orderDTO.setCustomerName(customerMapper.selectByPrimaryKey(order.getCustomerId()).getName());
 		orderDTO.setEmployeeName(employee.getName());
@@ -507,7 +516,8 @@ public class OrderServiceImpl implements OrderService {
 		orderDTO.setDate(TimeFormatUtil.stringTodate(order.getDate()));
 		orderDTO.setEmployeeId(order.getEmployeeId());
 		orderDTO.setProjectName(projectMapper.selectByPrimaryKey(customerProject.getProjectId()).getName());
-		orderDTO.setRank(rankMapper.selectByName(ApplyType, employee.getCompanyId(),state));
+		stateList.add(stateWSX);
+		orderDTO.setRank(rankMapper.selectByName(ApplyType, employee.getCompanyId(),stateList));
 		orderDTO.setApplyState(dictMapper.selectByCodeAndStateCode(APPLY_FLOW, order.getApplyState(), employee.getCompanyId()));
 		orderDTO.setOrderState(dictMapper.selectByCodeAndStateCode(ORDER_FLOW, order.getOrderState(), employee.getCompanyId()));
 		orderDTO.setTimes(order.getProjectNum()+"/"+customerProject.getCount());
@@ -518,13 +528,15 @@ public class OrderServiceImpl implements OrderService {
 		OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
 		employee employee = employeeMapper.selectByPrimaryKey(order.getEmployeeId());
 		customerProject customerProject = customerProjectMapper.selectByPrimaryKey(order.getCustomerProjectId());
-		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", employee.getCompanyId());
+		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", employee.getCompanyId());
+		List<Integer> stateList = new ArrayList<Integer>();
 		orderDetailDTO.setCustomerName(customerMapper.selectByPrimaryKey(order.getCustomerId()).getName());
 		orderDetailDTO.setEmployeeName(employee.getName());
 		orderDetailDTO.setId(order.getId());
 		orderDetailDTO.setNote(order.getNote());
 		orderDetailDTO.setProjectName(projectMapper.selectByPrimaryKey(customerProject.getProjectId()).getName());
-		orderDetailDTO.setRank(rankMapper.selectByName(ApplyType, employee.getCompanyId(),state));
+		stateList.add(stateWSX);
+		orderDetailDTO.setRank(rankMapper.selectByName(ApplyType, employee.getCompanyId(),stateList));
 		if(order.getOrderState() != null) {
 			orderDetailDTO.setOrderState(dictMapper.selectByCodeAndStateCode(ORDER_FLOW, order.getOrderState(), employee.getCompanyId()));
 		}
@@ -606,7 +618,8 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public Integer endOrder(JSONObject data) {
 		Integer orderId = data.getInteger("orderId");
-		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
+		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
 		order order = orderMapper.selectByPrimaryKey(orderId);
 		if(order.getApplyState() != dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"))) {
 			throw new BusiException("该预约无法开始");
@@ -637,7 +650,9 @@ public class OrderServiceImpl implements OrderService {
 		dataJSonDynamic.put("id", order.getId());
 		dataJSonDynamic.put("employeeId", order.getEmployeeId());
 		dataJSonDynamic.put("companyId", data.getInteger("companyId"));
-		dataJSonDynamic.put("rank", rankMapper.selectByName(OrderType,data.getInteger("companyId"),state));
+		stateList.clear();
+		stateList.add(stateWSX);
+		dataJSonDynamic.put("rank", rankMapper.selectByName(OrderType,data.getInteger("companyId"),stateList));
 		int dynamicId = DynamicService.writeDynamic(dataJSonDynamic);
 
 		JSONObject dataJSonApply = new JSONObject();
@@ -754,7 +769,11 @@ public class OrderServiceImpl implements OrderService {
 		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
 		Integer stateYWC = dictMapper.selectByCodeAndStateName(ORDER_FLOW, "已完成", data.getInteger("companyId"));
 		Integer pageNum = data.getInteger("pageNum");
-		List<order> orders = orderMapper.selectByEmployeeIdHistory(data.getInteger("employeeId"),stateCG,stateYWC,(pageNum-1)*PAGESIZE,PAGESIZE);
+		List<Integer> stateListApply = new ArrayList<Integer>();
+		stateListApply.add(stateCG);
+		List<Integer> stateListOrder = new ArrayList<Integer>();
+		stateListOrder.add(stateYWC);
+		List<order> orders = orderMapper.selectByEmployeeIdHistory(data.getInteger("employeeId"),stateListApply,stateListOrder,(pageNum-1)*PAGESIZE,PAGESIZE);
 		List<JSONObject> orderJsonList = new ArrayList<>();
 		for(order o: orders) {
 			JSONObject orderJson = new JSONObject();
@@ -790,7 +809,7 @@ public class OrderServiceImpl implements OrderService {
 			}
 			orderJsonList.add(orderJson);
 		}
-		int total = orderMapper.selectByEmployeeIdHistoryCount(data.getInteger("employeeId"),stateCG,stateYWC);
+		int total = orderMapper.selectByEmployeeIdHistoryCount(data.getInteger("employeeId"),stateListApply,stateListOrder);
 		Page<JSONObject> page = new Page<JSONObject>();
 		page.setPageNum(pageNum);
 		page.setPageSize(PAGESIZE);
@@ -801,8 +820,12 @@ public class OrderServiceImpl implements OrderService {
 	public Page<JSONObject> getOrderHistoryByCustomer(JSONObject data) throws ParseException{
 		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
 		Integer stateYWC = dictMapper.selectByCodeAndStateName(ORDER_FLOW, "已完成", data.getInteger("companyId"));
+		List<Integer> stateListApply = new ArrayList<Integer>();
+		stateListApply.add(stateCG);
+		List<Integer> stateListOrder = new ArrayList<Integer>();
+		stateListOrder.add(stateYWC);
 		Integer pageNum = data.getInteger("pageNum");
-		List<order> orders = orderMapper.selectByCustomerIdHistory(data.getInteger("customerId"),stateCG,stateYWC,(pageNum-1)*PAGESIZE,PAGESIZE);
+		List<order> orders = orderMapper.selectByCustomerIdHistory(data.getInteger("customerId"),stateListApply,stateListOrder,(pageNum-1)*PAGESIZE,PAGESIZE);
 		List<JSONObject> orderJsonList = new ArrayList<>();
 		for(order o: orders) {
 			JSONObject orderJson = new JSONObject();
@@ -838,7 +861,7 @@ public class OrderServiceImpl implements OrderService {
 			}
 			orderJsonList.add(orderJson);
 		}
-		int total = orderMapper.selectByCustomerIdHistoryCount(data.getInteger("customerId"),stateCG,stateYWC);
+		int total = orderMapper.selectByCustomerIdHistoryCount(data.getInteger("customerId"),stateListApply,stateListOrder);
 		Page<JSONObject> page = new Page<JSONObject>();
 		page.setPageNum(pageNum);
 		page.setPageSize(PAGESIZE);
@@ -850,14 +873,16 @@ public class OrderServiceImpl implements OrderService {
 	public Page<OrderDTO> getOrderByEmployee(JSONObject data) throws ParseException {
 		Integer employeeId = data.getInteger("employeeId");
 		Integer pageNum = data.getInteger("pageNum");
-		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
-		List<order> orders = orderMapper.selectByEmployee(employeeId,state,(pageNum-1)*PAGESIZE, PAGESIZE);
+		Integer stateYSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(stateYSX);
+		List<order> orders = orderMapper.selectByEmployee(employeeId,stateList,(pageNum-1)*PAGESIZE, PAGESIZE);
 		List<OrderDTO> jsonObjects = new ArrayList<OrderDTO>();
 		for(order o:orders) {
 			OrderDTO orderDTO = this.sOrderDTO(o);
 			jsonObjects.add(orderDTO);
 		}
-		int total = orderMapper.selectByEmployeeCount(employeeId,state);
+		int total = orderMapper.selectByEmployeeCount(employeeId,stateList);
 		Page<OrderDTO> page = new Page<OrderDTO>();
 		page.setPageNum(pageNum);
 		page.setPageSize(PAGESIZE);

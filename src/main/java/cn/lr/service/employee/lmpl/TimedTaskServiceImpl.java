@@ -1,5 +1,6 @@
 package cn.lr.service.employee.lmpl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -133,11 +134,12 @@ public class TimedTaskServiceImpl implements TimedTaskService{
 			Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", c.getId());
 			Integer stateSHZ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", c.getId());
 			Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", c.getId());
-			Integer stateSB = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核失败", c.getId());
 			Integer stateWKS = dictMapper.selectByCodeAndStateName(ORDER_FLOW, "未开始", c.getId());
 			Integer stateJXZ = dictMapper.selectByCodeAndStateName(ORDER_FLOW, "进行中", c.getId());
+			List<Integer> stateList = new ArrayList<Integer>();
 			String date = TimeFormatUtil.timeStampToString(new Date().getTime());
-			List<employee> employees = employeeMapper.selectByCompanyId(c.getId(),stateSX, 0, Integer.MAX_VALUE);
+			stateList.add(stateSX);
+			List<employee> employees = employeeMapper.selectByCompanyId(c.getId(),stateList, 0, Integer.MAX_VALUE);
 			for(employee e:employees) {
 				// 更新今日未审核的任务申请
 				employeeTask employeeTask = employeeTaskMapper.selectByEmployee(e.getId());
@@ -146,7 +148,7 @@ public class TimedTaskServiceImpl implements TimedTaskService{
 				if(oriFN != null && !"".equals(oriFN)) {
 					String[] oriFNs = oriFN.split("-");
 					String[] oriStates = oriState.split("-");
-					String stateList = "";
+					String taskStateList = "";
 					for(int i = 0;i<oriFNs.length;i++) {
 						if(Integer.valueOf(oriStates[i]) != stateWSQ) {
 							JSONObject dataTask = new JSONObject();
@@ -159,16 +161,16 @@ public class TimedTaskServiceImpl implements TimedTaskService{
 								EmployeeTaskService.annulEmployeeTask(dataTask);
 							}
 						}
-						stateList += stateWSQ+"-";
+						taskStateList += stateWSQ+"-";
 					}
-					employeeTask.setTaskIdListFNState(stateList);
+					employeeTask.setTaskIdListFNState(taskStateList);
 				}
 				String oriRWDay = employeeTask.getTaskIdListRWDay();
 				String oriRWDayState = employeeTask.getTaskIdListRWDayState();
 				if(oriRWDay != null && !"".equals(oriRWDay)) {
 					String[] oriRWDays = oriRWDay.split("-");
 					String[] oriStates = oriRWDayState.split("-");
-					String stateList = "";
+					String taskStateList = "";
 					for(int i = 0;i<oriRWDays.length;i++) {
 						if(Integer.valueOf(oriStates[i]) != stateWSQ) {
 							JSONObject dataTask = new JSONObject();
@@ -181,16 +183,22 @@ public class TimedTaskServiceImpl implements TimedTaskService{
 								EmployeeTaskService.annulEmployeeTask(dataTask);
 							}
 						}
-						stateList += stateWSQ+"-";
+						taskStateList += stateWSQ+"-";
 					}
-					employeeTask.setTaskIdListRWDayState(stateList);
+					employeeTask.setTaskIdListRWDayState(taskStateList);
 				}
 				int count = employeeTaskMapper.updateByPrimaryKeySelective(employeeTask);
 				if(count == 0) {
 					throw new BusiException("更新employeeTask表失败");
 				}
 				// 更新结束日期是今日前一天的申请
-				List<employeeApply> employeeApplies = employeeApplyMapper.selectByEmployeeId(e.getId(),stateSX,stateCG);
+				stateList.clear();
+				stateList.add(stateWSQ);
+				stateList.add(stateCG);
+				stateList.add(stateSHZ);
+				stateList.add(stateWSH);
+				stateList.add(stateWTJ);
+				List<employeeApply> employeeApplies = employeeApplyMapper.selectByEmployeeId(e.getId(),stateList);
 				for(employeeApply ea:employeeApplies) {
 					JSONObject dataApply = new JSONObject();
 					dataApply.put("employeeApplyId", ea.getId());
@@ -203,7 +211,13 @@ public class TimedTaskServiceImpl implements TimedTaskService{
 					}
 				}
 				// 更新今日打卡
-				employeeAttendance employeeAttendance = employeeAttendanceMapper.selectByEmployeeIdNew(e.getId(),stateSX,stateSB);
+				stateList.clear();
+				stateList.add(stateWSQ);
+				stateList.add(stateCG);
+				stateList.add(stateSHZ);
+				stateList.add(stateWSH);
+				stateList.add(stateWTJ);
+				employeeAttendance employeeAttendance = employeeAttendanceMapper.selectByEmployeeIdNew(e.getId(),stateList);
 				if(employeeAttendance != null) {
 					JSONObject dataAttendance = new JSONObject();
 					dataAttendance.put("employeeAttendanceId", employeeAttendance.getId());
@@ -217,7 +231,13 @@ public class TimedTaskServiceImpl implements TimedTaskService{
 					}
 				}
 				//更新今日总结
-				employeeLogDay employeeLogDay = employeeLogDayMapper.selectByEmployeeIdNew(e.getId(),stateSX,stateSB);
+				stateList.clear();
+				stateList.add(stateWSQ);
+				stateList.add(stateCG);
+				stateList.add(stateSHZ);
+				stateList.add(stateWSH);
+				stateList.add(stateWTJ);
+				employeeLogDay employeeLogDay = employeeLogDayMapper.selectByEmployeeIdNew(e.getId(),stateList);
 				if(employeeLogDay != null) {
 					JSONObject dataLogDay = new JSONObject();
 					dataLogDay.put("employeeLogDayId", employeeLogDay.getId());
@@ -231,7 +251,13 @@ public class TimedTaskServiceImpl implements TimedTaskService{
 					}
 				}
 				// 更新明日计划
-				employeeLogTomorrow employeeLogTomorrow = employeeLogTomorrowMapper.selectByEmployeeIdNew(e.getId(),stateSX,stateSB);
+				stateList.clear();
+				stateList.add(stateWSQ);
+				stateList.add(stateCG);
+				stateList.add(stateSHZ);
+				stateList.add(stateWSH);
+				stateList.add(stateWTJ);
+				employeeLogTomorrow employeeLogTomorrow = employeeLogTomorrowMapper.selectByEmployeeIdNew(e.getId(),stateList);
 				if(employeeLogTomorrow != null) {
 					JSONObject dataLogTomorrow = new JSONObject();
 					dataLogTomorrow.put("employeeLogTomorrowId", employeeLogTomorrow.getId());
@@ -245,8 +271,13 @@ public class TimedTaskServiceImpl implements TimedTaskService{
 					}
 				}
 				// 更新每日行程
-				
-				employeeRest employeeRest = employeeRestMapper.selectByEmployeeIdNew(e.getId(),stateSX,stateSB,date);
+				stateList.clear();
+				stateList.add(stateWSQ);
+				stateList.add(stateCG);
+				stateList.add(stateSHZ);
+				stateList.add(stateWSH);
+				stateList.add(stateWTJ);
+				employeeRest employeeRest = employeeRestMapper.selectByEmployeeIdNew(e.getId(),stateList,date);
 				if(employeeRest != null) {
 					JSONObject dataRest = new JSONObject();
 					dataRest.put("employeeRestId", employeeRest.getId());
@@ -261,14 +292,19 @@ public class TimedTaskServiceImpl implements TimedTaskService{
 				}
 				//更新未审核的新增业绩
 			
-				List<customerPerformance> customerPerformancesWTJ = customerPerformanceMapper.selectByEmployeeWTJ(e.getId(),stateWTJ);
+				stateList.clear();
+				stateList.add(stateWTJ);
+				List<customerPerformance> customerPerformancesWTJ = customerPerformanceMapper.selectByEmployeeState(e.getId(),stateList);
 				for(customerPerformance cp:customerPerformancesWTJ) {
 					JSONObject cpJsonObject = new JSONObject();
 					cpJsonObject.put("customerPerformanceId", cp.getId());
 					cpJsonObject.put("companyId", e.getCompanyId());
 					CustomerPerformanceService.deleteCustomerPerformance(cpJsonObject);
 				}
-				List<customerPerformance> customerPerformancesWSHAndSHZ = customerPerformanceMapper.selectByEmployeeWSHAndSHZ(e.getId(),stateWSH,stateSHZ);
+				stateList.clear();
+				stateList.add(stateWSH);
+				stateList.add(stateSHZ);
+				List<customerPerformance> customerPerformancesWSHAndSHZ = customerPerformanceMapper.selectByEmployeeState(e.getId(),stateList);
 				for(customerPerformance cp:customerPerformancesWSHAndSHZ) {
 					JSONObject cpJsonObject = new JSONObject();
 					cpJsonObject.put("customerPerformanceId", cp.getId());
@@ -276,14 +312,19 @@ public class TimedTaskServiceImpl implements TimedTaskService{
 					CustomerPerformanceService.annulCustomerPerformance(cpJsonObject);
 				}
 				//更新未审核的预约
-				List<order> ordersWTJ = orderMapper.selectByEmployeeWTJ(e.getId(),stateWTJ,date);
+				stateList.clear();
+				stateList.add(stateWTJ);
+				List<order> ordersWTJ = orderMapper.selectByEmployeeStateApply(e.getId(),stateList,date);
 				for(order o:ordersWTJ) {
 					JSONObject oJsonObject = new JSONObject();
 					oJsonObject.put("orderId", o.getId());
 					oJsonObject.put("companyId", e.getCompanyId());
 					OrderService.deleteOrder(oJsonObject);
 				}
-				List<order> ordersWSHAndSHZ = orderMapper.selectByEmployeeWSHAndSHZ(e.getId(),stateWSH,stateSHZ,date);
+				stateList.clear();
+				stateList.add(stateWSH);
+				stateList.add(stateSHZ);
+				List<order> ordersWSHAndSHZ = orderMapper.selectByEmployeeStateApply(e.getId(),stateList,date);
 				for(order o:ordersWSHAndSHZ) {
 					JSONObject oJsonObject = new JSONObject();
 					oJsonObject.put("orderId", o.getId());
@@ -291,21 +332,30 @@ public class TimedTaskServiceImpl implements TimedTaskService{
 					OrderService.annulOrder(oJsonObject);
 				}
 				//更新未审核的预约完成
-				List<order> ordersFinishWTJ = orderMapper.selectByEmployeeFinishWTJ(e.getId(),stateWTJ);
+				stateList.clear();
+				stateList.add(stateWTJ);
+				List<order> ordersFinishWTJ = orderMapper.selectByEmployeeFinishState(e.getId(),stateList);
 				for(order o:ordersFinishWTJ) {
 					JSONObject oJsonObject = new JSONObject();
 					oJsonObject.put("orderId", o.getId());
 					oJsonObject.put("companyId", e.getCompanyId());
 					OrderService.deleteOrderFinish(oJsonObject);
 				}
-				List<order> ordersFinishWSHAndSHZ = orderMapper.selectByEmployeeFinishWSHAndSHZ(e.getId(),stateWSH,stateSHZ);
+				stateList.clear();
+				stateList.add(stateWSH);
+				stateList.add(stateSHZ);
+				List<order> ordersFinishWSHAndSHZ = orderMapper.selectByEmployeeFinishState(e.getId(),stateList);
 				for(order o:ordersFinishWSHAndSHZ) {
 					JSONObject oJsonObject = new JSONObject();
 					oJsonObject.put("orderId", o.getId());
 					oJsonObject.put("companyId", e.getCompanyId());
 					OrderService.annulOrderFinish(oJsonObject);
 				}
-				List<order> ordersWKS = orderMapper.selectByEmployeeWKS(e.getId(),stateCG,stateWKS,date);
+				List<Integer> stateListAppply = new ArrayList<Integer>();
+				List<Integer> stateListOrder = new ArrayList<Integer>();
+				stateListAppply.add(stateCG);
+				stateListOrder.add(stateWKS);
+				List<order> ordersWKS = orderMapper.selectByEmployeeOrder(e.getId(),stateListAppply,stateListOrder,date);
 				for(order o:ordersWKS) {
 					JSONObject oJsonObject = new JSONObject();
 					oJsonObject.put("orderId", o.getId());
@@ -313,7 +363,11 @@ public class TimedTaskServiceImpl implements TimedTaskService{
 					oJsonObject.put("evaluate", "预约过期未开始");
 					OrderService.cancelOrder(oJsonObject);
 				}
-				List<order> ordersJXZ = orderMapper.selectByEmployeeWKS(e.getId(),stateCG,stateJXZ,date);
+				stateListAppply.clear();;
+				stateListOrder.clear();;
+				stateListAppply.add(stateCG);
+				stateListOrder.add(stateJXZ);
+				List<order> ordersJXZ = orderMapper.selectByEmployeeOrder(e.getId(),stateListAppply,stateListOrder,date);
 				for(order o:ordersJXZ) {
 					JSONObject oJsonObject = new JSONObject();
 					oJsonObject.put("orderId", o.getId());
@@ -322,14 +376,19 @@ public class TimedTaskServiceImpl implements TimedTaskService{
 					OrderService.cancelOrder(oJsonObject);
 				}
 				//更新未审核的客户项目
-				List<customerProject> customerProjectWTJ = customerProjectMapper.selectByEmployeeWTJ(e.getId(),stateWTJ);
+				stateList.clear();
+				stateList.add(stateWTJ);
+				List<customerProject> customerProjectWTJ = customerProjectMapper.selectByEmployeeState(e.getId(),stateList);
 				for(customerProject cp:customerProjectWTJ) {
 					JSONObject cpJsonObject = new JSONObject();
 					cpJsonObject.put("customerProjectId", cp.getId());
 					cpJsonObject.put("companyId", e.getCompanyId());
 					CustomerProjectService.deleteCustomerProject(cpJsonObject);
 				}
-				List<customerProject> customerProjectWSHAndSHZ = customerProjectMapper.selectByEmployeeWSHAndSHZ(e.getId(),stateWSH,stateSHZ);
+				stateList.clear();
+				stateList.add(stateWSH);
+				stateList.add(stateSHZ);
+				List<customerProject> customerProjectWSHAndSHZ = customerProjectMapper.selectByEmployeeState(e.getId(),stateList);
 				for(customerProject cp:customerProjectWSHAndSHZ) {
 					JSONObject cpJsonObject = new JSONObject();
 					cpJsonObject.put("customerProjectId", cp.getId());
@@ -350,7 +409,9 @@ public class TimedTaskServiceImpl implements TimedTaskService{
 			Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", c.getId());
 			Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", c.getId());
 			Integer stateSHZ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", c.getId());
-			List<employee> employees = employeeMapper.selectByCompanyId(c.getId(),stateSX, 0, Integer.MAX_VALUE);
+			List<Integer> stateList =  new ArrayList<Integer>();
+			stateList.add(stateSX);
+			List<employee> employees = employeeMapper.selectByCompanyId(c.getId(),stateList, 0, Integer.MAX_VALUE);
 			for(employee e:employees) {
 				employeeTask employeeTask = employeeTaskMapper.selectByEmployee(e.getId());
 				String oriRWWeek = employeeTask.getTaskIdListRWWeek();
@@ -358,7 +419,7 @@ public class TimedTaskServiceImpl implements TimedTaskService{
 				if(oriRWWeek != null && !"".equals(oriRWWeek)) {
 					String[] oriRWWeeks = oriRWWeek.split("-");
 					String[] oriStates = oriRWWeekState.split("-");
-					String stateList = "";
+					String taskStateList = "";
 					for(int i = 0;i<oriRWWeeks.length;i++) {
 						if(Integer.valueOf(oriStates[i]) != stateWSQ) {
 							JSONObject dataTask = new JSONObject();
@@ -371,9 +432,9 @@ public class TimedTaskServiceImpl implements TimedTaskService{
 								EmployeeTaskService.annulEmployeeTask(dataTask);
 							}
 						}
-						stateList += stateWSQ+"-";
+						taskStateList += stateWSQ+"-";
 					}
-					employeeTask.setTaskIdListRWWeekState(stateList);
+					employeeTask.setTaskIdListRWWeekState(taskStateList);
 				}
 				int count = employeeTaskMapper.updateByPrimaryKeySelective(employeeTask);
 				if(count == 0) {
@@ -392,7 +453,9 @@ public class TimedTaskServiceImpl implements TimedTaskService{
 			Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", c.getId());
 			Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", c.getId());
 			Integer stateSHZ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", c.getId());
-			List<employee> employees = employeeMapper.selectByCompanyId(c.getId(),stateSX, 0, Integer.MAX_VALUE);
+			List<Integer> stateList =  new ArrayList<Integer>();
+			stateList.add(stateSX);
+			List<employee> employees = employeeMapper.selectByCompanyId(c.getId(),stateList, 0, Integer.MAX_VALUE);
 			for(employee e:employees) {
 				employeeTask employeeTask = employeeTaskMapper.selectByEmployee(e.getId());
 				String oriRWMon = employeeTask.getTaskIdListRWMon();
@@ -400,7 +463,7 @@ public class TimedTaskServiceImpl implements TimedTaskService{
 				if(oriRWMon != null && !"".equals(oriRWMon)) {
 					String[] oriRWMons = oriRWMon.split("-");
 					String[] oriStates = oriRWMonState.split("-");
-					String stateList = "";
+					String taskStateList = "";
 					for(int i = 0;i<oriRWMons.length;i++) {
 						if(Integer.valueOf(oriStates[i]) != stateWSQ) {
 							JSONObject dataTask = new JSONObject();
@@ -413,9 +476,9 @@ public class TimedTaskServiceImpl implements TimedTaskService{
 								EmployeeTaskService.annulEmployeeTask(dataTask);
 							}
 						}
-						stateList += stateWSQ+"-";
+						taskStateList += stateWSQ+"-";
 					}
-					employeeTask.setTaskIdListRWMonState(stateList);
+					employeeTask.setTaskIdListRWMonState(taskStateList);
 				}
 				int count = employeeTaskMapper.updateByPrimaryKeySelective(employeeTask);
 				if(count == 0) {

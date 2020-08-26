@@ -1,6 +1,8 @@
 package cn.lr.service.company.lmpl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 
@@ -46,11 +48,13 @@ public class RankServiceImpl implements RankService {
 	@Override
 	public Integer getRankByType(JSONObject data) {
 		String type = EToC.get(data.get("type"));
-		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
+		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(stateWSX);
 		if(type == null) {
 			throw new BusiException("该类型不存在");
 		}
-		Integer score = rankMapper.selectByName(type,data.getInteger("companyId"),state);
+		Integer score = rankMapper.selectByName(type,data.getInteger("companyId"),stateList);
 		return score;
 	}
 }

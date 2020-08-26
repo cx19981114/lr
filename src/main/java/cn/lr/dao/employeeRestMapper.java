@@ -19,18 +19,23 @@ public interface employeeRestMapper {
 
 	int updateByPrimaryKey(employeeRest record);
 
-	List<employeeRest> selectByEmployeeId(@Param("employeeId") Integer employeeId,@Param("state") Integer state, @Param("page") Integer page,
-			@Param("size") Integer size);
+	List<employeeRest> selectByEmployeeId(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state,
+			@Param("page") Integer page,@Param("size") Integer size);
 	
-	int selectByEmployeeIdCount(@Param("employeeId") Integer employeeId,@Param("state") Integer state);
+	int selectByEmployeeIdCount(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state);
 
-	employeeRest selectByEmployeeIdNew(@Param("employeeId")Integer employeeId,@Param("stateSX") Integer stateSX,@Param("stateSB") Integer stateSB,@Param("date") String date);
+	employeeRest selectByEmployeeIdNew(@Param("employeeId")Integer employeeId,
+			@Param("state") List<Integer> state,@Param("date") String date);
 
-	List<employeeRest> selectByEmployeeList(@Param("employeeIdList") List<Integer> employeeIdList,@Param("stateSX") Integer stateSX,@Param("stateSB") Integer stateSB,@Param("date") String date);
+	List<employeeRest> selectByEmployeeList(@Param("employeeIdList") List<Integer> employeeIdList,
+			@Param("state") List<Integer> state,@Param("date") String date);
 	
-	List<employeeRest> selectByEmployeeTeam(@Param("employeeIdList") List<Integer> employeeIdList,@Param("stateSX") Integer stateSX,@Param("stateSB") Integer stateSB,@Param("date") String date,
+	List<employeeRest> selectByEmployeeTeam(@Param("employeeIdList") List<Integer> employeeIdList,
+			@Param("state") List<Integer> state,@Param("date") String date,
 			@Param("type") List<Integer> type,@Param("page") Integer page,@Param("size") Integer size);
 	
-	int selectByEmployeeTeamCount(@Param("employeeIdList") List<Integer> employeeIdList,@Param("stateSX") Integer stateSX,@Param("stateSB") Integer stateSB,@Param("date") String date,@Param("type") List<Integer> type);
+	int selectByEmployeeTeamCount(@Param("employeeIdList") List<Integer> employeeIdList,
+			@Param("state") List<Integer> state,@Param("date") String date,
+			@Param("type") List<Integer> type);
 
 }
