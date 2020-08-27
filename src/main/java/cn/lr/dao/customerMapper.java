@@ -66,4 +66,8 @@ public interface customerMapper {
 			@Param("size") Integer size);
 	
 	int selectByServiceQtrCount(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state);
+	
+	int selectByConsumeDay(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state,@Param("day") Integer day);
+	
+	int selectByServiceDay(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state,@Param("day") Integer day);
 }

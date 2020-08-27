@@ -391,4 +391,46 @@ public class CustomerServiceImpl implements CustomerService {
 		customerDTO.setState(dictMapper.selectByCodeAndStateCode(APPLY_FLOW, customer.getState(),employee.getCompanyId()));
 		return customerDTO;
 	}
+	@Override
+	public JSONObject getCustomerChart(JSONObject data) {
+		Integer employeeId = data.getInteger("employeeId");
+		Integer state = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(state);
+		String[] category = new String[] {"Mon","Tue","Wed","Thu","Fri","Sat","Sun"};
+		JSONObject option = new JSONObject();
+		JSONObject xAxis = new JSONObject();
+		JSONObject yAxis = new JSONObject();
+		List<JSONObject> seriesList = new ArrayList<JSONObject>();
+		
+		List<Integer> line = new ArrayList<Integer>();
+		JSONObject series = new JSONObject();
+		for(int i = 1;i <= 7 ;i++) {
+			line.add(customerMapper.selectByConsumeDay(employeeId, stateList,i));
+		}
+		series.put("data", line);
+		series.put("type", "line");
+		seriesList.add(series);
+		
+		line = new ArrayList<Integer>();
+		series = new JSONObject();
+		for(int i = 1;i <= 7 ;i++) {
+			line.add(customerMapper.selectByServiceDay(employeeId, stateList,i));
+		}
+		series.put("data", line);
+		series.put("type", "line");
+		seriesList.add(series);
+		
+		xAxis.put("type", "category");
+		xAxis.put("data", category);
+		option.put("xAxis", xAxis);
+		
+		yAxis.put("type", "value");
+		option.put("yAxis", yAxis);
+		
+		series.put("data", line);
+		series.put("type", "line");
+		option.put("series", seriesList);
+		return option;
+	}
 }

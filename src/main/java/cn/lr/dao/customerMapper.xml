@@ -453,4 +453,30 @@
     </if> 
     and QUARTER(activeServiceTime)=QUARTER(now())
   </select>
+  
+  <select id="selectByConsumeDay" resultType="Integer">
+    select count(*)
+    from tb_customer
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    and to_days(activeConsumeTime) = to_days(subdate(curdate(),date_format(curdate(),'%w')-#{day,jdbcType=INTEGER})) 
+  </select>
+  
+  <select id="selectByServiceDay" resultType="Integer">
+    select count(*)
+    from tb_customer
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    and to_days(activeServiceTime) = to_days(subdate(curdate(),date_format(curdate(),'%w')-#{day,jdbcType=INTEGER})) 
+  </select>
 </mapper>
