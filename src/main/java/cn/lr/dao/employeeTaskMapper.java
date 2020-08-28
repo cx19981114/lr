@@ -1,5 +1,9 @@
 package cn.lr.dao;
 
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
 import cn.lr.po.employeeTask;
 
 public interface employeeTaskMapper {
@@ -15,5 +19,10 @@ public interface employeeTaskMapper {
 
     int updateByPrimaryKey(employeeTask record);
     
-    employeeTask selectByEmployee(Integer employeeId);
+    List<employeeTask> selectByEmployeeId(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state,@Param("page") Integer page,
+			@Param("size") Integer size);
+    
+    int selectByEmployeeIdCount(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state);
+    
+    List<employeeTask> selectByState(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state);
 }

@@ -67,6 +67,11 @@ public interface customerMapper {
 	
 	int selectByServiceQtrCount(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state);
 	
+	List<customer> selectByUnServiceQtr(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state,@Param("page") Integer page,
+			@Param("size") Integer size);
+	
+	int selectByUnServiceQtrCount(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state);
+	
 	int selectByConsumeDay(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state,@Param("day") Integer day);
 	
 	int selectByServiceDay(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state,@Param("day") Integer day);

@@ -6,6 +6,8 @@ import com.alibaba.fastjson.JSONObject;
 
 public class EmployeeTaskDTO {
 	private Integer id;
+	
+	private Integer taskId;
 
 	private String name;
 
@@ -26,6 +28,14 @@ public class EmployeeTaskDTO {
 	private String note;
 	
 	private JSONObject pics;
+
+	public Integer getTaskId() {
+		return taskId;
+	}
+
+	public void setTaskId(Integer taskId) {
+		this.taskId = taskId;
+	}
 
 	public String getNote() {
 		return note;

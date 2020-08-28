@@ -4,18 +4,14 @@
   <resultMap id="BaseResultMap" type="cn.lr.po.employeeTask">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="employeeId" jdbcType="INTEGER" property="employeeId" />
-    <result column="taskIdListFN" jdbcType="VARCHAR" property="taskIdListFN" />
-    <result column="taskIdListRWDay" jdbcType="VARCHAR" property="taskIdListRWDay" />
-    <result column="taskIdListRWWeek" jdbcType="VARCHAR" property="taskIdListRWWeek" />
-    <result column="taskIdListRWMon" jdbcType="VARCHAR" property="taskIdListRWMon" />
-    <result column="taskIdListFNState" jdbcType="VARCHAR" property="taskIdListFNState" />
-    <result column="taskIdListRWDayState" jdbcType="VARCHAR" property="taskIdListRWDayState" />
-    <result column="taskIdListRWWeekState" jdbcType="VARCHAR" property="taskIdListRWWeekState" />
-    <result column="taskIdListRWMonState" jdbcType="VARCHAR" property="taskIdListRWMonState" />
+    <result column="taskId" jdbcType="INTEGER" property="taskId" />
+    <result column="dateTime" jdbcType="VARCHAR" property="dateTime" />
+    <result column="note" jdbcType="VARCHAR" property="note" />
+    <result column="pics" jdbcType="VARCHAR" property="pics" />
+    <result column="state" jdbcType="INTEGER" property="state" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, employeeId, taskIdListFN, taskIdListRWDay, taskIdListRWWeek, taskIdListRWMon, 
-    taskIdListFNState, taskIdListRWDayState, taskIdListRWWeekState, taskIdListRWMonState
+    id, employeeId, taskId, dateTime, note, pics, state
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -27,19 +23,15 @@
     delete from tb_employeetask
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="cn.lr.po.employeeTask">
-    insert into tb_employeetask (id, employeeId, taskIdListFN, 
-      taskIdListRWDay, taskIdListRWWeek, taskIdListRWMon, 
-      taskIdListFNState, taskIdListRWDayState, 
-      taskIdListRWWeekState, taskIdListRWMonState
-      )
-    values (#{id,jdbcType=INTEGER}, #{employeeId,jdbcType=INTEGER}, #{taskIdListFN,jdbcType=VARCHAR}, 
-      #{taskIdListRWDay,jdbcType=VARCHAR}, #{taskIdListRWWeek,jdbcType=VARCHAR}, #{taskIdListRWMon,jdbcType=VARCHAR}, 
-      #{taskIdListFNState,jdbcType=VARCHAR}, #{taskIdListRWDayState,jdbcType=VARCHAR}, 
-      #{taskIdListRWWeekState,jdbcType=VARCHAR}, #{taskIdListRWMonState,jdbcType=VARCHAR}
-      )
+  <insert id="insert" parameterType="cn.lr.po.employeeTask"  useGeneratedKeys="true" keyProperty="id">
+    insert into tb_employeetask (id, employeeId, taskId, 
+      dateTime, note, pics, 
+      state)
+    values (#{id,jdbcType=INTEGER}, #{employeeId,jdbcType=INTEGER}, #{taskId,jdbcType=INTEGER}, 
+      #{dateTime,jdbcType=VARCHAR}, #{note,jdbcType=VARCHAR}, #{pics,jdbcType=VARCHAR}, 
+      #{state,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="cn.lr.po.employeeTask">
+  <insert id="insertSelective" parameterType="cn.lr.po.employeeTask"  useGeneratedKeys="true" keyProperty="id">
     insert into tb_employeetask
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -48,29 +40,20 @@
       <if test="employeeId != null">
         employeeId,
       </if>
-      <if test="taskIdListFN != null">
-        taskIdListFN,
+      <if test="taskId != null">
+        taskId,
       </if>
-      <if test="taskIdListRWDay != null">
-        taskIdListRWDay,
+      <if test="dateTime != null">
+        dateTime,
       </if>
-      <if test="taskIdListRWWeek != null">
-        taskIdListRWWeek,
+      <if test="note != null">
+        note,
       </if>
-      <if test="taskIdListRWMon != null">
-        taskIdListRWMon,
+      <if test="pics != null">
+        pics,
       </if>
-      <if test="taskIdListFNState != null">
-        taskIdListFNState,
-      </if>
-      <if test="taskIdListRWDayState != null">
-        taskIdListRWDayState,
-      </if>
-      <if test="taskIdListRWWeekState != null">
-        taskIdListRWWeekState,
-      </if>
-      <if test="taskIdListRWMonState != null">
-        taskIdListRWMonState,
+      <if test="state != null">
+        state,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -80,29 +63,20 @@
       <if test="employeeId != null">
         #{employeeId,jdbcType=INTEGER},
       </if>
-      <if test="taskIdListFN != null">
-        #{taskIdListFN,jdbcType=VARCHAR},
+      <if test="taskId != null">
+        #{taskId,jdbcType=INTEGER},
       </if>
-      <if test="taskIdListRWDay != null">
-        #{taskIdListRWDay,jdbcType=VARCHAR},
+      <if test="dateTime != null">
+        #{dateTime,jdbcType=VARCHAR},
       </if>
-      <if test="taskIdListRWWeek != null">
-        #{taskIdListRWWeek,jdbcType=VARCHAR},
+      <if test="note != null">
+        #{note,jdbcType=VARCHAR},
       </if>
-      <if test="taskIdListRWMon != null">
-        #{taskIdListRWMon,jdbcType=VARCHAR},
+      <if test="pics != null">
+        #{pics,jdbcType=VARCHAR},
       </if>
-      <if test="taskIdListFNState != null">
-        #{taskIdListFNState,jdbcType=VARCHAR},
-      </if>
-      <if test="taskIdListRWDayState != null">
-        #{taskIdListRWDayState,jdbcType=VARCHAR},
-      </if>
-      <if test="taskIdListRWWeekState != null">
-        #{taskIdListRWWeekState,jdbcType=VARCHAR},
-      </if>
-      <if test="taskIdListRWMonState != null">
-        #{taskIdListRWMonState,jdbcType=VARCHAR},
+      <if test="state != null">
+        #{state,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -112,29 +86,20 @@
       <if test="employeeId != null">
         employeeId = #{employeeId,jdbcType=INTEGER},
       </if>
-      <if test="taskIdListFN != null">
-        taskIdListFN = #{taskIdListFN,jdbcType=VARCHAR},
+      <if test="taskId != null">
+        taskId = #{taskId,jdbcType=INTEGER},
       </if>
-      <if test="taskIdListRWDay != null">
-        taskIdListRWDay = #{taskIdListRWDay,jdbcType=VARCHAR},
+      <if test="dateTime != null">
+        dateTime = #{dateTime,jdbcType=VARCHAR},
       </if>
-      <if test="taskIdListRWWeek != null">
-        taskIdListRWWeek = #{taskIdListRWWeek,jdbcType=VARCHAR},
+      <if test="note != null">
+        note = #{note,jdbcType=VARCHAR},
       </if>
-      <if test="taskIdListRWMon != null">
-        taskIdListRWMon = #{taskIdListRWMon,jdbcType=VARCHAR},
+      <if test="pics != null">
+        pics = #{pics,jdbcType=VARCHAR},
       </if>
-      <if test="taskIdListFNState != null">
-        taskIdListFNState = #{taskIdListFNState,jdbcType=VARCHAR},
-      </if>
-      <if test="taskIdListRWDayState != null">
-        taskIdListRWDayState = #{taskIdListRWDayState,jdbcType=VARCHAR},
-      </if>
-      <if test="taskIdListRWWeekState != null">
-        taskIdListRWWeekState = #{taskIdListRWWeekState,jdbcType=VARCHAR},
-      </if>
-      <if test="taskIdListRWMonState != null">
-        taskIdListRWMonState = #{taskIdListRWMonState,jdbcType=VARCHAR},
+      <if test="state != null">
+        state = #{state,jdbcType=INTEGER},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -142,21 +107,49 @@
   <update id="updateByPrimaryKey" parameterType="cn.lr.po.employeeTask">
     update tb_employeetask
     set employeeId = #{employeeId,jdbcType=INTEGER},
-      taskIdListFN = #{taskIdListFN,jdbcType=VARCHAR},
-      taskIdListRWDay = #{taskIdListRWDay,jdbcType=VARCHAR},
-      taskIdListRWWeek = #{taskIdListRWWeek,jdbcType=VARCHAR},
-      taskIdListRWMon = #{taskIdListRWMon,jdbcType=VARCHAR},
-      taskIdListFNState = #{taskIdListFNState,jdbcType=VARCHAR},
-      taskIdListRWDayState = #{taskIdListRWDayState,jdbcType=VARCHAR},
-      taskIdListRWWeekState = #{taskIdListRWWeekState,jdbcType=VARCHAR},
-      taskIdListRWMonState = #{taskIdListRWMonState,jdbcType=VARCHAR}
+      taskId = #{taskId,jdbcType=INTEGER},
+      dateTime = #{dateTime,jdbcType=VARCHAR},
+      note = #{note,jdbcType=VARCHAR},
+      pics = #{pics,jdbcType=VARCHAR},
+      state = #{state,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
   
-  <select id="selectByEmployee" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+   <select id="selectByEmployeeId" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from tb_employeetask
-    where employeeId = #{employeeId,jdbcType=INTEGER}
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state not in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>  
+    order by dateTime desc limit #{page},#{size}
+  </select>
+  <select id="selectByEmployeeIdCount"  resultType="Integer">
+    select count(*)
+    from tb_employeetask
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state not in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+  </select>
+  <select id="selectByState" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_employeetask
+    where employeeId = #{employeeId,jdbcType=INTEGER} 
+     <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>  
+    and to_days(now()) = to_days(dateTime)
   </select>
 </mapper>

@@ -199,6 +199,25 @@ public class CustomerManagement {
 			LoggerUtil.LOGGER.info("-------------end 根据职员获取最近消费顾客--------------------");
 		}
 	}
+	@PostMapping("/getCustomerByUnService")
+	@ResponseBody
+	public String getCustomerByUnService(@RequestBody String data, HttpSession session) {
+		LoggerUtil.LOGGER.info("-------------enter 根据职员获取最经三个月未服务客户--------------------");
+		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
+		LoggerUtil.LOGGER.debug("data : {}", data);
+		JSONObject dataJson = JSON.parseObject(data);
+		dataJson.put("companyId", session.getAttribute("companyId"));
+		try {
+			Page<JSONObject> customers = CustomerService.getCustomerByUnService(dataJson);
+			return ResultJsonUtil.toJsonString(200, customers, "根据职员获取最经三个月未服务客户成功",session.getId());
+		} catch (BusiException e) {
+			return ResultJsonUtil.toJsonString(101, null, e.getMessage(),session.getId());
+		} catch (Exception e) {
+			return ResultJsonUtil.toJsonString(404, null, "系统未知错误",session.getId());
+		}finally {
+			LoggerUtil.LOGGER.info("-------------end 根据职员获取最经三个月未服务客户-------------------");
+		}
+	}
 	@PostMapping("/getCustomerChart")
 	@ResponseBody
 	public String getCustomerByConsumeChart(@RequestBody String data, HttpSession session) {

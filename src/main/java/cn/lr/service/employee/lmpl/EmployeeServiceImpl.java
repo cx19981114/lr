@@ -39,6 +39,7 @@ import cn.lr.po.employeeTask;
 import cn.lr.po.order;
 import cn.lr.po.post;
 import cn.lr.service.company.PostService;
+import cn.lr.service.company.TaskService;
 import cn.lr.service.customer.CustomerPerformanceService;
 import cn.lr.service.customer.CustomerProjectService;
 import cn.lr.service.customer.CustomerService;
@@ -655,42 +656,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 			dayJson.put("rest", "暂无");
 		}
 		return dayJson;
-	}
-
-	public void getAllByExcel(String file) {
-		List<employee> list = new ArrayList<employee>();
-		try {
-			Workbook rwb = Workbook.getWorkbook(new File(file));
-			Sheet rs = rwb.getSheet("employee");// 或者rwb.getSheet(0)
-			int clos = rs.getColumns();// 得到所有的列
-			int rows = rs.getRows();// 得到所有的行
-			System.out.println(clos + " rows:" + rows);
-			for (int i = 1; i < rows; i++) {
-				for (int j = 0; j < clos; j++) {
-					// 第一个是列数，第二个是行数
-					String userId = rs.getCell(j++, i).getContents();// 默认最左边编号也算一列
-					if (userId == null || "".equals(userId))
-						userId = "0";
-					// 所以这里得j++
-					employee employee = new employee();
-					String userName = rs.getCell(j++, i).getContents();
-					String email = rs.getCell(j++, i).getContents();
-					String mobile = rs.getCell(j++, i).getContents();
-					String password = rs.getCell(j++, i).getContents();
-//	                    employee.setCompanyId(companyId);
-//	                    employee.setLeaderIdList(leaderIdList);
-//	                    employee.setName(name);
-//	                    employee.setPassword(password);
-//	                    employee.setPhone(phone);
-//	                    employee.setPostId(postId);
-//	                    employee.setSex(sex);
-//	                    employee.setState(state);
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-//	        return list;
 	}
 
 	public employeeDTO sEmployeeDTO(employee employee) {

@@ -1,5 +1,6 @@
 package cn.lr.service.company.lmpl;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,10 +21,11 @@ import cn.lr.dto.Page;
 import cn.lr.exception.BusiException;
 import cn.lr.po.dynamic;
 import cn.lr.po.employee;
-import cn.lr.po.employeeTask;
 import cn.lr.po.postTask;
 import cn.lr.po.task;
 import cn.lr.service.company.TaskService;
+import jxl.Sheet;
+import jxl.Workbook;
 
 @Service
 @Transactional
@@ -54,6 +56,8 @@ public class TaskServiceImpl implements TaskService {
 	private String TASK_TYPE;
 	@Value("${pageSize}")
 	private Integer PAGESIZE;
+	@Value("${picActPath}")
+	private String ACTPATH;
 
 	@Override
 	public Integer addTask(JSONObject data) {
@@ -71,7 +75,7 @@ public class TaskServiceImpl implements TaskService {
 		stateList.clear();
 		stateList.add(stateWSX);
 		List<task> tasks = taskMapper.selectByPostAndStep(data.getInteger("postIdList"),
-				dataJson.getInteger("prevType"), dataJson.getInteger("type"), data.getInteger("step"),stateList);
+				dataJson.getInteger("prevType"), dataJson.getInteger("type"), data.getInteger("step"), stateList);
 		for (task t : tasks) {
 			t.setStep(t.getStep() + 1);
 			int count = taskMapper.updateByPrimaryKeySelective(t);
@@ -84,9 +88,10 @@ public class TaskServiceImpl implements TaskService {
 		String employeeIdList = "";
 		stateList.clear();
 		stateList.add(stateYSX);
-		List<employee> employees = employeeMapper.selectByPostId(data.getInteger("companyId"), data.getInteger("postIdList"), stateList, 0, Integer.MAX_VALUE);
-		for(employee e:employees) {
-			employeeIdList += e.getId()+"-";
+		List<employee> employees = employeeMapper.selectByPostId(data.getInteger("companyId"),
+				data.getInteger("postIdList"), stateList, 0, Integer.MAX_VALUE);
+		for (employee e : employees) {
+			employeeIdList += e.getId() + "-";
 		}
 		task.setEmployeeIdList(employeeIdList);
 		task.setState(stateWSX);
@@ -98,11 +103,6 @@ public class TaskServiceImpl implements TaskService {
 		Integer postIdList = data.getInteger("postIdList");
 		this.changePostList(postIdList, task.getId(), data.getInteger("step"), true, dataJson.getInteger("prevType"),
 				dataJson.getInteger("type"), data.getInteger("companyId"));
-		// 根据职员添加任务 employeeIdList
-		this.changeEmployeeList(employeeIdList, task.getId(),
-				dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未申请", data.getInteger("companyId")),
-				data.getInteger("step"), true, dataJson.getInteger("prevType"), dataJson.getInteger("type"),
-				data.getInteger("companyId"));
 		return task.getId();
 	}
 
@@ -110,7 +110,6 @@ public class TaskServiceImpl implements TaskService {
 	public Integer modifyTask(JSONObject data) {
 		task task = taskMapper.selectByPrimaryKey(data.getInteger("taskId"));
 		String oriPostIdList = task.getPostIdList();
-		String oriEmployeeIdList = task.getEmployeeIdList();
 		Integer oriPrevType = task.getPrevType();
 		Integer oriType = task.getType();
 		Integer oriStep = task.getStep();
@@ -133,14 +132,15 @@ public class TaskServiceImpl implements TaskService {
 		task.setContent(data.getString("content"));
 		task.setName(data.getString("name"));
 		task.setRank(data.getInteger("rank"));
-		if(data.getInteger("postIdList") != null) {
+		if (data.getInteger("postIdList") != null) {
 			task.setPostIdList(String.valueOf(data.getInteger("postIdList")));
 			String employeeIdList = "";
 			stateList.clear();
 			stateList.add(stateYSX);
-			List<employee> employees = employeeMapper.selectByPostId(data.getInteger("companyId"), data.getInteger("postIdList"), stateList, 0, Integer.MAX_VALUE);
-			for(employee e:employees) {
-				employeeIdList += e.getId()+"-";
+			List<employee> employees = employeeMapper.selectByPostId(data.getInteger("companyId"),
+					data.getInteger("postIdList"), stateList, 0, Integer.MAX_VALUE);
+			for (employee e : employees) {
+				employeeIdList += e.getId() + "-";
 			}
 			task.setEmployeeIdList(employeeIdList);
 			int count = taskMapper.updateByPrimaryKeySelective(task);
@@ -149,14 +149,14 @@ public class TaskServiceImpl implements TaskService {
 			}
 		}
 		// 根据职位添加任务 postIdList
-		// 根据职员添加任务 employeeIdList
 		// 修改任务优先级
-		if ((data.getInteger("step") != null && oriStep != data.getInteger("step")) || !oriEmployeeIdList.equals(task.getEmployeeIdList())
-				|| !oriPostIdList.equals(task.getPostIdList()) || task.getType() != oriType
-				|| task.getPrevType() != oriPrevType) {
+		if ((data.getInteger("step") != null && oriStep != data.getInteger("step"))
+				|| !oriPostIdList.equals(task.getPostIdList())
+				|| task.getType() != oriType || task.getPrevType() != oriPrevType) {
 			stateList.clear();
 			stateList.add(stateWSX);
-			List<task> tasks = taskMapper.selectByPostAndStep(Integer.valueOf(oriPostIdList),oriPrevType, oriType, oriStep,stateList);
+			List<task> tasks = taskMapper.selectByPostAndStep(Integer.valueOf(oriPostIdList), oriPrevType, oriType,
+					oriStep, stateList);
 			for (task t : tasks) {
 				t.setStep(t.getStep() - 1);
 				int count = taskMapper.updateByPrimaryKeySelective(t);
@@ -164,12 +164,12 @@ public class TaskServiceImpl implements TaskService {
 					throw new BusiException("修改任务顺序失败");
 				}
 			}
-			this.changePostList(Integer.valueOf(oriPostIdList), task.getId(),null, false, oriPrevType, oriType, data.getInteger("companyId"));
-			this.changeEmployeeList(oriEmployeeIdList, task.getId(),null,null, false, oriPrevType, oriType,
+			this.changePostList(Integer.valueOf(oriPostIdList), task.getId(), null, false, oriPrevType, oriType,
 					data.getInteger("companyId"));
 			stateList.clear();
 			stateList.add(stateWSX);
-			tasks = taskMapper.selectByPostAndStep(Integer.valueOf(task.getPostIdList()),task.getPrevType(), task.getType(), data.getInteger("step"),stateList);
+			tasks = taskMapper.selectByPostAndStep(Integer.valueOf(task.getPostIdList()), task.getPrevType(),
+					task.getType(), data.getInteger("step"), stateList);
 			for (task t : tasks) {
 				t.setStep(t.getStep() + 1);
 				int count = taskMapper.updateByPrimaryKeySelective(t);
@@ -182,124 +182,12 @@ public class TaskServiceImpl implements TaskService {
 			if (count == 0) {
 				throw new BusiException("修改任务顺序失败");
 			}
-			this.changePostList(Integer.valueOf(task.getPostIdList()), task.getId(),task.getStep(), true, task.getPrevType(), task.getType(),
-					data.getInteger("companyId"));
-			this.changeEmployeeList(task.getEmployeeIdList(), task.getId(),dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未申请", data.getInteger("companyId")),
-					task.getStep(),  true, task.getPrevType(), task.getType(),
-					data.getInteger("companyId"));
+			this.changePostList(Integer.valueOf(task.getPostIdList()), task.getId(), task.getStep(), true,
+					task.getPrevType(), task.getType(), data.getInteger("companyId"));
 		}
 		return task.getId();
 	}
 
-	@Override
-	public void changeEmployeeList(String idList, Integer taskId, Integer state, Integer step, boolean isAdd,
-			Integer prevType, Integer type, Integer companyId) {
-		String[] list = idList.split("-");
-		System.out.println(idList);
-		for (int i = 0; i < list.length; i++) {
-			employeeTask employeeTask = employeeTaskMapper.selectByEmployee(Integer.valueOf(list[i]));
-			if (employeeTask == null) {
-				throw new BusiException("该任务中不存在该职员");
-			}
-			if (isAdd) {
-				if (prevType == dictMapper.selectByCodeAndStateName(PRETASK_TYPE, "赋能思维", companyId)) {
-					JSONObject data = this.sortTaskAndState(employeeTask.getTaskIdListFN(),
-							employeeTask.getTaskIdListFNState(), step, taskId, state);
-					employeeTask.setTaskIdListFN(data.getString("idList"));
-					employeeTask.setTaskIdListFNState(data.getString("stateList"));
-				} else if (prevType == dictMapper.selectByCodeAndStateName(PRETASK_TYPE, "任务清单", companyId)) {
-					if (type == dictMapper.selectByCodeAndStateName(TASK_TYPE, "日流程", companyId)) {
-						JSONObject data = this.sortTaskAndState(employeeTask.getTaskIdListRWDay(),
-								employeeTask.getTaskIdListRWDayState(), step, taskId, state);
-						employeeTask.setTaskIdListRWDay(data.getString("idList"));
-						employeeTask.setTaskIdListRWDayState(data.getString("stateList"));
-					} else if (type == dictMapper.selectByCodeAndStateName(TASK_TYPE, "周安排", companyId)) {
-						JSONObject data = this.sortTaskAndState(employeeTask.getTaskIdListRWWeek(),
-								employeeTask.getTaskIdListRWWeekState(), step, taskId, state);
-						employeeTask.setTaskIdListRWWeek(data.getString("idList"));
-						employeeTask.setTaskIdListRWWeekState(data.getString("stateList"));
-					} else if (type == dictMapper.selectByCodeAndStateName(TASK_TYPE, "月计划", companyId)) {
-						JSONObject data = this.sortTaskAndState(employeeTask.getTaskIdListRWMon(),
-								employeeTask.getTaskIdListRWMonState(), step, taskId, state);
-						employeeTask.setTaskIdListRWMon(data.getString("idList"));
-						employeeTask.setTaskIdListRWMonState(data.getString("stateList"));
-					}
-				}
-			} else {
-				if (prevType == dictMapper.selectByCodeAndStateName(PRETASK_TYPE, "赋能思维", companyId)) {
-					String taskIdString = employeeTask.getTaskIdListFN();
-					String taskStateString = employeeTask.getTaskIdListFNState();
-					String taskIdStringD = "";
-					String taskStateStringD = "";
-					String[] taskIdList = taskIdString.split("-");
-					String[] taskSatetList = taskStateString.split("-");
-					for (int j = 0; j < taskIdList.length; j++) {
-						if (Integer.valueOf(taskIdList[j]) == taskId) {
-							continue;
-						}
-						taskIdStringD += taskIdList[j] + "-";
-						taskStateStringD += taskSatetList[j] + "-";
-					}
-					employeeTask.setTaskIdListFN(taskIdStringD);
-					employeeTask.setTaskIdListFNState(taskStateStringD);
-				} else if (prevType == dictMapper.selectByCodeAndStateName(PRETASK_TYPE, "任务清单", companyId)) {
-					if (type == dictMapper.selectByCodeAndStateName(TASK_TYPE, "日流程", companyId)) {
-						String taskIdString = employeeTask.getTaskIdListRWDay();
-						String taskStateString = employeeTask.getTaskIdListRWDayState();
-						String taskIdStringD = "";
-						String taskStateStringD = "";
-						String[] taskIdList = taskIdString.split("-");
-						String[] taskSatetList = taskStateString.split("-");
-						for (int j = 0; j < taskIdList.length; j++) {
-							if (Integer.valueOf(taskIdList[j]) == taskId) {
-								continue;
-							}
-							taskIdStringD += taskIdList[j] + "-";
-							taskStateStringD += taskSatetList[j] + "-";
-						}
-						employeeTask.setTaskIdListRWDay(taskIdStringD);
-						employeeTask.setTaskIdListRWDayState(taskStateStringD);
-					} else if (type == dictMapper.selectByCodeAndStateName(TASK_TYPE, "周安排", companyId)) {
-						String taskIdString = employeeTask.getTaskIdListRWWeek();
-						String taskStateString = employeeTask.getTaskIdListRWWeekState();
-						String taskIdStringD = "";
-						String taskStateStringD = "";
-						String[] taskIdList = taskIdString.split("-");
-						String[] taskSatetList = taskStateString.split("-");
-						for (int j = 0; j < taskIdList.length; j++) {
-							if (Integer.valueOf(taskIdList[j]) == taskId) {
-								continue;
-							}
-							taskIdStringD += taskIdList[j] + "-";
-							taskStateStringD += taskSatetList[j] + "-";
-						}
-						employeeTask.setTaskIdListRWWeek(taskIdStringD);
-						employeeTask.setTaskIdListRWWeekState(taskStateStringD);
-					} else if (type == dictMapper.selectByCodeAndStateName(TASK_TYPE, "月计划", companyId)) {
-						String taskIdString = employeeTask.getTaskIdListRWMon();
-						String taskStateString = employeeTask.getTaskIdListRWMonState();
-						String taskIdStringD = "";
-						String taskStateStringD = "";
-						String[] taskIdList = taskIdString.split("-");
-						String[] taskSatetList = taskStateString.split("-");
-						for (int j = 0; j < taskIdList.length; j++) {
-							if (Integer.valueOf(taskIdList[j]) == taskId) {
-								continue;
-							}
-							taskIdStringD += taskIdList[j] + "-";
-							taskStateStringD += taskSatetList[j] + "-";
-						}
-						employeeTask.setTaskIdListRWMon(taskIdStringD);
-						employeeTask.setTaskIdListRWMonState(taskStateStringD);
-					}
-				}
-			}
-			int count = employeeTaskMapper.updateByPrimaryKeySelective(employeeTask);
-			if (count == 0) {
-				throw new BusiException("更新employeeTask表失败");
-			}
-		}
-	}
 
 	@Override
 	public void changePostList(Integer idList, Integer taskId, Integer step, boolean isAdd, Integer prevType,
@@ -345,48 +233,16 @@ public class TaskServiceImpl implements TaskService {
 		String[] taskIdList = idList.split("-");
 		int flag = 0;
 		for (int i = 0; i < taskIdList.length; i++) {
-			if (i == step-1) {
+			if (i == step - 1) {
 				sortTask += taskId + "-";
 				flag = 1;
 			}
 			sortTask += taskIdList[i] + "-";
 		}
-		if(flag == 0) {
+		if (flag == 0) {
 			sortTask += taskId + "-";
 		}
 		return sortTask;
-	}
-
-	public JSONObject sortTaskAndState(String idList, String stateList, Integer step, Integer taskId,
-			Integer taskState) {
-		if ("".equals(idList) || idList == null) {
-			JSONObject data = new JSONObject();
-			data.put("idList", taskId + "-");
-			data.put("stateList", taskState + "-");
-			return data;
-		}
-		String[] taskIdList = idList.split("-");
-		String[] taskStateList = stateList.split("-");
-		String sortTask = "";
-		String sortTaskState = "";
-		int flag = 0;
-		for (int i = 0; i < taskIdList.length; i++) {
-			if (i == step-1) {
-				sortTask += taskId + "-";
-				sortTaskState += taskState + "-";
-				flag = 1;
-			}
-			sortTask += taskIdList[i] + "-";
-			sortTaskState += taskStateList[i] + "-";
-		}
-		if(flag == 0) {
-			sortTask += taskId + "-";
-			sortTaskState += taskState + "-";
-		}
-		JSONObject data = new JSONObject();
-		data.put("idList", sortTask);
-		data.put("stateList", sortTaskState);
-		return data;
 	}
 
 	@Override
@@ -401,7 +257,6 @@ public class TaskServiceImpl implements TaskService {
 			throw new BusiException("该任务已被申请无法删除");
 		}
 		String oriPostIdList = task.getPostIdList();
-		String oriEmployeeIdList = task.getEmployeeIdList();
 		task.setState(stateYSX);
 		int count = taskMapper.updateByPrimaryKeySelective(task);
 		if (count == 0) {
@@ -409,8 +264,8 @@ public class TaskServiceImpl implements TaskService {
 		}
 		stateList.clear();
 		stateList.add(stateWSX);
-		List<task> tasks = taskMapper.selectByPostAndStep(Integer.valueOf(task.getPostIdList()),
-				task.getPrevType(), task.getType(), task.getStep(),stateList);
+		List<task> tasks = taskMapper.selectByPostAndStep(Integer.valueOf(task.getPostIdList()), task.getPrevType(),
+				task.getType(), task.getStep(), stateList);
 		for (task t : tasks) {
 			t.setStep(t.getStep() - 1);
 			count = taskMapper.updateByPrimaryKeySelective(t);
@@ -418,10 +273,8 @@ public class TaskServiceImpl implements TaskService {
 				throw new BusiException("修改任务顺序失败");
 			}
 		}
-		this.changePostList(Integer.valueOf(oriPostIdList), task.getId(), null, false, task.getPrevType(), task.getType(),
-				data.getInteger("companyId"));
-		this.changeEmployeeList(oriEmployeeIdList, task.getId(), null, null, false, task.getPrevType(), task.getType(),
-				data.getInteger("companyId"));
+		this.changePostList(Integer.valueOf(oriPostIdList), task.getId(), null, false, task.getPrevType(),
+				task.getType(), data.getInteger("companyId"));
 		return task.getId();
 	}
 
@@ -443,12 +296,20 @@ public class TaskServiceImpl implements TaskService {
 		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
 		List<Integer> stateList = new ArrayList<Integer>();
 		stateList.add(stateWSX);
-		List<task> tasks = taskMapper.selectByCompanyId(companyId,dictMapper.selectByCodeAndStateName(PRETASK_TYPE, data.getString("prevType"),
-						data.getInteger("companyId")),data.getString("type").equals("") ? null : dictMapper.selectByCodeAndStateName(TASK_TYPE, data.getString("type"),
-						data.getInteger("companyId")),stateList, (pageNum - 1) * PAGESIZE, PAGESIZE);
-		int total = taskMapper.selectByCompanyCount(companyId,dictMapper.selectByCodeAndStateName(PRETASK_TYPE, data.getString("prevType"),
-						data.getInteger("companyId")),data.getString("type").equals("") ? null : dictMapper.selectByCodeAndStateName(TASK_TYPE, data.getString("type"),
-						data.getInteger("companyId")),stateList);
+		List<task> tasks = taskMapper.selectByCompanyId(companyId,
+				dictMapper.selectByCodeAndStateName(PRETASK_TYPE, data.getString("prevType"),
+						data.getInteger("companyId")),
+				data.getString("type").equals("") ? null
+						: dictMapper.selectByCodeAndStateName(TASK_TYPE, data.getString("type"),
+								data.getInteger("companyId")),
+				stateList, (pageNum - 1) * PAGESIZE, PAGESIZE);
+		int total = taskMapper.selectByCompanyCount(companyId,
+				dictMapper.selectByCodeAndStateName(PRETASK_TYPE, data.getString("prevType"),
+						data.getInteger("companyId")),
+				data.getString("type").equals("") ? null
+						: dictMapper.selectByCodeAndStateName(TASK_TYPE, data.getString("type"),
+								data.getInteger("companyId")),
+				stateList);
 		Page<task> page = new Page<task>();
 		page.setPageNum(pageNum);
 		page.setPageSize(PAGESIZE);
@@ -494,13 +355,13 @@ public class TaskServiceImpl implements TaskService {
 			}
 		}
 		String[] taskId = taskIdList.split("-");
-		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"));
+		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
 		System.out.println(taskId.length);
 		List<task> tasks = new ArrayList<task>();
 		int total = taskId.length;
 		if (!taskId[0].equals("")) {
-			if (taskId.length > (pageNum - 1) * PAGESIZE) 
-				total = Integer.min(taskId.length,pageNum*PAGESIZE);
+			if (taskId.length > (pageNum - 1) * PAGESIZE)
+				total = Integer.min(taskId.length, pageNum * PAGESIZE);
 			for (int i = (pageNum - 1) * PAGESIZE; i < total; i++) {
 				task task = taskMapper.selectByPrimaryKey(Integer.valueOf(taskId[i]));
 				if (task == null || task.getState() == state) {
@@ -516,17 +377,50 @@ public class TaskServiceImpl implements TaskService {
 		page.setList(tasks);
 		return page;
 	}
+
 	@Override
 	public Integer maxStep(JSONObject data) {
 		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
 		List<Integer> stateList = new ArrayList<Integer>();
 		stateList.add(stateWSX);
 		JSONObject dataJson = this.testType(data);
-		Integer numInteger = taskMapper.selectByPostAndStepMax(data.getInteger("postId"), dataJson.getInteger("prevType"),
-				dataJson.getInteger("type"), stateList);
-		if(numInteger == null) {
+		Integer numInteger = taskMapper.selectByPostAndStepMax(data.getInteger("postId"),
+				dataJson.getInteger("prevType"), dataJson.getInteger("type"), stateList);
+		if (numInteger == null) {
 			return 1;
 		}
-		return numInteger+1;
+		return numInteger + 1;
 	}
+
+	public void AddTaskByExcel(JSONObject data) throws Exception {
+		Workbook rwb = Workbook.getWorkbook(new File(ACTPATH + data.getString("file")));
+		Sheet rs = rwb.getSheet("task");// 或者rwb.getSheet(0)
+		int clos = rs.getColumns();// 得到所有的列
+		int rows = rs.getRows();// 得到所有的行
+		System.out.println(clos + " rows:" + rows);
+		for (int i = 1; i < rows; i++) {
+			for (int j = 0; j < clos; j++) {
+				String companyId = rs.getCell(j++, i).getContents();
+				String step = rs.getCell(j++, i).getContents();
+				String prevType = rs.getCell(j++, i).getContents();
+				String type = rs.getCell(j++, i).getContents();
+				String name = rs.getCell(j++, i).getContents();
+				String content = rs.getCell(j++, i).getContents();
+				String rank = rs.getCell(j++, i).getContents();
+				String postIdList = rs.getCell(j++, i).getContents();
+				JSONObject dataJsonObject = new JSONObject();
+				dataJsonObject.put("companyId", Integer.valueOf(companyId));
+				dataJsonObject.put("step", Integer.valueOf(step));
+				dataJsonObject.put("prevType", prevType);
+				dataJsonObject.put("type", type);
+				dataJsonObject.put("name", name);
+				dataJsonObject.put("content", content);
+				dataJsonObject.put("rank", Integer.valueOf(rank));
+				dataJsonObject.put("postIdList", Integer.valueOf(postIdList));
+				this.addTask(dataJsonObject);
+
+			}
+		}
+	}
+
 }

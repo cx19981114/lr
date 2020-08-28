@@ -114,24 +114,5 @@ public class ApplyRankManagement {
 			LoggerUtil.LOGGER.info("-------------end 获取审核人列表请信息--------------------");
 		}
 	}
-	@PostMapping("/getApplyTask")
-	@ResponseBody
-	public String getApplyTask(@RequestBody String data, HttpSession session) {
-		LoggerUtil.LOGGER.info("-------------enter 获取任务申请信息--------------------");
-		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
-		LoggerUtil.LOGGER.debug("data : {}", data);
-		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
-		try {
-			EmployeeService.getEmployee(dataJson);
-			Page<EmployeeTaskDTO> task = ApplyRankService.getEmployeeTask(dataJson);
-			return ResultJsonUtil.toJsonString(200, task, "获取任务申请信息成功", session.getId());
-		} catch (BusiException e) {
-			return ResultJsonUtil.toJsonString(101, null, e.getMessage(), session.getId());
-		} catch (Exception e) {
-			return ResultJsonUtil.toJsonString(404, null, "系统未知错误", session.getId());
-		} finally {
-			LoggerUtil.LOGGER.info("-------------end 获取任务申请信息--------------------");
-		}
-	}
+	
 }

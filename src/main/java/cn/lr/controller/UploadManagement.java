@@ -24,7 +24,7 @@ public class UploadManagement {
 	@RequestMapping(value = "/upload")
 	@ResponseBody
 	public String upload(@RequestParam(value = "file", required = false) MultipartFile file, HttpSession session,HttpServletRequest request) {
-		LoggerUtil.LOGGER.info("-------------enter 上传图片信息--------------------");
+		LoggerUtil.LOGGER.info("-------------enter 上传文件信息--------------------");
 		LoggerUtil.LOGGER.info("sessionId : {}, userId : {}", session.getId(), session.getAttribute("userId"));
 		LoggerUtil.LOGGER.info("file: {}", file);
 		try {
@@ -53,7 +53,7 @@ public class UploadManagement {
 		}catch (Exception e) {
 			return ResultJsonUtil.toJsonString(404,  null, "系统未知错误",session.getId());
 		}finally {
-			LoggerUtil.LOGGER.info("-------------end 上传图片信息--------------------");
+			LoggerUtil.LOGGER.info("-------------end 上传文件信息--------------------");
 		}
 	}
 }

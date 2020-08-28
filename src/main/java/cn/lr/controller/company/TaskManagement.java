@@ -175,6 +175,25 @@ public class TaskManagement {
 			LoggerUtil.LOGGER.info("-------------end 根据岗位和任务类型获取最大任务序号--------------------");
 		}
 	}
+	@PostMapping("/AddTaskByExcel")
+	@ResponseBody
+	public String AddTaskByExcel(@RequestBody String data, HttpSession session) {
+		LoggerUtil.LOGGER.info("-------------enter 根据表格导入任务--------------------");
+		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}, companyId : {}", session.getId(), session.getAttribute("employeeId"),session.getAttribute("comapnyId"));
+		LoggerUtil.LOGGER.debug("data : {}", data);
+		JSONObject dataJson = JSON.parseObject(data);
+		dataJson.put("companyId", session.getAttribute("companyId"));
+		try {
+			TaskService.AddTaskByExcel(dataJson);
+			return ResultJsonUtil.toJsonString(200, null, "根据表格导入任务成功",session.getId());
+		} catch (BusiException e) {
+			return ResultJsonUtil.toJsonString(101, null, e.getMessage(),session.getId());
+		} catch (Exception e) {
+			return ResultJsonUtil.toJsonString(404, null, "系统未知错误",session.getId());
+		}finally {
+			LoggerUtil.LOGGER.info("-------------end 根据表格导入任务--------------------");
+		}
+	}
 	
 	
 

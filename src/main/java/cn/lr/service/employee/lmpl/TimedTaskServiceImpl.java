@@ -26,7 +26,6 @@ import cn.lr.dao.employeeMapper;
 import cn.lr.dao.employeeRestMapper;
 import cn.lr.dao.employeeTaskMapper;
 import cn.lr.dao.orderMapper;
-import cn.lr.exception.BusiException;
 import cn.lr.po.company;
 import cn.lr.po.customerPerformance;
 import cn.lr.po.customerProject;
@@ -142,54 +141,24 @@ public class TimedTaskServiceImpl implements TimedTaskService{
 			List<employee> employees = employeeMapper.selectByCompanyId(c.getId(),stateList, 0, Integer.MAX_VALUE);
 			for(employee e:employees) {
 				// 更新今日未审核的任务申请
-				employeeTask employeeTask = employeeTaskMapper.selectByEmployee(e.getId());
-				String oriFN = employeeTask.getTaskIdListFN();
-				String oriState = employeeTask.getTaskIdListFNState();
-				if(oriFN != null && !"".equals(oriFN)) {
-					String[] oriFNs = oriFN.split("-");
-					String[] oriStates = oriState.split("-");
-					String taskStateList = "";
-					for(int i = 0;i<oriFNs.length;i++) {
-						if(Integer.valueOf(oriStates[i]) != stateWSQ) {
-							JSONObject dataTask = new JSONObject();
-							dataTask.put("taskId", Integer.valueOf(oriFNs[i]));
-							dataTask.put("employeeId", e.getId());
-							dataTask.put("companyId", c.getId());
-							if(Integer.valueOf(oriStates[i]) == stateWTJ) {
-								EmployeeTaskService.deleteEmployeeTask(dataTask);
-							}else if(Integer.valueOf(oriStates[i]) == stateWSH || Integer.valueOf(oriStates[i]) == stateSHZ){
-								EmployeeTaskService.annulEmployeeTask(dataTask);
-							}
-						}
-						taskStateList += stateWSQ+"-";
-					}
-					employeeTask.setTaskIdListFNState(taskStateList);
+				stateList.clear();
+				stateList.add(stateWTJ);
+				List<employeeTask> employeeTaskWTJ = employeeTaskMapper.selectByState(e.getId(),stateList);
+				for(employeeTask et:employeeTaskWTJ) {
+					JSONObject eJsonObject = new JSONObject();
+					eJsonObject.put("employeeTaskId", et.getId());
+					eJsonObject.put("companyId", c.getId());
+					EmployeeTaskService.deleteEmployeeTask(eJsonObject);
 				}
-				String oriRWDay = employeeTask.getTaskIdListRWDay();
-				String oriRWDayState = employeeTask.getTaskIdListRWDayState();
-				if(oriRWDay != null && !"".equals(oriRWDay)) {
-					String[] oriRWDays = oriRWDay.split("-");
-					String[] oriStates = oriRWDayState.split("-");
-					String taskStateList = "";
-					for(int i = 0;i<oriRWDays.length;i++) {
-						if(Integer.valueOf(oriStates[i]) != stateWSQ) {
-							JSONObject dataTask = new JSONObject();
-							dataTask.put("taskId", Integer.valueOf(oriRWDays[i]));
-							dataTask.put("employeeId", e.getId());
-							dataTask.put("companyId", c.getId());
-							if(Integer.valueOf(oriStates[i]) == stateWTJ) {
-								EmployeeTaskService.deleteEmployeeTask(dataTask);
-							}else if(Integer.valueOf(oriStates[i]) == stateWSH || Integer.valueOf(oriStates[i]) == stateSHZ){
-								EmployeeTaskService.annulEmployeeTask(dataTask);
-							}
-						}
-						taskStateList += stateWSQ+"-";
-					}
-					employeeTask.setTaskIdListRWDayState(taskStateList);
-				}
-				int count = employeeTaskMapper.updateByPrimaryKeySelective(employeeTask);
-				if(count == 0) {
-					throw new BusiException("更新employeeTask表失败");
+				stateList.clear();
+				stateList.add(stateWSH);
+				stateList.add(stateSHZ);
+				List<employeeTask> employeeTaskWSHAndSHZ = employeeTaskMapper.selectByState(e.getId(),stateList);
+				for(employeeTask et:employeeTaskWSHAndSHZ) {
+					JSONObject eJsonObject = new JSONObject();
+					eJsonObject.put("employeeTaskId", et.getId());
+					eJsonObject.put("companyId", c.getId());
+					EmployeeTaskService.annulEmployeeTask(eJsonObject);
 				}
 				// 更新结束日期是今日前一天的申请
 				stateList.clear();
@@ -291,7 +260,6 @@ public class TimedTaskServiceImpl implements TimedTaskService{
 					}
 				}
 				//更新未审核的新增业绩
-			
 				stateList.clear();
 				stateList.add(stateWTJ);
 				List<customerPerformance> customerPerformancesWTJ = customerPerformanceMapper.selectByEmployeeState(e.getId(),stateList);
@@ -394,95 +362,6 @@ public class TimedTaskServiceImpl implements TimedTaskService{
 					cpJsonObject.put("customerProjectId", cp.getId());
 					cpJsonObject.put("companyId", e.getCompanyId());
 					CustomerProjectService.annulCustomerProject(cpJsonObject);
-				}
-			}
-		}
-		
-	}
-
-	@Override
-	public void timedWeek() {
-		List<company> companies = companyMapper.listCompanyVaild();
-		for(company c:companies) {
-			Integer stateSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", c.getId());
-			Integer stateWSQ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未申请", c.getId());
-			Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", c.getId());
-			Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", c.getId());
-			Integer stateSHZ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", c.getId());
-			List<Integer> stateList =  new ArrayList<Integer>();
-			stateList.add(stateSX);
-			List<employee> employees = employeeMapper.selectByCompanyId(c.getId(),stateList, 0, Integer.MAX_VALUE);
-			for(employee e:employees) {
-				employeeTask employeeTask = employeeTaskMapper.selectByEmployee(e.getId());
-				String oriRWWeek = employeeTask.getTaskIdListRWWeek();
-				String oriRWWeekState = employeeTask.getTaskIdListRWWeekState();
-				if(oriRWWeek != null && !"".equals(oriRWWeek)) {
-					String[] oriRWWeeks = oriRWWeek.split("-");
-					String[] oriStates = oriRWWeekState.split("-");
-					String taskStateList = "";
-					for(int i = 0;i<oriRWWeeks.length;i++) {
-						if(Integer.valueOf(oriStates[i]) != stateWSQ) {
-							JSONObject dataTask = new JSONObject();
-							dataTask.put("taskId", Integer.valueOf(oriRWWeeks[i]));
-							dataTask.put("employeeId", e.getId());
-							dataTask.put("companyId", c.getId());
-							if(Integer.valueOf(oriStates[i]) == stateWTJ) {
-								EmployeeTaskService.deleteEmployeeTask(dataTask);
-							}else if(Integer.valueOf(oriStates[i]) == stateWSH || Integer.valueOf(oriStates[i]) == stateSHZ){
-								EmployeeTaskService.annulEmployeeTask(dataTask);
-							}
-						}
-						taskStateList += stateWSQ+"-";
-					}
-					employeeTask.setTaskIdListRWWeekState(taskStateList);
-				}
-				int count = employeeTaskMapper.updateByPrimaryKeySelective(employeeTask);
-				if(count == 0) {
-					throw new BusiException("更新employeeTask表失败");
-				}
-			}
-		}
-	}
-
-	@Override
-	public void timedMon() {
-		List<company> companies = companyMapper.listCompanyVaild();
-		for(company c:companies) {
-			Integer stateSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", c.getId());
-			Integer stateWSQ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未申请", c.getId());
-			Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", c.getId());
-			Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", c.getId());
-			Integer stateSHZ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", c.getId());
-			List<Integer> stateList =  new ArrayList<Integer>();
-			stateList.add(stateSX);
-			List<employee> employees = employeeMapper.selectByCompanyId(c.getId(),stateList, 0, Integer.MAX_VALUE);
-			for(employee e:employees) {
-				employeeTask employeeTask = employeeTaskMapper.selectByEmployee(e.getId());
-				String oriRWMon = employeeTask.getTaskIdListRWMon();
-				String oriRWMonState = employeeTask.getTaskIdListRWMonState();
-				if(oriRWMon != null && !"".equals(oriRWMon)) {
-					String[] oriRWMons = oriRWMon.split("-");
-					String[] oriStates = oriRWMonState.split("-");
-					String taskStateList = "";
-					for(int i = 0;i<oriRWMons.length;i++) {
-						if(Integer.valueOf(oriStates[i]) != stateWSQ) {
-							JSONObject dataTask = new JSONObject();
-							dataTask.put("taskId", Integer.valueOf(oriRWMons[i]));
-							dataTask.put("employeeId", e.getId());
-							dataTask.put("companyId", c.getId());
-							if(Integer.valueOf(oriStates[i]) == stateWTJ) {
-								EmployeeTaskService.deleteEmployeeTask(dataTask);
-							}else if(Integer.valueOf(oriStates[i]) == stateWSH || Integer.valueOf(oriStates[i]) == stateSHZ){
-								EmployeeTaskService.annulEmployeeTask(dataTask);
-							}
-						}
-						taskStateList += stateWSQ+"-";
-					}
-					employeeTask.setTaskIdListRWMonState(taskStateList);
-				}
-				int count = employeeTaskMapper.updateByPrimaryKeySelective(employeeTask);
-				if(count == 0) {
-					throw new BusiException("更新employeeTask表失败");
 				}
 			}
 		}

@@ -5,21 +5,15 @@ public class employeeTask {
 
     private Integer employeeId;
 
-    private String taskIdListFN;
+    private Integer taskId;
 
-    private String taskIdListRWDay;
+    private String dateTime;
 
-    private String taskIdListRWWeek;
+    private String note;
 
-    private String taskIdListRWMon;
+    private String pics;
 
-    private String taskIdListFNState;
-
-    private String taskIdListRWDayState;
-
-    private String taskIdListRWWeekState;
-
-    private String taskIdListRWMonState;
+    private Integer state;
 
     public Integer getId() {
         return id;
@@ -37,67 +31,43 @@ public class employeeTask {
         this.employeeId = employeeId;
     }
 
-    public String getTaskIdListFN() {
-        return taskIdListFN;
+    public Integer getTaskId() {
+        return taskId;
     }
 
-    public void setTaskIdListFN(String taskIdListFN) {
-        this.taskIdListFN = taskIdListFN == null ? null : taskIdListFN.trim();
+    public void setTaskId(Integer taskId) {
+        this.taskId = taskId;
     }
 
-    public String getTaskIdListRWDay() {
-        return taskIdListRWDay;
+    public String getDateTime() {
+        return dateTime;
     }
 
-    public void setTaskIdListRWDay(String taskIdListRWDay) {
-        this.taskIdListRWDay = taskIdListRWDay == null ? null : taskIdListRWDay.trim();
+    public void setDateTime(String dateTime) {
+        this.dateTime = dateTime == null ? null : dateTime.trim();
     }
 
-    public String getTaskIdListRWWeek() {
-        return taskIdListRWWeek;
+    public String getNote() {
+        return note;
     }
 
-    public void setTaskIdListRWWeek(String taskIdListRWWeek) {
-        this.taskIdListRWWeek = taskIdListRWWeek == null ? null : taskIdListRWWeek.trim();
+    public void setNote(String note) {
+        this.note = note == null ? null : note.trim();
     }
 
-    public String getTaskIdListRWMon() {
-        return taskIdListRWMon;
+    public String getPics() {
+        return pics;
     }
 
-    public void setTaskIdListRWMon(String taskIdListRWMon) {
-        this.taskIdListRWMon = taskIdListRWMon == null ? null : taskIdListRWMon.trim();
+    public void setPics(String pics) {
+        this.pics = pics == null ? null : pics.trim();
     }
 
-    public String getTaskIdListFNState() {
-        return taskIdListFNState;
+    public Integer getState() {
+        return state;
     }
 
-    public void setTaskIdListFNState(String taskIdListFNState) {
-        this.taskIdListFNState = taskIdListFNState == null ? null : taskIdListFNState.trim();
-    }
-
-    public String getTaskIdListRWDayState() {
-        return taskIdListRWDayState;
-    }
-
-    public void setTaskIdListRWDayState(String taskIdListRWDayState) {
-        this.taskIdListRWDayState = taskIdListRWDayState == null ? null : taskIdListRWDayState.trim();
-    }
-
-    public String getTaskIdListRWWeekState() {
-        return taskIdListRWWeekState;
-    }
-
-    public void setTaskIdListRWWeekState(String taskIdListRWWeekState) {
-        this.taskIdListRWWeekState = taskIdListRWWeekState == null ? null : taskIdListRWWeekState.trim();
-    }
-
-    public String getTaskIdListRWMonState() {
-        return taskIdListRWMonState;
-    }
-
-    public void setTaskIdListRWMonState(String taskIdListRWMonState) {
-        this.taskIdListRWMonState = taskIdListRWMonState == null ? null : taskIdListRWMonState.trim();
+    public void setState(Integer state) {
+        this.state = state;
     }
 }

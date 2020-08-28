@@ -32,4 +32,6 @@ public interface CustomerService {
 	public Page<JSONObject> getCustomerByConsume(JSONObject data)  throws ParseException;
 	
 	public JSONObject getCustomerChart(JSONObject data);
+	
+	public Page<JSONObject> getCustomerByUnService(JSONObject data) throws ParseException;
 }

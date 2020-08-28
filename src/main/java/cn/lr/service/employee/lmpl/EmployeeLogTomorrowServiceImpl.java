@@ -84,7 +84,7 @@ public class EmployeeLogTomorrowServiceImpl implements EmployeeLogTomorrowServic
 		record.setPerson(data.getString("person"));
 		record.setRun(data.getString("run"));
 		record.setDateTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
-		record.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交",data.getInteger("companyId")));
+		record.setState(stateWTJ);
 		int count = employeeLogTomorrowMapper.insertSelective(record);
 		if (count == 0) {
 			throw new BusiException("插入employeeLogTomorrow表失败");

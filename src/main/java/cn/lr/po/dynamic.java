@@ -20,16 +20,6 @@ public class dynamic {
     private Integer rank;
     
     private Integer state;
-    
-    private String pic;
-
-    public String getPic() {
-		return pic;
-	}
-
-	public void setPic(String pic) {
-		this.pic = pic;
-	}
 
 	public Integer getRank() {
 		return rank;

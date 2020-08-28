@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.lr.dto.EmployeeTaskDTO;
 import cn.lr.dto.Page;
+import cn.lr.po.employeeTask;
 import cn.lr.po.task;
 
 public interface EmployeeTaskService {
@@ -24,8 +25,10 @@ public interface EmployeeTaskService {
 	
 	public JSONObject getEmployeeTask(JSONObject data) throws ParseException;
 	
-	public EmployeeTaskDTO sEmployeeTaskDTO(task task,Integer employeeId,Integer companyId) throws ParseException;
+	public EmployeeTaskDTO sEmployeeTaskDTO(employeeTask employeeTask) throws ParseException;
 	
 	public List<JSONObject> getTaskByEmployeeList(JSONObject data);
+	
+	public Page<EmployeeTaskDTO> getEmployeeTaskByEmployee(JSONObject data) throws ParseException;
 	
 }

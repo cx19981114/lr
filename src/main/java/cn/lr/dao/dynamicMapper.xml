@@ -12,10 +12,9 @@
     <result column="companyId" jdbcType="INTEGER" property="companyId" />
     <result column="rank" jdbcType="INTEGER" property="rank" />
     <result column="state" jdbcType="INTEGER" property="state" />
-    <result column="pic" jdbcType="VARCHAR" property="pic" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, note, dateTime, tb_name, tb_id, employeeId, checkId, companyId, rank, state, pic
+    id, note, dateTime, tb_name, tb_id, employeeId, checkId, companyId, rank, state
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -34,7 +33,7 @@
     values (#{id,jdbcType=INTEGER}, #{note,jdbcType=VARCHAR}, #{dateTime,jdbcType=VARCHAR}, 
       #{tb_name,jdbcType=VARCHAR}, #{tb_id,jdbcType=INTEGER}, #{employeeId,jdbcType=INTEGER}, 
       #{checkId,jdbcType=INTEGER}), #{companyId,jdbcType=INTEGER},#{rank,jdbcType=INTEGER}),
-       #{state,jdbcType=INTEGER},#{pic,jdbcType=VARCHAR})
+       #{state,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="cn.lr.po.dynamic" useGeneratedKeys="true" keyProperty="id">
     insert into tb_dynamic
@@ -69,9 +68,6 @@
       <if test="state != null">
         state,
       </if>
-      <if test="pic != null">
-        pic,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -103,9 +99,6 @@
       </if>
       <if test="state != null">
         #{state,jdbcType=INTEGER},
-      </if>
-      <if test="pic != null">
-        #{pic,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -139,9 +132,6 @@
       <if test="state != null">
         state = #{state,jdbcType=INTEGER},
       </if>
-      <if test="pic != null">
-        pic = #{pic,jdbcType=VARCHAR},
-      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -155,8 +145,7 @@
       checkId = #{checkId,jdbcType=INTEGER},
       companyId = #{companyId,jdbcType=INTEGER},
       rank = #{rank,jdbcType=INTEGER},
-      state = #{state,jdbcType=INTEGER},
-      pic = #{pic,jdbcType=VARCHAR}
+      state = #{state,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
   

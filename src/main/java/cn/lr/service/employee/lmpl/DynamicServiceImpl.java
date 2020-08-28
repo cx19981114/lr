@@ -61,7 +61,6 @@ public class DynamicServiceImpl implements DynamicService {
 		record.setTb_name(data.getString("name"));
 		record.setTb_id(data.getInteger("id"));
 		record.setEmployeeId(data.getInteger("employeeId"));
-		record.setPic(data.getString("pic"));
 		employee employee = employeeMapper.selectByPrimaryKey(data.getInteger("employeeId"));
 		if (employee == null || employee.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"))) {
 			throw new BusiException("该职员不存在");

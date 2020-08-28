@@ -16,7 +16,9 @@ import com.alibaba.fastjson.JSONObject;
 import cn.lr.dao.applyRankMapper;
 import cn.lr.dao.dictMapper;
 import cn.lr.dao.dynamicMapper;
+import cn.lr.dao.employeeMapper;
 import cn.lr.dao.employeeTaskMapper;
+import cn.lr.dao.postTaskMapper;
 import cn.lr.dao.rankMapper;
 import cn.lr.dao.taskMapper;
 import cn.lr.dto.EmployeeTaskDTO;
@@ -24,7 +26,9 @@ import cn.lr.dto.Page;
 import cn.lr.exception.BusiException;
 import cn.lr.po.applyRank;
 import cn.lr.po.dynamic;
+import cn.lr.po.employee;
 import cn.lr.po.employeeTask;
+import cn.lr.po.postTask;
 import cn.lr.po.task;
 import cn.lr.service.employee.ApplyRankService;
 import cn.lr.service.employee.DynamicService;
@@ -48,6 +52,10 @@ public class EmployeeTaskServiceImpl implements EmployeeTaskService {
 	applyRankMapper applyRankMapper;
 	@Autowired
 	dynamicMapper dynamicMapper;
+	@Autowired
+	postTaskMapper postTaskMapper;
+	@Autowired
+	employeeMapper employeeMapper;
 
 	@Autowired
 	ApplyRankService ApplyRankService;
@@ -73,34 +81,27 @@ public class EmployeeTaskServiceImpl implements EmployeeTaskService {
 
 	@Override
 	public Page<task> getTaskByEmployee(JSONObject data) {
-		employeeTask employeeTask = employeeTaskMapper.selectByEmployee(data.getInteger("employeeId"));
+		employee employee = employeeMapper.selectByPrimaryKey(data.getInteger("employeeId"));
+		postTask postTask = postTaskMapper.selectByPost(employee.getPostId());
 		Integer pageNum = data.getInteger("pageNum");
 		String taskList = null;
-		String taskStateList = null;
 		if ("赋能思维".equals(data.getString("prevType"))) {
-			taskList = employeeTask.getTaskIdListFN();
-			taskStateList = employeeTask.getTaskIdListFNState();
+			taskList = postTask.getTaskIdListFN();
 		} else if ("任务清单".equals(data.getString("prevType"))) {
 			if ("日流程".equals(data.getString("type"))) {
-				taskList = employeeTask.getTaskIdListRWDay();
-				taskStateList = employeeTask.getTaskIdListRWDayState();
+				taskList = postTask.getTaskIdListRWDay();
 			} else if ("周安排".equals(data.getString("type"))) {
-				taskList = employeeTask.getTaskIdListRWWeek();
-				taskStateList = employeeTask.getTaskIdListRWWeekState();
+				taskList = postTask.getTaskIdListRWWeek();
 			} else if ("月计划".equals(data.getString("type"))) {
-				taskList = employeeTask.getTaskIdListRWMon();
-				taskStateList = employeeTask.getTaskIdListRWMonState();
+				taskList = postTask.getTaskIdListRWMon();
 			}
 		}
 		List<task> tasks = new ArrayList<task>();
 		if (taskList != null && !("".equals(taskList))) {
 			String[] taskId = taskList.split("-");
-			String[] taskState = taskStateList.split("-");
 			for (int i = 0; i < taskId.length; i++) {
 				task task = taskMapper.selectByPrimaryKey(Integer.valueOf(taskId[i]));
-				if (Integer.valueOf(taskState[i]) == dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未申请",data.getInteger("companyId"))) {
-					tasks.add(task);
-				}
+				tasks.add(task);
 			}
 		}
 		int total = tasks.size();
@@ -118,39 +119,33 @@ public class EmployeeTaskServiceImpl implements EmployeeTaskService {
 		page.setList(taskPart);
 		return page;
 	}
+
 	@Override
 	public List<JSONObject> getTaskByEmployeeList(JSONObject data) {
-		employeeTask employeeTask = employeeTaskMapper.selectByEmployee(data.getInteger("employeeId"));
+		employee employee = employeeMapper.selectByPrimaryKey(data.getInteger("employeeId"));
+		postTask postTask = postTaskMapper.selectByPost(employee.getPostId());
 		String taskList = null;
-		String taskStateList = null;
 		if ("赋能思维".equals(data.getString("prevType"))) {
-			taskList = employeeTask.getTaskIdListFN();
-			taskStateList = employeeTask.getTaskIdListFNState();
+			taskList = postTask.getTaskIdListFN();
 		} else if ("任务清单".equals(data.getString("prevType"))) {
 			if ("日流程".equals(data.getString("type"))) {
-				taskList = employeeTask.getTaskIdListRWDay();
-				taskStateList = employeeTask.getTaskIdListRWDayState();
+				taskList = postTask.getTaskIdListRWDay();
 			} else if ("周安排".equals(data.getString("type"))) {
-				taskList = employeeTask.getTaskIdListRWWeek();
-				taskStateList = employeeTask.getTaskIdListRWWeekState();
+				taskList = postTask.getTaskIdListRWWeek();
 			} else if ("月计划".equals(data.getString("type"))) {
-				taskList = employeeTask.getTaskIdListRWMon();
-				taskStateList = employeeTask.getTaskIdListRWMonState();
+				taskList = postTask.getTaskIdListRWMon();
 			}
 		}
 		List<task> tasks = new ArrayList<task>();
 		if (taskList != null && !("".equals(taskList))) {
 			String[] taskId = taskList.split("-");
-			String[] taskState = taskStateList.split("-");
 			for (int i = 0; i < taskId.length; i++) {
 				task task = taskMapper.selectByPrimaryKey(Integer.valueOf(taskId[i]));
-				if (Integer.valueOf(taskState[i]) == dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未申请",data.getInteger("companyId"))) {
-					tasks.add(task);
-				}
+				tasks.add(task);
 			}
 		}
 		List<JSONObject> taskJsonList = new ArrayList<JSONObject>();
-		for(task t:tasks) {
+		for (task t : tasks) {
 			JSONObject taskJsonObject = new JSONObject();
 			taskJsonObject.put("id", t.getId());
 			taskJsonObject.put("name", t.getName());
@@ -163,170 +158,173 @@ public class EmployeeTaskServiceImpl implements EmployeeTaskService {
 	@Override
 	public Integer addEmployeeTask(JSONObject data) {
 		task task = taskMapper.selectByPrimaryKey(data.getInteger("taskId"));
-		if (task == null || task.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"))) {
+		if (task == null || task.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",
+				data.getInteger("companyId"))) {
 			throw new BusiException("该任务不存在");
 		}
-		employeeTask employeeTask = employeeTaskMapper.selectByEmployee(data.getInteger("employeeId"));
-		String taskList = "";
-		String taskStateList = "";
-		Integer prevType = task.getPrevType();
-		if (prevType == dictMapper.selectByCodeAndStateName(PRETASK_TYPE, "赋能思维",data.getInteger("companyId"))) {
-			taskList = employeeTask.getTaskIdListFN();
-			taskStateList = employeeTask.getTaskIdListFNState();
-		} else if (prevType == dictMapper.selectByCodeAndStateName(PRETASK_TYPE, "任务清单",data.getInteger("companyId"))) {
-			Integer type = task.getType();
-			if (type == dictMapper.selectByCodeAndStateName(TASK_TYPE, "日流程",data.getInteger("companyId"))) {
-				taskList = employeeTask.getTaskIdListRWDay();
-				taskStateList = employeeTask.getTaskIdListRWDayState();
-			} else if (type == dictMapper.selectByCodeAndStateName(TASK_TYPE, "周安排",data.getInteger("companyId"))) {
-				taskList = employeeTask.getTaskIdListRWWeek();
-				taskStateList = employeeTask.getTaskIdListRWWeekState();
-			} else if (type == dictMapper.selectByCodeAndStateName(TASK_TYPE, "月计划",data.getInteger("companyId"))) {
-				taskList = employeeTask.getTaskIdListRWMon();
-				taskStateList = employeeTask.getTaskIdListRWMonState();
-			}
-		}
-		System.out.println(taskList);
-		if (taskList.indexOf(task.getId() + "-") == -1) {
+		if(!task.getEmployeeIdList().contains(data.getInteger("employeeId")+"-")){
 			throw new BusiException("该任务不属于该职员");
 		}
-		String[] taskId = taskList.split("-");
-		String[] taskState = taskStateList.split("-");
-		for (int i = 0; i < taskId.length; i++) {
-			if (Integer.valueOf(taskId[i]) == task.getId()) {
-				if (Integer.valueOf(taskState[i]) != dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未申请",data.getInteger("companyId"))
-						&& Integer.valueOf(taskState[i]) != dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核失败",data.getInteger("companyId"))
-						&& Integer.valueOf(taskState[i]) != dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"))) {
-					throw new BusiException("该任务无法申请");
-				}
-			}
-		}
-		JSONObject dataJSonDynamic = new JSONObject();
-		dataJSonDynamic.put("note", data.getString("note"));
-		dataJSonDynamic.put("name", Type);
+		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
+		Integer stateWSQ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未申请",data.getInteger("companyId"));
+		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
+		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", data.getInteger("companyId"));
+		Integer stateSHZ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", data.getInteger("companyId"));
+		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(stateWSQ);
+		stateList.add(stateCG);
+		stateList.add(stateSHZ);
+		stateList.add(stateWSH);
+		stateList.add(stateWTJ);
+		String now = TimeFormatUtil.timeStampToString(new Date().getTime());
+		
+		employeeTask employeeTask = new employeeTask();
+		employeeTask.setDateTime(now);
+		employeeTask.setEmployeeId(data.getInteger("employeeId"));
+		employeeTask.setNote(data.getString("note"));
+		employeeTask.setState(stateWTJ);
+		employeeTask.setTaskId(data.getInteger("taskId"));
 		List<Object> pics = data.getJSONArray("pic");
-		if(pics != null) {
+		if (pics != null) {
 			String picString = "";
 			for (Object o : pics) {
 				picString += o.toString() + "-";
 			}
-			dataJSonDynamic.put("pic", picString);
+			employeeTask.setPics(picString);
 		}
-		dataJSonDynamic.put("id", data.getInteger("taskId"));
-		dataJSonDynamic.put("employeeId", data.getInteger("employeeId"));
-		dataJSonDynamic.put("rank", task.getRank());
+		int count = employeeTaskMapper.insertSelective(employeeTask);
+		if(count == 0) {
+			throw new BusiException("插入employeeTask表失败");
+		}
+		JSONObject dataJSonDynamic = new JSONObject();
+		dataJSonDynamic.put("note", data.getString("note"));
+		dataJSonDynamic.put("name", Type);
+		dataJSonDynamic.put("id", employeeTask.getId());
 		dataJSonDynamic.put("companyId", data.getInteger("companyId"));
+		dataJSonDynamic.put("employeeId", data.getInteger("employeeId"));
+		stateList.clear();
+		stateList.add(stateWSX);
+		dataJSonDynamic.put("rank",task.getRank());
 		int dynamicId = DynamicService.writeDynamic(dataJSonDynamic);
-
+		
 		JSONObject dataJSonApply = new JSONObject();
 		dataJSonApply.put("employeeId", data.getInteger("employeeId"));
 		dataJSonApply.put("dynamicId", dynamicId);
 		dataJSonApply.put("companyId", data.getInteger("companyId"));
-		int applyRank = ApplyRankService.addApplyRank(dataJSonApply);
-		ApplyRankService.setEmployeeTask(dynamicId, dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交",data.getInteger("companyId")),data.getInteger("companyId"));
+		ApplyRankService.addApplyRank(dataJSonApply);
+		
+		data.put("employeeTaskId", employeeTask.getId());
 		this.affirmEmployeeTask(data);
-		return applyRank;
+		return employeeTask.getId();
 	}
 
 	@Override
 	public Integer modifyEmployeeTask(JSONObject data) {
-		task task = taskMapper.selectByPrimaryKey(data.getInteger("taskId"));
-		if (task == null || task.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"))) {
-			throw new BusiException("该任务不存在");
+		String now = TimeFormatUtil.timeStampToString(new Date().getTime());
+		employeeTask employeeTask = employeeTaskMapper.selectByPrimaryKey(data.getInteger("employeeTaskId"));
+		if (employeeTask.getState() != dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交",data.getInteger("companyId"))) {
+			throw new BusiException("该任务不能修改");
+		}
+		employeeTask.setNote(data.getString("note"));
+		List<Object> pics = data.getJSONArray("pic");
+		if (pics != null) {
+			String picString = "";
+			for (Object o : pics) {
+				picString += o.toString() + "-";
+			}
+			employeeTask.setPics(picString);
+		}
+		int count = employeeTaskMapper.updateByPrimaryKeySelective(employeeTask);
+		if(count == 0) {
+			throw new BusiException("更新employeeTask表失败");
 		}
 		JSONObject dataJSonDynamic = new JSONObject();
 		dataJSonDynamic.put("name", Type);
-		dataJSonDynamic.put("id", data.getInteger("taskId"));
-		dataJSonDynamic.put("employeeId", data.getInteger("employeeId"));
+		dataJSonDynamic.put("id", employeeTask.getId());
 		dataJSonDynamic.put("companyId", data.getInteger("companyId"));
-		dynamic dynamic = DynamicService.selectByTypeAndIdAndEmployeeId(dataJSonDynamic);
-		if (dynamic.getState() != dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交",data.getInteger("companyId"))) {
-			throw new BusiException("该任务申请无法修改");
+		dynamic dynamic = DynamicService.getDynamicByTypeAndId(dataJSonDynamic);
+		dataJSonDynamic.put("time", now);
+		dataJSonDynamic.put("dynamicId",  dynamic.getId());
+		count = DynamicService.modifyDynamic(dataJSonDynamic);
+		if(count == 0) {
+			throw new BusiException("更新dynamic表失败");
 		}
-		dataJSonDynamic.put("dynamicId", dynamic.getId());
-		dataJSonDynamic.put("note", data.getString("note"));
-		List<Object> pics = data.getJSONArray("pic");
-		String picString = "";
-		for (Object o : pics) {
-			picString += o.toString() + "-";
-		}
-		dataJSonDynamic.put("pic", picString);
-		dataJSonDynamic.put("rank", task.getRank());
-		dataJSonDynamic.put("time", TimeFormatUtil.timeStampToString(new Date().getTime()));
-		int dynamicId = DynamicService.modifyDynamic(dataJSonDynamic);
-
-		return dynamicId;
+		return employeeTask.getId();
 	}
 
 	@Override
 	public Integer deleteEmployeeTask(JSONObject data) {
-		task task = taskMapper.selectByPrimaryKey(data.getInteger("taskId"));
-		if (task == null || task.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"))) {
-			throw new BusiException("该任务不存在");
+		employeeTask employeeTask = employeeTaskMapper.selectByPrimaryKey(data.getInteger("employeeTaskId"));
+		if(employeeTask.getState() != dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交",data.getInteger("companyId"))) {
+			throw new BusiException("该任务已提交无法删除");
 		}
+		employeeTask.setState(dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId")));
+		int count = employeeTaskMapper.updateByPrimaryKeySelective(employeeTask);
+		if (count == 0) {
+			throw new BusiException("更新employeeLogTomorrow表失败");
+		}
+
 		JSONObject dataJSonDynamic = new JSONObject();
 		dataJSonDynamic.put("name", Type);
-		dataJSonDynamic.put("id", data.getInteger("taskId"));
-		dataJSonDynamic.put("employeeId", data.getInteger("employeeId"));
+		dataJSonDynamic.put("id", employeeTask.getId());
 		dataJSonDynamic.put("companyId", data.getInteger("companyId"));
-		dynamic dynamic = DynamicService.selectByTypeAndIdAndEmployeeId(dataJSonDynamic);
-		if(dynamic.getState() != dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交",data.getInteger("companyId"))) {
-			throw new BusiException("该任务申请已提交无法删除");
-		}
+		dynamic dynamic = DynamicService.getDynamicByTypeAndId(dataJSonDynamic);
 		dataJSonDynamic.put("dynamicId", dynamic.getId());
 		DynamicService.deleteDynamic(dataJSonDynamic);
 
 		JSONObject dataJSonApply = new JSONObject();
-		dataJSonApply.put("dynamicId", dynamic.getId());
 		dataJSonApply.put("companyId", data.getInteger("companyId"));
-		int applyRank = ApplyRankService.deleteApplyRank(dataJSonApply);
+		dataJSonApply.put("dynamicId", dynamic.getId());
+		ApplyRankService.deleteApplyRank(dataJSonApply);
 
-		ApplyRankService.setEmployeeTask(dynamic.getId(), dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId")),data.getInteger("companyId"));
-
-		return applyRank;
+		return employeeTask.getId();
 	}
+
 	@Override
 	public Integer annulEmployeeTask(JSONObject data) {
-		task task = taskMapper.selectByPrimaryKey(data.getInteger("taskId"));
-		if (task == null || task.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"))) {
-			throw new BusiException("该任务不存在");
+		employeeTask employeeTask = employeeTaskMapper.selectByPrimaryKey(data.getInteger("employeeTaskId"));
+		employeeTask.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核失败",data.getInteger("companyId")));
+		int count = employeeTaskMapper.updateByPrimaryKeySelective(employeeTask);
+		if (count == 0) {
+			throw new BusiException("更新employeeTask表失败");
 		}
+		
 		JSONObject dataJSonDynamic = new JSONObject();
 		dataJSonDynamic.put("name", Type);
-		dataJSonDynamic.put("id", data.getInteger("taskId"));
-		dataJSonDynamic.put("employeeId", data.getInteger("employeeId"));
+		dataJSonDynamic.put("id", employeeTask.getId());
 		dataJSonDynamic.put("companyId", data.getInteger("companyId"));
-		dynamic dynamic = DynamicService.selectByTypeAndIdAndEmployeeId(dataJSonDynamic);
-		if(dynamic.getState() != dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核",data.getInteger("companyId"))) {
-			throw new BusiException("该任务申请已无法撤回");
-		}
+		dynamic dynamic = DynamicService.getDynamicByTypeAndId(dataJSonDynamic);
 		dataJSonDynamic.put("dynamicId", dynamic.getId());
 		DynamicService.annulDynamic(dataJSonDynamic);
 		
 		JSONObject dataJSonApply = new JSONObject();
-		dataJSonApply.put("dynamicId", dynamic.getId());
 		dataJSonApply.put("companyId", data.getInteger("companyId"));
-		int applyRank = ApplyRankService.annulApplyRank(dataJSonApply);
+		dataJSonApply.put("dynamicId", dynamic.getId());
+		ApplyRankService.annulApplyRank(dataJSonApply);
 		
-		ApplyRankService.setEmployeeTask(dynamic.getId(), dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核失败",data.getInteger("companyId")),data.getInteger("companyId"));
-		
-		return applyRank;
+		return employeeTask.getId();
 	}
 
 	public Integer affirmEmployeeTask(JSONObject data) {
 		String now = TimeFormatUtil.timeStampToString(new Date().getTime());
+		employeeTask employeeTask = employeeTaskMapper.selectByPrimaryKey(data.getInteger("employeeTaskId"));
+		if (employeeTask.getState() != dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交",data.getInteger("companyId"))) {
+			throw new BusiException("该任务无法确认提交");
+		}
+		employeeTask.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核",data.getInteger("companyId")));
+		int count = employeeTaskMapper.updateByPrimaryKeySelective(employeeTask);
+		if (count == 0) {
+			throw new BusiException("更新employeeTask表失败");
+		}
 		JSONObject dataJSonDynamic = new JSONObject();
 		dataJSonDynamic.put("name", Type);
-		dataJSonDynamic.put("id", data.getInteger("taskId"));
-		dataJSonDynamic.put("employeeId", data.getInteger("employeeId"));
+		dataJSonDynamic.put("id", employeeTask.getId());
 		dataJSonDynamic.put("companyId", data.getInteger("companyId"));
-		dynamic dynamic = DynamicService.selectByTypeAndIdAndEmployeeId(dataJSonDynamic);
-		if (dynamic.getState() != dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交",data.getInteger("companyId"))) {
-			throw new BusiException("该任务申请无法确认提交");
-		}
+		dynamic dynamic = DynamicService.getDynamicByTypeAndId(dataJSonDynamic);
 		dynamic.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核",data.getInteger("companyId")));
 		dynamic.setDateTime(now);
-		int count = dynamicMapper.updateByPrimaryKeySelective(dynamic);
+		count = dynamicMapper.updateByPrimaryKeySelective(dynamic);
 		if (count == 0) {
 			throw new BusiException("更新dynamic表失败");
 		}
@@ -335,59 +333,54 @@ public class EmployeeTaskServiceImpl implements EmployeeTaskService {
 		applyRank.setStartTime(now);
 		String[] checkTimeList = applyRank.getCheckTimeList().split("--");
 		String checkTime = "";
-		for (int i = 0; i < checkTimeList.length; i++) {
-			checkTime += now + "--";
+		for(int i=0;i<checkTimeList.length;i++) {
+			checkTime += now+"--";
 		}
 		applyRank.setCheckTimeList(checkTime);
 		count = applyRankMapper.updateByPrimaryKeySelective(applyRank);
 		if (count == 0) {
 			throw new BusiException("更新applyRank表失败");
 		}
-		ApplyRankService.setEmployeeTask(dynamic.getId(), dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核",data.getInteger("companyId")),data.getInteger("companyId"));
-		return data.getInteger("taskId");
+		return employeeTask.getId();
 	}
-	
+
 	@Override
 	public JSONObject getEmployeeTask(JSONObject data) throws ParseException {
-		task task = taskMapper.selectByPrimaryKey(data.getInteger("taskId"));
-		if (task == null || task.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"))) {
-			throw new BusiException("该任务不存在");
+		employeeTask employeeTask = employeeTaskMapper.selectByPrimaryKey(data.getInteger("employeeTaskId"));
+		if (employeeTask == null || employeeTask.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"))) {
+			throw new BusiException("该employeeTaskId不存在");
 		}
 		JSONObject dataJSonDynamic = new JSONObject();
 		dataJSonDynamic.put("name", Type);
-		dataJSonDynamic.put("id", data.getInteger("taskId"));
-		dataJSonDynamic.put("employeeId", data.getInteger("employeeId"));
+		dataJSonDynamic.put("id", employeeTask.getId());
 		dataJSonDynamic.put("companyId", data.getInteger("companyId"));
-		dynamic dynamic = DynamicService.selectByTypeAndIdAndEmployeeId(dataJSonDynamic);
+		dynamic dynamic = DynamicService.getDynamicByTypeAndId(dataJSonDynamic);
 		dataJSonDynamic.put("dynamicId", dynamic.getId());
 
 		JSONObject dataJson = new JSONObject();
-		dataJson.put("employeeTask", this.sEmployeeTaskDTO(task, data.getInteger("employeeId"),data.getInteger("companyId")));
+		dataJson.put("employeeLog", this.sEmployeeTaskDTO(employeeTask));
 		dataJson.put("dynamicId", dynamic.getId());
 		dataJson.put("ApplyRankDTO", ApplyRankService.getApplyRankByDynamic(dataJSonDynamic));
 		return dataJson;
 	}
-	
-	public EmployeeTaskDTO sEmployeeTaskDTO(task task,Integer employeeId,Integer companyId) throws ParseException {
-		JSONObject dataJSonDynamic = new JSONObject();
-		dataJSonDynamic.put("name", Type);
-		dataJSonDynamic.put("id", task.getId());
-		dataJSonDynamic.put("employeeId", employeeId);
-		dataJSonDynamic.put("companyId", companyId);
-		dynamic dynamic = DynamicService.selectByTypeAndIdAndEmployeeId(dataJSonDynamic);
+
+	public EmployeeTaskDTO sEmployeeTaskDTO(employeeTask employeeTask) throws ParseException {
+		task task = taskMapper.selectByPrimaryKey(employeeTask.getTaskId());
+		employee employee = employeeMapper.selectByPrimaryKey(employeeTask.getEmployeeId());
 		EmployeeTaskDTO employeeTaskDTO = new EmployeeTaskDTO();
 		employeeTaskDTO.setContent(task.getContent());
-		employeeTaskDTO.setDateTime(TimeFormatUtil.stringToTimeStamp(dynamic.getDateTime()));
-		employeeTaskDTO.setId(task.getId());
-		employeeTaskDTO.setNote(dynamic.getNote());
-		String pics = dynamic.getPic();
+		employeeTaskDTO.setDateTime(TimeFormatUtil.stringToTimeStamp(employeeTask.getDateTime()));
+		employeeTaskDTO.setId(employeeTask.getId());
+		employeeTaskDTO.setNote(employeeTask.getNote());
+		employeeTaskDTO.setTaskId(employeeTask.getTaskId());
+		String pics = employeeTask.getPics();
 		JSONObject dataJson = new JSONObject();
 		List<JSONObject> fileListJSON = new ArrayList<JSONObject>();
 		List<String> urlList = new ArrayList<String>();
 		if (pics != null && !"".equals(pics)) {
 			String[] picList = pics.split("-");
-			for(int i =0 ;i<picList.length;i++) {
-				File picture = new File(ACTPATH+picList[i]);
+			for (int i = 0; i < picList.length; i++) {
+				File picture = new File(ACTPATH + picList[i]);
 				JSONObject files = new JSONObject();
 				JSONObject file = new JSONObject();
 				file.put("path", PATH + picList[i]);
@@ -401,13 +394,34 @@ public class EmployeeTaskServiceImpl implements EmployeeTaskService {
 			dataJson.put("uploadImg", urlList);
 			employeeTaskDTO.setPics(dataJson);
 		}
-		employeeTaskDTO.setPrevType(dictMapper.selectByCodeAndStateCode(PRETASK_TYPE, task.getPrevType(), companyId));
-		employeeTaskDTO.setType(dictMapper.selectByCodeAndStateCode(TASK_TYPE, task.getType(), companyId));
+		employeeTaskDTO.setPrevType(dictMapper.selectByCodeAndStateCode(PRETASK_TYPE, task.getPrevType(), employee.getCompanyId()));
+		employeeTaskDTO.setType(dictMapper.selectByCodeAndStateCode(TASK_TYPE, task.getType(), employee.getCompanyId()));
 		employeeTaskDTO.setName(task.getName());
 		employeeTaskDTO.setRank(task.getRank());
-		employeeTaskDTO.setState(dictMapper.selectByCodeAndStateCode(APPLY_FLOW, dynamic.getState(), companyId));
+		employeeTaskDTO.setState(dictMapper.selectByCodeAndStateCode(APPLY_FLOW, employeeTask.getState(), employee.getCompanyId()));
 		employeeTaskDTO.setStep(task.getStep());
 		return employeeTaskDTO;
 	}
 
+	public Page<EmployeeTaskDTO> getEmployeeTaskByEmployee(JSONObject data) throws ParseException {
+		Integer pageNum = data.getInteger("pageNum");
+		Integer employeeId = data.getInteger("employeeId");
+		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(state);
+		List<employeeTask> employeeTasks = employeeTaskMapper.selectByEmployeeId(employeeId,stateList, (pageNum - 1) * PAGESIZE,
+				PAGESIZE);
+		List<EmployeeTaskDTO> jsonObjects = new ArrayList<EmployeeTaskDTO>();
+		for (employeeTask e : employeeTasks) {
+			EmployeeTaskDTO employeeTaskDTO = this.sEmployeeTaskDTO(e);
+			jsonObjects.add(employeeTaskDTO);
+		}
+		int total = employeeTaskMapper.selectByEmployeeIdCount(employeeId,stateList);
+		Page<EmployeeTaskDTO> page = new Page<EmployeeTaskDTO>();
+		page.setPageNum(pageNum);
+		page.setPageSize(PAGESIZE);
+		page.setTotal(total);
+		page.setList(jsonObjects);
+		return page;
+	}
 }
