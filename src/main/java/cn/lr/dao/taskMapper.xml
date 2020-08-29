@@ -11,11 +11,10 @@
     <result column="type" jdbcType="INTEGER" property="type" />
     <result column="step" jdbcType="INTEGER" property="step" />
     <result column="postIdList" jdbcType="VARCHAR" property="postIdList" />
-    <result column="employeeIdList" jdbcType="VARCHAR" property="employeeIdList" />
     <result column="state" jdbcType="INTEGER" property="state" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, companyId, name, content, rank, prevType, type, step, postIdList, employeeIdList, 
+    id, companyId, name, content, rank, prevType, type, step, postIdList, 
     state
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -32,11 +31,11 @@
     insert into tb_task (id, companyId, name, 
       content, rank, prevType, 
       type, step, postIdList, 
-      employeeIdList, state)
+       state)
     values (#{id,jdbcType=INTEGER}, #{companyId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
       #{content,jdbcType=VARCHAR}, #{rank,jdbcType=INTEGER}, #{prevType,jdbcType=INTEGER}, 
       #{type,jdbcType=INTEGER}, #{step,jdbcType=INTEGER}, #{postIdList,jdbcType=VARCHAR}, 
-      #{employeeIdList,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER})
+      #{state,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="cn.lr.po.task" useGeneratedKeys="true" keyProperty="id">
     insert into tb_task
@@ -67,9 +66,6 @@
       </if>
       <if test="postIdList != null">
         postIdList,
-      </if>
-      <if test="employeeIdList != null">
-        employeeIdList,
       </if>
       <if test="state != null">
         state,
@@ -103,9 +99,6 @@
       <if test="postIdList != null">
         #{postIdList,jdbcType=VARCHAR},
       </if>
-      <if test="employeeIdList != null">
-        #{employeeIdList,jdbcType=VARCHAR},
-      </if>
       <if test="state != null">
         #{state,jdbcType=INTEGER},
       </if>
@@ -138,9 +131,6 @@
       <if test="postIdList != null">
         postIdList = #{postIdList,jdbcType=VARCHAR},
       </if>
-      <if test="employeeIdList != null">
-        employeeIdList = #{employeeIdList,jdbcType=VARCHAR},
-      </if>
       <if test="state != null">
         state = #{state,jdbcType=INTEGER},
       </if>
@@ -157,7 +147,6 @@
       type = #{type,jdbcType=INTEGER},
       step = #{step,jdbcType=INTEGER},
       postIdList = #{postIdList,jdbcType=VARCHAR},
-      employeeIdList = #{employeeIdList,jdbcType=VARCHAR},
       state = #{state,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>

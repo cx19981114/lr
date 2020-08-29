@@ -67,10 +67,13 @@ public class DynamicServiceImpl implements DynamicService {
 		}
 		if (employee.getLeaderIdList() != null && !"".equals(employee.getLeaderIdList())) {
 			record.setCheckId(Integer.valueOf(employee.getLeaderIdList().split("-")[0]));
+			record.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交",data.getInteger("companyId")));
+		}else {
+			record.setCheckId(employee.getId());
+			record.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功",data.getInteger("companyId")));
 		}
 		record.setCompanyId(employee.getCompanyId());
 		record.setRank(data.getInteger("rank"));
-		record.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交",data.getInteger("companyId")));
 		int count = dynamicMapper.insertSelective(record);
 		if (count == 0) {
 			throw new BusiException("插入动态表失败");

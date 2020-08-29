@@ -157,6 +157,9 @@ public class PostServiceImpl implements PostService {
 
 	public PostDTO sePostDTO(post post) {
 		PostDTO postDTO = new PostDTO();
+		if(post.getLeaderPostId() == 0) {
+			return postDTO;
+		}
 		post post2 = postMapper.selectByPrimaryKey(post.getLeaderPostId());
 		if (!post.getName().contains("店长")) {
 			postDTO.setLeaderPostId(post.getLeaderPostId());

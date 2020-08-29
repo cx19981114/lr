@@ -260,25 +260,25 @@ public class TimedTaskServiceImpl implements TimedTaskService{
 					}
 				}
 				//更新未审核的新增业绩
-				stateList.clear();
-				stateList.add(stateWTJ);
-				List<customerPerformance> customerPerformancesWTJ = customerPerformanceMapper.selectByEmployeeState(e.getId(),stateList);
-				for(customerPerformance cp:customerPerformancesWTJ) {
-					JSONObject cpJsonObject = new JSONObject();
-					cpJsonObject.put("customerPerformanceId", cp.getId());
-					cpJsonObject.put("companyId", e.getCompanyId());
-					CustomerPerformanceService.deleteCustomerPerformance(cpJsonObject);
-				}
-				stateList.clear();
-				stateList.add(stateWSH);
-				stateList.add(stateSHZ);
-				List<customerPerformance> customerPerformancesWSHAndSHZ = customerPerformanceMapper.selectByEmployeeState(e.getId(),stateList);
-				for(customerPerformance cp:customerPerformancesWSHAndSHZ) {
-					JSONObject cpJsonObject = new JSONObject();
-					cpJsonObject.put("customerPerformanceId", cp.getId());
-					cpJsonObject.put("companyId", e.getCompanyId());
-					CustomerPerformanceService.annulCustomerPerformance(cpJsonObject);
-				}
+//				stateList.clear();
+//				stateList.add(stateWTJ);
+//				List<customerPerformance> customerPerformancesWTJ = customerPerformanceMapper.selectByEmployeeState(e.getId(),stateList);
+//				for(customerPerformance cp:customerPerformancesWTJ) {
+//					JSONObject cpJsonObject = new JSONObject();
+//					cpJsonObject.put("customerPerformanceId", cp.getId());
+//					cpJsonObject.put("companyId", e.getCompanyId());
+//					CustomerPerformanceService.deleteCustomerPerformance(cpJsonObject);
+//				}
+//				stateList.clear();
+//				stateList.add(stateWSH);
+//				stateList.add(stateSHZ);
+//				List<customerPerformance> customerPerformancesWSHAndSHZ = customerPerformanceMapper.selectByEmployeeState(e.getId(),stateList);
+//				for(customerPerformance cp:customerPerformancesWSHAndSHZ) {
+//					JSONObject cpJsonObject = new JSONObject();
+//					cpJsonObject.put("customerPerformanceId", cp.getId());
+//					cpJsonObject.put("companyId", e.getCompanyId());
+//					CustomerPerformanceService.annulCustomerPerformance(cpJsonObject);
+//				}
 				//更新未审核的预约
 				stateList.clear();
 				stateList.add(stateWTJ);
@@ -300,25 +300,25 @@ public class TimedTaskServiceImpl implements TimedTaskService{
 					OrderService.annulOrder(oJsonObject);
 				}
 				//更新未审核的预约完成
-				stateList.clear();
-				stateList.add(stateWTJ);
-				List<order> ordersFinishWTJ = orderMapper.selectByEmployeeFinishState(e.getId(),stateList);
-				for(order o:ordersFinishWTJ) {
-					JSONObject oJsonObject = new JSONObject();
-					oJsonObject.put("orderId", o.getId());
-					oJsonObject.put("companyId", e.getCompanyId());
-					OrderService.deleteOrderFinish(oJsonObject);
-				}
-				stateList.clear();
-				stateList.add(stateWSH);
-				stateList.add(stateSHZ);
-				List<order> ordersFinishWSHAndSHZ = orderMapper.selectByEmployeeFinishState(e.getId(),stateList);
-				for(order o:ordersFinishWSHAndSHZ) {
-					JSONObject oJsonObject = new JSONObject();
-					oJsonObject.put("orderId", o.getId());
-					oJsonObject.put("companyId", e.getCompanyId());
-					OrderService.annulOrderFinish(oJsonObject);
-				}
+//				stateList.clear();
+//				stateList.add(stateWTJ);
+//				List<order> ordersFinishWTJ = orderMapper.selectByEmployeeFinishState(e.getId(),stateList);
+//				for(order o:ordersFinishWTJ) {
+//					JSONObject oJsonObject = new JSONObject();
+//					oJsonObject.put("orderId", o.getId());
+//					oJsonObject.put("companyId", e.getCompanyId());
+//					OrderService.deleteOrderFinish(oJsonObject);
+//				}
+//				stateList.clear();
+//				stateList.add(stateWSH);
+//				stateList.add(stateSHZ);
+//				List<order> ordersFinishWSHAndSHZ = orderMapper.selectByEmployeeFinishState(e.getId(),stateList);
+//				for(order o:ordersFinishWSHAndSHZ) {
+//					JSONObject oJsonObject = new JSONObject();
+//					oJsonObject.put("orderId", o.getId());
+//					oJsonObject.put("companyId", e.getCompanyId());
+//					OrderService.annulOrderFinish(oJsonObject);
+//				}
 				List<Integer> stateListAppply = new ArrayList<Integer>();
 				List<Integer> stateListOrder = new ArrayList<Integer>();
 				stateListAppply.add(stateCG);
@@ -344,25 +344,25 @@ public class TimedTaskServiceImpl implements TimedTaskService{
 					OrderService.cancelOrder(oJsonObject);
 				}
 				//更新未审核的客户项目
-				stateList.clear();
-				stateList.add(stateWTJ);
-				List<customerProject> customerProjectWTJ = customerProjectMapper.selectByEmployeeState(e.getId(),stateList);
-				for(customerProject cp:customerProjectWTJ) {
-					JSONObject cpJsonObject = new JSONObject();
-					cpJsonObject.put("customerProjectId", cp.getId());
-					cpJsonObject.put("companyId", e.getCompanyId());
-					CustomerProjectService.deleteCustomerProject(cpJsonObject);
-				}
-				stateList.clear();
-				stateList.add(stateWSH);
-				stateList.add(stateSHZ);
-				List<customerProject> customerProjectWSHAndSHZ = customerProjectMapper.selectByEmployeeState(e.getId(),stateList);
-				for(customerProject cp:customerProjectWSHAndSHZ) {
-					JSONObject cpJsonObject = new JSONObject();
-					cpJsonObject.put("customerProjectId", cp.getId());
-					cpJsonObject.put("companyId", e.getCompanyId());
-					CustomerProjectService.annulCustomerProject(cpJsonObject);
-				}
+//				stateList.clear();
+//				stateList.add(stateWTJ);
+//				List<customerProject> customerProjectWTJ = customerProjectMapper.selectByEmployeeState(e.getId(),stateList);
+//				for(customerProject cp:customerProjectWTJ) {
+//					JSONObject cpJsonObject = new JSONObject();
+//					cpJsonObject.put("customerProjectId", cp.getId());
+//					cpJsonObject.put("companyId", e.getCompanyId());
+//					CustomerProjectService.deleteCustomerProject(cpJsonObject);
+//				}
+//				stateList.clear();
+//				stateList.add(stateWSH);
+//				stateList.add(stateSHZ);
+//				List<customerProject> customerProjectWSHAndSHZ = customerProjectMapper.selectByEmployeeState(e.getId(),stateList);
+//				for(customerProject cp:customerProjectWSHAndSHZ) {
+//					JSONObject cpJsonObject = new JSONObject();
+//					cpJsonObject.put("customerProjectId", cp.getId());
+//					cpJsonObject.put("companyId", e.getCompanyId());
+//					CustomerProjectService.annulCustomerProject(cpJsonObject);
+//				}
 			}
 		}
 		

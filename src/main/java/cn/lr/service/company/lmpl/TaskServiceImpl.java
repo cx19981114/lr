@@ -24,6 +24,7 @@ import cn.lr.po.employee;
 import cn.lr.po.postTask;
 import cn.lr.po.task;
 import cn.lr.service.company.TaskService;
+import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
 
@@ -85,15 +86,6 @@ public class TaskServiceImpl implements TaskService {
 		}
 		task.setStep(data.getInteger("step"));
 		task.setPostIdList(String.valueOf(data.getInteger("postIdList")));
-		String employeeIdList = "";
-		stateList.clear();
-		stateList.add(stateYSX);
-		List<employee> employees = employeeMapper.selectByPostId(data.getInteger("companyId"),
-				data.getInteger("postIdList"), stateList, 0, Integer.MAX_VALUE);
-		for (employee e : employees) {
-			employeeIdList += e.getId() + "-";
-		}
-		task.setEmployeeIdList(employeeIdList);
 		task.setState(stateWSX);
 		int count = taskMapper.insertSelective(task);
 		if (count == 0) {
@@ -134,15 +126,6 @@ public class TaskServiceImpl implements TaskService {
 		task.setRank(data.getInteger("rank"));
 		if (data.getInteger("postIdList") != null) {
 			task.setPostIdList(String.valueOf(data.getInteger("postIdList")));
-			String employeeIdList = "";
-			stateList.clear();
-			stateList.add(stateYSX);
-			List<employee> employees = employeeMapper.selectByPostId(data.getInteger("companyId"),
-					data.getInteger("postIdList"), stateList, 0, Integer.MAX_VALUE);
-			for (employee e : employees) {
-				employeeIdList += e.getId() + "-";
-			}
-			task.setEmployeeIdList(employeeIdList);
 			int count = taskMapper.updateByPrimaryKeySelective(task);
 			if (count == 0) {
 				throw new BusiException("更新task表失败");
@@ -400,6 +383,10 @@ public class TaskServiceImpl implements TaskService {
 		System.out.println(clos + " rows:" + rows);
 		for (int i = 1; i < rows; i++) {
 			for (int j = 0; j < clos; j++) {
+				System.out.println(j);
+				if(rs.getCell(0, i).getContents().equals("")) {
+					break;
+				}
 				String companyId = rs.getCell(j++, i).getContents();
 				String step = rs.getCell(j++, i).getContents();
 				String prevType = rs.getCell(j++, i).getContents();
@@ -408,6 +395,7 @@ public class TaskServiceImpl implements TaskService {
 				String content = rs.getCell(j++, i).getContents();
 				String rank = rs.getCell(j++, i).getContents();
 				String postIdList = rs.getCell(j++, i).getContents();
+				System.out.println(j);
 				JSONObject dataJsonObject = new JSONObject();
 				dataJsonObject.put("companyId", Integer.valueOf(companyId));
 				dataJsonObject.put("step", Integer.valueOf(step));

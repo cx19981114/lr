@@ -660,6 +660,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 	public employeeDTO sEmployeeDTO(employee employee) {
 		employeeDTO employeeDTO = new employeeDTO();
+		System.out.println(employee.getPostId());
 		post post = postMapper.selectByPrimaryKey(employee.getPostId());
 		employeeDTO.setCompany(companyMapper.selectByPrimaryKey(employee.getCompanyId()).getName());
 		employeeDTO.setEmployeeId(employee.getId());
@@ -674,6 +675,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 				dictMapper.selectByCodeAndStateCode(EMPLOYEE_TYPE, employee.getState(), employee.getCompanyId()));
 		employeeDTO.setPermissionList(post.getPermissionList());
 		if (employee.getLeaderIdList() != null && !employee.getLeaderIdList().equals("")) {
+			System.out.println(employee.getLeaderIdList());
 			String leaderId = employee.getLeaderIdList().split("-")[0];
 			employee employee1 = employeeMapper.selectByPrimaryKey(Integer.valueOf(leaderId));
 			if (employee1 == null) {

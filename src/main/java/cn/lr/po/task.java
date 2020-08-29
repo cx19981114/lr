@@ -19,8 +19,6 @@ public class task {
 
     private String postIdList;
 
-    private String employeeIdList;
-
     private Integer state;
 
     public Integer getId() {
@@ -93,14 +91,6 @@ public class task {
 
     public void setPostIdList(String postIdList) {
         this.postIdList = postIdList == null ? null : postIdList.trim();
-    }
-
-    public String getEmployeeIdList() {
-        return employeeIdList;
-    }
-
-    public void setEmployeeIdList(String employeeIdList) {
-        this.employeeIdList = employeeIdList == null ? null : employeeIdList.trim();
     }
 
     public Integer getState() {

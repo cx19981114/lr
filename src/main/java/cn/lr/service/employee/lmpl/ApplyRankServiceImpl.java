@@ -60,7 +60,7 @@ import cn.lr.util.TimeFormatUtil;
 public class ApplyRankServiceImpl implements ApplyRankService {
 	@Autowired
 	EmployeeService EmployeeService;
-	
+
 	@Autowired
 	employeeMapper employeeMapper;
 	@Autowired
@@ -132,19 +132,204 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 		String checkTimeList = "";
 		String noteList = "";
 		String now = TimeFormatUtil.timeStampToString(new Date().getTime());
-		for (int i = 0; i < checkId.length; i++) {
-			checkList += dictMapper.selectByCodeAndStateName(CHECK_FLOW, "未审核",data.getInteger("companyId")) + "-";
-			checkTimeList += now + "--";
-			noteList += "未审核-";
+		if (checkIdList == null || "".equals(checkIdList)) {
+			Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+			applyRank.setStartTime(now);
+			applyRank.setEndTime(now);
+			applyRank.setState(stateCG);
+			applyRank.setCheckNumber(0);
+			applyRank.setDynamicId(data.getInteger("dynamicId"));
+			dynamic dynamic = dynamicMapper.selectByPrimaryKey(data.getInteger("dynamicId"));
+			String name = dynamic.getTb_name();
+			Integer id = dynamic.getTb_id();
+			if ("每日打卡".equals(name)) {
+				employeeAttendance employeeAttendance = employeeAttendanceMapper.selectByPrimaryKey(id);
+				if (employeeAttendance == null || employeeAttendance.getState() == dictMapper
+						.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"))) {
+					throw new BusiException("该用户的每日打卡不存在");
+				}
+				employeeAttendance.setState(stateCG);
+				int count = employeeAttendanceMapper.updateByPrimaryKeySelective(employeeAttendance);
+				if (count == 0) {
+					throw new BusiException("修改每日打卡状态失败");
+				}
+			} else if ("今日总结".equals(name)) {
+				employeeLogDay employeeLogDay = employeeLogDayMapper.selectByPrimaryKey(id);
+				if (employeeLogDay == null || employeeLogDay.getState() == dictMapper
+						.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"))) {
+					throw new BusiException("该用户的今日总结不存在");
+				}
+				employeeLogDay.setState(stateCG);
+				int count = employeeLogDayMapper.updateByPrimaryKeySelective(employeeLogDay);
+				if (count == 0) {
+					throw new BusiException("修改今日总结状态失败");
+				}
+
+			} else if ("明日计划".equals(name)) {
+				employeeLogTomorrow employeeLogTomorrow = employeeLogTomorrowMapper.selectByPrimaryKey(id);
+				if (employeeLogTomorrow == null || employeeLogTomorrow.getState() == dictMapper
+						.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"))) {
+					throw new BusiException("该用户的明日计划不存在");
+				}
+				employeeLogTomorrow.setState(stateCG);
+				int count = employeeLogTomorrowMapper.updateByPrimaryKeySelective(employeeLogTomorrow);
+				if (count == 0) {
+					throw new BusiException("修改明日计划状态失败");
+				}
+
+			} else if ("任务".equals(name)) {
+				employeeTask employeeTask = employeeTaskMapper.selectByPrimaryKey(id);
+				if (employeeTask == null || employeeTask.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE,
+						"已失效", data.getInteger("companyId"))) {
+					throw new BusiException("该用户的任务不存在");
+				}
+				employeeTask.setState(stateCG);
+				int count = employeeTaskMapper.updateByPrimaryKeySelective(employeeTask);
+				if (count == 0) {
+					throw new BusiException("修改任务状态失败");
+				}
+			} else if ("每日行程".equals(name)) {
+				employeeRest employeeRest = employeeRestMapper.selectByPrimaryKey(id);
+				if (employeeRest == null || employeeRest.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE,
+						"已失效", data.getInteger("companyId"))) {
+					throw new BusiException("该用户的每日行程不存在");
+				}
+				employeeRest.setState(stateCG);
+				int count = employeeRestMapper.updateByPrimaryKeySelective(employeeRest);
+				if (count == 0) {
+					throw new BusiException("修改每日行程状态失败");
+				}
+
+			} else if ("请假".equals(name) || "物料".equals(name) || "培训".equals(name)) {
+				employeeApply employeeApply = employeeApplyMapper.selectByPrimaryKey(id);
+				if (employeeApply == null || employeeApply.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE,
+						"已失效", data.getInteger("companyId"))) {
+					throw new BusiException("该用户的申请不存在");
+				}
+				employeeApply.setState(stateCG);
+				int count = employeeApplyMapper.updateByPrimaryKeySelective(employeeApply);
+				if (count == 0) {
+					throw new BusiException("修改申请状态失败");
+				}
+			} else if ("顾客购买项目".equals(name)) {
+				customerProject customerProject = customerProjectMapper.selectByPrimaryKey(id);
+				if (customerProject == null || customerProject.getState() == dictMapper
+						.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"))) {
+					throw new BusiException("该客户服务项目不存在");
+				}
+				customerProject.setState(stateCG);
+				int count = customerProjectMapper.updateByPrimaryKeySelective(customerProject);
+				if (count == 0) {
+					throw new BusiException("修改客户服务项目状态失败");
+				}
+				customer customer = customerMapper.selectByPrimaryKey(customerProject.getCustomerId());
+				project project = projectMapper.selectByPrimaryKey(customerProject.getProjectId());
+				customer.setMoney(customer.getMoney() - project.getMoney());
+				customer.setActiveConsumeTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
+				count = customerMapper.updateByPrimaryKeySelective(customer);
+				if (count == 0) {
+					throw new BusiException("更新customer表失败");
+				}
+			} else if ("新增顾客".equals(name)) {
+				customerPerformance customerPerformance = customerPerformanceMapper.selectByPrimaryKey(id);
+				if (customerPerformance == null || customerPerformance.getState() == dictMapper
+						.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"))) {
+					throw new BusiException("该业绩不存在");
+				}
+				customerPerformance.setState(stateCG);
+				int count = customerPerformanceMapper.updateByPrimaryKeySelective(customerPerformance);
+				if (count == 0) {
+					throw new BusiException("修改业绩状态失败");
+				}
+				customer customer = customerMapper.selectByPrimaryKey(customerPerformance.getCustomerId());
+				if (customer == null
+						|| customer.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"))) {
+					throw new BusiException("该顾客不存在");
+				}
+				customer.setState(stateCG);
+				customer.setActiveConsumeTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
+				customer.setActiveServiceTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
+				count = customerMapper.updateByPrimaryKeySelective(customer);
+				if (count == 0) {
+					throw new BusiException("修改顾客状态失败");
+				}
+			} else if ("顾客续费".equals(name)) {
+				customerPerformance customerPerformance = customerPerformanceMapper.selectByPrimaryKey(id);
+				if (customerPerformance == null || customerPerformance.getState() == dictMapper
+						.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"))) {
+					throw new BusiException("该业绩不存在");
+				}
+				customerPerformance.setState(stateCG);
+				int count = customerPerformanceMapper.updateByPrimaryKeySelective(customerPerformance);
+				if (count == 0) {
+					throw new BusiException("修改业绩状态失败");
+				}
+				customer customer = customerMapper.selectByPrimaryKey(customerPerformance.getCustomerId());
+				customer.setMoney(customer.getMoney() + customerPerformance.getMoney());
+				customer.setActiveConsumeTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
+				count = customerMapper.updateByPrimaryKeySelective(customer);
+				if (count == 0) {
+					throw new BusiException("更新customer表失败");
+				}
+			} else if ("预约项目".equals(name)) {
+				order order = orderMapper.selectByPrimaryKey(id);
+				if (order == null
+						|| order.getApplyState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"))) {
+					throw new BusiException("该预约不存在");
+				}
+				order.setApplyState(stateCG);
+				order.setOrderState(dictMapper.selectByCodeAndStateName(ORDER_FLOW, "未开始", data.getInteger("companyId")));
+				customer customer = customerMapper.selectByPrimaryKey(order.getCustomerId());
+				customer.setActiveServiceTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
+				int count = customerMapper.updateByPrimaryKeySelective(customer);
+				if (count == 0) {
+					throw new BusiException("修改顾客活跃时间失败");
+				}
+				count = orderMapper.updateByPrimaryKeySelective(order);
+				if (count == 0) {
+					throw new BusiException("修改预约状态失败");
+				}
+			} else if ("预约完成".equals(name)) {
+				order order = orderMapper.selectByPrimaryKey(id);
+				if (order == null || order.getApplyOrderState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",
+						data.getInteger("companyId"))) {
+					throw new BusiException("该预约不存在");
+				}
+				order.setApplyOrderState(stateCG);
+				int count = orderMapper.updateByPrimaryKeySelective(order);
+				if (count == 0) {
+					throw new BusiException("修改预约状态失败");
+				}
+				customerProject customerProject = customerProjectMapper
+						.selectByPrimaryKey(order.getCustomerProjectId());
+				customerProject.setRestCount(customerProject.getRestCount() - 1);
+				customerProject.setIngCount(customerProject.getIngCount() + 1);
+				count = customerProjectMapper.updateByPrimaryKeySelective(customerProject);
+				if (count == 0) {
+					throw new BusiException("修改项目剩余数量失败");
+				}
+				customer customer = customerMapper.selectByPrimaryKey(customerProject.getCustomerId());
+				customer.setActiveServiceTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
+				count = customerMapper.updateByPrimaryKeySelective(customer);
+				if (count == 0) {
+					throw new BusiException("修改顾客活跃时间失败");
+				}
+			}
+		} else{
+			for (int i = 0; i < checkId.length; i++) {
+				checkList += dictMapper.selectByCodeAndStateName(CHECK_FLOW, "未审核", data.getInteger("companyId")) + "-";
+				checkTimeList += now + "--";
+				noteList += "未审核-";
+			}
+			applyRank.setStartTime(now);
+			applyRank.setCheckList(checkList);
+			applyRank.setCheckTimeList(checkTimeList);
+			applyRank.setNoteList(noteList);
+			applyRank.setCheckIdList(checkIdList);
+			applyRank.setCheckNumber(0);
+			applyRank.setDynamicId(data.getInteger("dynamicId"));
+			applyRank.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId")));
 		}
-		applyRank.setStartTime(now);
-		applyRank.setCheckList(checkList);
-		applyRank.setCheckTimeList(checkTimeList);
-		applyRank.setNoteList(noteList);
-		applyRank.setCheckIdList(checkIdList);
-		applyRank.setCheckNumber(0);
-		applyRank.setDynamicId(data.getInteger("dynamicId"));
-		applyRank.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交",data.getInteger("companyId")));
 		int count = applyRankMapper.insertSelective(applyRank);
 		if (count == 0) {
 			throw new BusiException("插入applyRank表失败");
@@ -155,8 +340,9 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 	@Override
 	public Integer modifyApplyRank(JSONObject data) {
 		applyRank applyRank = applyRankMapper.selectByDynamic(data.getInteger("dynamicId"));
-		if(applyRank.getState() != dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核",data.getInteger("companyId"))
-				&& applyRank.getState() != dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中",data.getInteger("companyId"))) { 
+		if (applyRank.getState() != dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", data.getInteger("companyId"))
+				&& applyRank.getState() != dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中",
+						data.getInteger("companyId"))) {
 			throw new BusiException("该申请无法审核");
 		}
 		Integer actCheckId = data.getInteger("checkId");
@@ -180,8 +366,9 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 		String now = TimeFormatUtil.timeStampToString(new Date().getTime());
 		for (; i < checkId.length; i++) {
 			if (Integer.valueOf(checkId[i]) == actCheckId) {
-				if (i != 0 && Integer.valueOf(check[i-1]) == dictMapper.selectByCodeAndStateName(CHECK_FLOW, "未审核",data.getInteger("companyId"))) {
-					throw new BusiException("职员编号:" + checkId[i-1] + "还未审核");
+				if (i != 0 && Integer.valueOf(check[i - 1]) == dictMapper.selectByCodeAndStateName(CHECK_FLOW, "未审核",
+						data.getInteger("companyId"))) {
+					throw new BusiException("职员编号:" + checkId[i - 1] + "还未审核");
 				}
 				check[i] = String.valueOf(actCheck);
 				checkTime[i] = now;
@@ -199,19 +386,21 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 				applyRank.setCheckList(afterCheck);
 				applyRank.setCheckTimeList(afterCheckTime);
 				applyRank.setNoteList(afterNote);
-				
-				if (actCheck == dictMapper.selectByCodeAndStateName(CHECK_FLOW, "通过",data.getInteger("companyId"))) {
+
+				if (actCheck == dictMapper.selectByCodeAndStateName(CHECK_FLOW, "通过", data.getInteger("companyId"))) {
 					if (i == checkId.length - 1) {
 						applyRank.setEndTime(now);
-						applyRank.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功",data.getInteger("companyId")));
-						this.setState(applyRank.getDynamicId(), dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功",data.getInteger("companyId")),
-								null,data.getInteger("companyId"));
+						applyRank.setState(
+								dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId")));
+						this.setState(applyRank.getDynamicId(),
+								dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId")),
+								null, data.getInteger("companyId"));
 
 						employeeRank employeeRank = new employeeRank();
 						employeeRank.setDateTime(now);
 						dynamic dynamic = dynamicMapper.selectByPrimaryKey(applyRank.getDynamicId());
-						if (dynamic == null
-								|| dynamic.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"))) {
+						if (dynamic == null || dynamic.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE,
+								"已失效", data.getInteger("companyId"))) {
 							throw new BusiException("该动态不存在");
 						}
 						employeeRank.setDynamicId(dynamic.getId());
@@ -225,15 +414,20 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 						}
 					} else {
 						applyRank.setCheckNumber(i + 1);
-						applyRank.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中",data.getInteger("companyId")));
-						this.setState(applyRank.getDynamicId(), dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中",data.getInteger("companyId")),
-								Integer.valueOf(checkId[i + 1]),data.getInteger("companyId"));
+						applyRank.setState(
+								dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", data.getInteger("companyId")));
+						this.setState(applyRank.getDynamicId(),
+								dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", data.getInteger("companyId")),
+								Integer.valueOf(checkId[i + 1]), data.getInteger("companyId"));
 					}
-				} else if (actCheck == dictMapper.selectByCodeAndStateName(CHECK_FLOW, "驳回",data.getInteger("companyId"))) {
+				} else if (actCheck == dictMapper.selectByCodeAndStateName(CHECK_FLOW, "驳回",
+						data.getInteger("companyId"))) {
 					applyRank.setEndTime(now);
-					applyRank.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核失败",data.getInteger("companyId")));
-					this.setState(applyRank.getDynamicId(), dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核失败",data.getInteger("companyId")),
-							null,data.getInteger("companyId"));
+					applyRank.setState(
+							dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核失败", data.getInteger("companyId")));
+					this.setState(applyRank.getDynamicId(),
+							dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核失败", data.getInteger("companyId")), null,
+							data.getInteger("companyId"));
 				}
 				break;
 			}
@@ -258,9 +452,9 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 		return applyRank.getId();
 	}
 
-	public void setState(Integer dynamicId, Integer state, Integer checkId,Integer companyId) {
+	public void setState(Integer dynamicId, Integer state, Integer checkId, Integer companyId) {
 		dynamic dynamic = dynamicMapper.selectByPrimaryKey(dynamicId);
-		if (dynamic == null || dynamic.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",companyId)) {
+		if (dynamic == null || dynamic.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", companyId)) {
 			throw new BusiException("该动态不存在");
 		}
 		dynamic.setCheckId(checkId);
@@ -273,8 +467,8 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 		Integer id = dynamic.getTb_id();
 		if ("每日打卡".equals(name)) {
 			employeeAttendance employeeAttendance = employeeAttendanceMapper.selectByPrimaryKey(id);
-			if (employeeAttendance == null
-					|| employeeAttendance.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",companyId)) {
+			if (employeeAttendance == null || employeeAttendance.getState() == dictMapper
+					.selectByCodeAndStateName(DATA_TYPE, "已失效", companyId)) {
 				throw new BusiException("该用户的每日打卡不存在");
 			}
 			employeeAttendance.setState(state);
@@ -285,7 +479,7 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 		} else if ("今日总结".equals(name)) {
 			employeeLogDay employeeLogDay = employeeLogDayMapper.selectByPrimaryKey(id);
 			if (employeeLogDay == null
-					|| employeeLogDay.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",companyId)) {
+					|| employeeLogDay.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", companyId)) {
 				throw new BusiException("该用户的今日总结不存在");
 			}
 			employeeLogDay.setState(state);
@@ -294,10 +488,10 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 				throw new BusiException("修改今日总结状态失败");
 			}
 
-		}else if ("明日计划".equals(name)) {
+		} else if ("明日计划".equals(name)) {
 			employeeLogTomorrow employeeLogTomorrow = employeeLogTomorrowMapper.selectByPrimaryKey(id);
-			if (employeeLogTomorrow == null
-					|| employeeLogTomorrow.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",companyId)) {
+			if (employeeLogTomorrow == null || employeeLogTomorrow.getState() == dictMapper
+					.selectByCodeAndStateName(DATA_TYPE, "已失效", companyId)) {
 				throw new BusiException("该用户的明日计划不存在");
 			}
 			employeeLogTomorrow.setState(state);
@@ -306,10 +500,10 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 				throw new BusiException("修改明日计划状态失败");
 			}
 
-		}else if ("任务".equals(name)) {
+		} else if ("任务".equals(name)) {
 			employeeTask employeeTask = employeeTaskMapper.selectByPrimaryKey(id);
 			if (employeeTask == null
-					|| employeeTask.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",companyId)) {
+					|| employeeTask.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", companyId)) {
 				throw new BusiException("该用户的任务不存在");
 			}
 			employeeTask.setState(state);
@@ -320,7 +514,7 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 		} else if ("每日行程".equals(name)) {
 			employeeRest employeeRest = employeeRestMapper.selectByPrimaryKey(id);
 			if (employeeRest == null
-					|| employeeRest.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",companyId)) {
+					|| employeeRest.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", companyId)) {
 				throw new BusiException("该用户的每日行程不存在");
 			}
 			employeeRest.setState(state);
@@ -332,7 +526,7 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 		} else if ("请假".equals(name) || "物料".equals(name) || "培训".equals(name)) {
 			employeeApply employeeApply = employeeApplyMapper.selectByPrimaryKey(id);
 			if (employeeApply == null
-					|| employeeApply.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",companyId)) {
+					|| employeeApply.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", companyId)) {
 				throw new BusiException("该用户的申请不存在");
 			}
 			employeeApply.setState(state);
@@ -340,10 +534,10 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 			if (count == 0) {
 				throw new BusiException("修改申请状态失败");
 			}
-		}else if ("顾客购买项目".equals(name)) {
+		} else if ("顾客购买项目".equals(name)) {
 			customerProject customerProject = customerProjectMapper.selectByPrimaryKey(id);
 			if (customerProject == null
-					|| customerProject.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",companyId)) {
+					|| customerProject.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", companyId)) {
 				throw new BusiException("该客户服务项目不存在");
 			}
 			customerProject.setState(state);
@@ -351,10 +545,10 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 			if (count == 0) {
 				throw new BusiException("修改客户服务项目状态失败");
 			}
-			if(state == dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", companyId)) {
+			if (state == dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", companyId)) {
 				customer customer = customerMapper.selectByPrimaryKey(customerProject.getCustomerId());
 				project project = projectMapper.selectByPrimaryKey(customerProject.getProjectId());
-				customer.setMoney(customer.getMoney()-project.getMoney());
+				customer.setMoney(customer.getMoney() - project.getMoney());
 				customer.setActiveConsumeTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
 				count = customerMapper.updateByPrimaryKeySelective(customer);
 				if (count == 0) {
@@ -363,8 +557,8 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 			}
 		} else if ("新增顾客".equals(name)) {
 			customerPerformance customerPerformance = customerPerformanceMapper.selectByPrimaryKey(id);
-			if (customerPerformance == null
-					|| customerPerformance.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",companyId)) {
+			if (customerPerformance == null || customerPerformance.getState() == dictMapper
+					.selectByCodeAndStateName(DATA_TYPE, "已失效", companyId)) {
 				throw new BusiException("该业绩不存在");
 			}
 			customerPerformance.setState(state);
@@ -374,11 +568,11 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 			}
 			customer customer = customerMapper.selectByPrimaryKey(customerPerformance.getCustomerId());
 			if (customer == null
-					|| customer.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",companyId)) {
+					|| customer.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", companyId)) {
 				throw new BusiException("该顾客不存在");
 			}
 			customer.setState(state);
-			if(state == dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", companyId)) {
+			if (state == dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", companyId)) {
 				customer.setActiveConsumeTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
 				customer.setActiveServiceTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
 			}
@@ -386,10 +580,10 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 			if (count == 0) {
 				throw new BusiException("修改顾客状态失败");
 			}
-		}  else if ("顾客续费".equals(name)) {
+		} else if ("顾客续费".equals(name)) {
 			customerPerformance customerPerformance = customerPerformanceMapper.selectByPrimaryKey(id);
-			if (customerPerformance == null
-					|| customerPerformance.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",companyId)) {
+			if (customerPerformance == null || customerPerformance.getState() == dictMapper
+					.selectByCodeAndStateName(DATA_TYPE, "已失效", companyId)) {
 				throw new BusiException("该业绩不存在");
 			}
 			customerPerformance.setState(state);
@@ -397,24 +591,24 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 			if (count == 0) {
 				throw new BusiException("修改业绩状态失败");
 			}
-			if(state == dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", companyId)) {
+			if (state == dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", companyId)) {
 				customer customer = customerMapper.selectByPrimaryKey(customerPerformance.getCustomerId());
-				customer.setMoney(customer.getMoney()+customerPerformance.getMoney());
+				customer.setMoney(customer.getMoney() + customerPerformance.getMoney());
 				customer.setActiveConsumeTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
 				count = customerMapper.updateByPrimaryKeySelective(customer);
-				if(count == 0) {
+				if (count == 0) {
 					throw new BusiException("更新customer表失败");
 				}
-				
+
 			}
-		}  else if ("预约项目".equals(name)) {
+		} else if ("预约项目".equals(name)) {
 			order order = orderMapper.selectByPrimaryKey(id);
 			if (order == null
-					|| order.getApplyState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",companyId)) {
+					|| order.getApplyState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", companyId)) {
 				throw new BusiException("该预约不存在");
 			}
 			order.setApplyState(state);
-			if(state == dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", companyId)) {
+			if (state == dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", companyId)) {
 				order.setOrderState(dictMapper.selectByCodeAndStateName(ORDER_FLOW, "未开始", companyId));
 				customer customer = customerMapper.selectByPrimaryKey(order.getCustomerId());
 				customer.setActiveServiceTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
@@ -427,10 +621,10 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 			if (count == 0) {
 				throw new BusiException("修改预约状态失败");
 			}
-		}else if ("预约完成".equals(name)) {
+		} else if ("预约完成".equals(name)) {
 			order order = orderMapper.selectByPrimaryKey(id);
 			if (order == null
-					|| order.getApplyOrderState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",companyId)) {
+					|| order.getApplyOrderState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", companyId)) {
 				throw new BusiException("该预约不存在");
 			}
 			order.setApplyOrderState(state);
@@ -438,10 +632,11 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 			if (count == 0) {
 				throw new BusiException("修改预约状态失败");
 			}
-			if(state == dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", companyId)) {
-				customerProject customerProject = customerProjectMapper.selectByPrimaryKey(order.getCustomerProjectId());
-				customerProject.setRestCount(customerProject.getRestCount()-1);
-				customerProject.setIngCount(customerProject.getIngCount()+1);
+			if (state == dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", companyId)) {
+				customerProject customerProject = customerProjectMapper
+						.selectByPrimaryKey(order.getCustomerProjectId());
+				customerProject.setRestCount(customerProject.getRestCount() - 1);
+				customerProject.setIngCount(customerProject.getIngCount() + 1);
 				count = customerProjectMapper.updateByPrimaryKeySelective(customerProject);
 				if (count == 0) {
 					throw new BusiException("修改项目剩余数量失败");
@@ -455,20 +650,22 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 			}
 		}
 	}
+
 	@Override
 	public Integer deleteApplyRank(JSONObject data) {
 		applyRank applyRank = applyRankMapper.selectByDynamic(data.getInteger("dynamicId"));
-		applyRank.setState(dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId")));
+		applyRank.setState(dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId")));
 		int count = applyRankMapper.updateByPrimaryKeySelective(applyRank);
 		if (count == 0) {
 			throw new BusiException("更新applyRank表失败");
 		}
 		return applyRank.getId();
 	}
+
 	@Override
 	public Integer annulApplyRank(JSONObject data) {
 		applyRank applyRank = applyRankMapper.selectByDynamic(data.getInteger("dynamicId"));
-		applyRank.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核失败",data.getInteger("companyId")));
+		applyRank.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核失败", data.getInteger("companyId")));
 		applyRank.setEndTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
 		int count = applyRankMapper.updateByPrimaryKeySelective(applyRank);
 		if (count == 0) {
@@ -480,7 +677,8 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 	@Override
 	public List<ApplyRankDTO> getApplyRank(JSONObject data) throws ParseException {
 		applyRank applyRank = applyRankMapper.selectByPrimaryKey(data.getInteger("applyRankId"));
-		if (applyRank == null || applyRank.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"))) {
+		if (applyRank == null || applyRank.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",
+				data.getInteger("companyId"))) {
 			throw new BusiException("该申请不存在");
 		}
 		List<ApplyRankDTO> applyRankDTOs = new ArrayList<ApplyRankDTO>();
@@ -496,7 +694,8 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 			employeeDTO employeeDTO = EmployeeService.getEmployee(dataJson);
 			applyRankDTO.setEmployee(employeeDTO);
 			applyRankDTO.setNote(noteList[i]);
-			applyRankDTO.setState(dictMapper.selectByCodeAndStateCode(CHECK_FLOW, Integer.valueOf(checkList[i]),data.getInteger("companyId")));
+			applyRankDTO.setState(dictMapper.selectByCodeAndStateCode(CHECK_FLOW, Integer.valueOf(checkList[i]),
+					data.getInteger("companyId")));
 			applyRankDTO.setTime(TimeFormatUtil.stringToTimeStamp(checkTimeList[i]));
 			applyRankDTOs.add(applyRankDTO);
 		}
@@ -506,10 +705,14 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 	@Override
 	public List<ApplyRankDTO> getApplyRankByDynamic(JSONObject data) throws ParseException {
 		applyRank applyRank = applyRankMapper.selectByDynamic(data.getInteger("dynamicId"));
-		if (applyRank == null || applyRank.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"))) {
+		if (applyRank == null || applyRank.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",
+				data.getInteger("companyId"))) {
 			throw new BusiException("该申请不存在");
 		}
 		List<ApplyRankDTO> applyRankDTOs = new ArrayList<ApplyRankDTO>();
+		if (applyRank.getCheckIdList() == null || "".equals(applyRank.getCheckIdList())) {
+			return applyRankDTOs;
+		}
 		String[] checkIdList = applyRank.getCheckIdList().split("-");
 		String[] checkTimeList = applyRank.getCheckTimeList().split("--");
 		String[] checkList = applyRank.getCheckList().split("-");
@@ -522,7 +725,8 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 			employeeDTO employeeDTO = EmployeeService.getEmployee(dataJson);
 			applyRankDTO.setEmployee(employeeDTO);
 			applyRankDTO.setNote(noteList[i]);
-			applyRankDTO.setState(dictMapper.selectByCodeAndStateCode(CHECK_FLOW, Integer.valueOf(checkList[i]),data.getInteger("companyId")));
+			applyRankDTO.setState(dictMapper.selectByCodeAndStateCode(CHECK_FLOW, Integer.valueOf(checkList[i]),
+					data.getInteger("companyId")));
 			applyRankDTO.setTime(TimeFormatUtil.stringToTimeStamp(checkTimeList[i]));
 			applyRankDTOs.add(applyRankDTO);
 		}
@@ -549,12 +753,13 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 			employeeDTO.setPic(employee.getPic());
 			employeeDTO.setPost(postMapper.selectByPrimaryKey(employee.getPostId()).getName());
 			employeeDTO.setSex(employee.getSex());
-			employeeDTO.setState(dictMapper.selectByCodeAndStateCode(EMPLOYEE_TYPE, employee.getState(),data.getInteger("companyId")));
+			employeeDTO.setState(dictMapper.selectByCodeAndStateCode(EMPLOYEE_TYPE, employee.getState(),
+					data.getInteger("companyId")));
 			if (employee.getLeaderIdList() != null && !employee.getLeaderIdList().equals("")) {
 				String leaderId = employee.getLeaderIdList().split("-")[0];
 				employee employee2 = employeeMapper.selectByPrimaryKey(Integer.valueOf(leaderId));
-				if (employee2 == null
-						|| employee2.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"))) {
+				if (employee2 == null || employee2.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",
+						data.getInteger("companyId"))) {
 					throw new BusiException("该职员不存在");
 				}
 				employeeDTO.setLeaderName(employee2.getName());

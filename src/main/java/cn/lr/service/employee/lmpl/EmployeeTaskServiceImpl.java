@@ -162,9 +162,9 @@ public class EmployeeTaskServiceImpl implements EmployeeTaskService {
 				data.getInteger("companyId"))) {
 			throw new BusiException("该任务不存在");
 		}
-		if(!task.getEmployeeIdList().contains(data.getInteger("employeeId")+"-")){
-			throw new BusiException("该任务不属于该职员");
-		}
+//		if(!task.getEmployeeIdList().contains(data.getInteger("employeeId")+"-")){
+//			throw new BusiException("该任务不属于该职员");
+//		}
 		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
 		Integer stateWSQ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未申请",data.getInteger("companyId"));
 		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
@@ -358,7 +358,7 @@ public class EmployeeTaskServiceImpl implements EmployeeTaskService {
 		dataJSonDynamic.put("dynamicId", dynamic.getId());
 
 		JSONObject dataJson = new JSONObject();
-		dataJson.put("employeeLog", this.sEmployeeTaskDTO(employeeTask));
+		dataJson.put("employeeTask", this.sEmployeeTaskDTO(employeeTask));
 		dataJson.put("dynamicId", dynamic.getId());
 		dataJson.put("ApplyRankDTO", ApplyRankService.getApplyRankByDynamic(dataJSonDynamic));
 		return dataJson;
