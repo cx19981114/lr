@@ -73,6 +73,7 @@ public class CustomerPerformanceServiceImpl implements CustomerPerformanceServic
 	public Integer addCustomerPerformance(JSONObject data) {
 		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
 		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
+		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
 		List<Integer> stateList = new ArrayList<Integer>();
 		customerPerformance customerPerformance = new customerPerformance();
 		customerPerformance.setCustomerId(data.getInteger("customerId"));
@@ -102,8 +103,12 @@ public class CustomerPerformanceServiceImpl implements CustomerPerformanceServic
 		dataJSonApply.put("dynamicId", dynamicId);
 		dataJSonApply.put("companyId", data.getInteger("companyId"));
 		ApplyRankService.addApplyRank(dataJSonApply);
-		data.put("customerPerformanceId", customerPerformance.getId());
-		this.affirmCustomerPerformance(data);
+		
+		customerPerformance = customerPerformanceMapper.selectByPrimaryKey(customerPerformance.getId());
+		if(customerPerformance.getState() != stateCG) {
+			data.put("customerPerformanceId", customerPerformance.getId());
+			this.affirmCustomerPerformance(data);
+		}
 		return customerPerformance.getId();
 	}
 
@@ -313,9 +318,15 @@ public class CustomerPerformanceServiceImpl implements CustomerPerformanceServic
 	public Page<CustomerPerformanceDTO> getCustomerPerformanceByEmployee(JSONObject data) throws ParseException {
 		Integer employeeId = data.getInteger("employeeId");
 		Integer pageNum = data.getInteger("pageNum");
-		Integer state = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
+		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
+		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", data.getInteger("companyId"));
+		Integer stateSHZ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", data.getInteger("companyId"));
 		List<Integer> stateList = new ArrayList<Integer>();
-		stateList.add(state);
+		stateList.add(stateCG);
+		stateList.add(stateWTJ);
+		stateList.add(stateWSH);
+		stateList.add(stateSHZ);
 		List<customerPerformance> customerPerformances = customerPerformanceMapper.selectByEmployee(employeeId,stateList,(pageNum-1)*PAGESIZE, PAGESIZE);
 		List<CustomerPerformanceDTO> jsonObjects = new ArrayList<CustomerPerformanceDTO>();
 		for(customerPerformance c:customerPerformances) {

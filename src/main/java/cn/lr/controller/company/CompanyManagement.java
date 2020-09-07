@@ -15,6 +15,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
 
+import cn.lr.dto.Page;
 import cn.lr.exception.BusiException;
 import cn.lr.po.company;
 import cn.lr.service.company.CompanyService;
@@ -124,6 +125,25 @@ public class CompanyManagement {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误",session.getId());
 		}finally {
 			LoggerUtil.LOGGER.info("-------------end 获得公司时段信息--------------------");
+		}
+	}
+	@PostMapping("/getCompanyList")
+	@ResponseBody
+	public String getCompanyList(@RequestBody String data, HttpSession session) {
+		LoggerUtil.LOGGER.info("-------------enter 获取所有公司--------------------");
+		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
+		LoggerUtil.LOGGER.debug("data : {}", data);
+		JSONObject dataJson = JSON.parseObject(data);
+		dataJson.put("companyId", session.getAttribute("companyId"));
+		try {
+			Page<company> companies = CompanyService.getCompanyList(dataJson);
+			return ResultJsonUtil.toJsonString(200, companies, "获取所有公司成功",session.getId());
+		} catch (BusiException e) {
+			return ResultJsonUtil.toJsonString(101, null, e.getMessage(),session.getId());
+		} catch (Exception e) {
+			return ResultJsonUtil.toJsonString(404, e.getMessage(), "系统未知错误",session.getId());
+		}finally {
+			LoggerUtil.LOGGER.info("-------------end 获取所有公司--------------------");
 		}
 	}
 	

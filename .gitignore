@@ -70,6 +70,6 @@ hs_err_pid*
 .classpath
 .project
 .DS_Store
-.properties
+*.properties
 
-
+resource.properties

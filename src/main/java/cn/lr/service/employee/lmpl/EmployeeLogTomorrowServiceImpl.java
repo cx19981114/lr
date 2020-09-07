@@ -62,13 +62,11 @@ public class EmployeeLogTomorrowServiceImpl implements EmployeeLogTomorrowServic
 	@Override
 	public Integer addEmployeeLogTomorrow(JSONObject data) {
 		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
-		Integer stateWSQ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未申请",data.getInteger("companyId"));
 		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
 		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", data.getInteger("companyId"));
 		Integer stateSHZ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", data.getInteger("companyId"));
 		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
 		List<Integer> stateList = new ArrayList<Integer>();
-		stateList.add(stateWSQ);
 		stateList.add(stateCG);
 		stateList.add(stateSHZ);
 		stateList.add(stateWSH);
@@ -287,13 +285,11 @@ public class EmployeeLogTomorrowServiceImpl implements EmployeeLogTomorrowServic
 	@Override
 	public EmployeeLogTomorrowDTO getEmployeeLogTomorrowByEmployeeNew(JSONObject data) throws ParseException {
 		Integer employeeId = data.getInteger("employeeId");
-		Integer stateWSQ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未申请",data.getInteger("companyId"));
 		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
 		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", data.getInteger("companyId"));
 		Integer stateSHZ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", data.getInteger("companyId"));
 		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
 		List<Integer> stateList = new ArrayList<Integer>();
-		stateList.add(stateWSQ);
 		stateList.add(stateCG);
 		stateList.add(stateSHZ);
 		stateList.add(stateWSH);

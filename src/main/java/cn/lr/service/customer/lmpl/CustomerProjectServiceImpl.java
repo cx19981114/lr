@@ -85,6 +85,7 @@ public class CustomerProjectServiceImpl implements CustomerProjectService {
 		project project = projectMapper.selectByPrimaryKey(data.getInteger("projectId"));
 		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
 		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
+		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
 		List<Integer> stateList = new ArrayList<Integer>();
 		if(customer.getMoney() < project.getMoney()) {
 			throw new BusiException("该顾客余额不足");
@@ -119,17 +120,26 @@ public class CustomerProjectServiceImpl implements CustomerProjectService {
 		dataJSonApply.put("companyId", data.getInteger("companyId"));
 		ApplyRankService.addApplyRank(dataJSonApply);
 		
-		data.put("customerProjectId", customerProject.getId());
-		this.affirmCustomerProject(data);
+		customerProject = customerProjectMapper.selectByPrimaryKey(customerProject.getId());
+		if(customerProject.getState() != stateCG) {
+			data.put("customerProjectId", customerProject.getId());
+			this.affirmCustomerProject(data);
+		}
 		return customerProject.getId();
 	}
 
 	@Override
 	public List<JSONObject> getCustomerProjectByCustomer(JSONObject data) throws ParseException {
+		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
+		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", data.getInteger("companyId"));
+		Integer stateSHZ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", data.getInteger("companyId"));
 		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
 		Integer stateYWC = dictMapper.selectByCodeAndStateName(ORDER_FLOW, "已完成", data.getInteger("companyId"));
 		List<Integer> stateList = new ArrayList<Integer>();
 		stateList.add(stateCG);
+		stateList.add(stateSHZ);
+		stateList.add(stateWSH);
+		stateList.add(stateWTJ);
 		List<Integer> stateListApply = new ArrayList<Integer>();
 		stateListApply.add(stateCG);
 		List<Integer> stateListOrder = new ArrayList<Integer>();
@@ -163,7 +173,7 @@ public class CustomerProjectServiceImpl implements CustomerProjectService {
 	@Override
 	public customerProject getCustomerProject(JSONObject data) {
 		customerProject customerProject = customerProjectMapper.selectByPrimaryKey(data.getInteger("customerProjectId"));
-		if(customerProject == null || customerProject.getState() != dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"))) {
+		if(customerProject == null || customerProject.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId")) ) {
 			throw new BusiException("该客户项目不存在");
 		}
 		return customerProject;
@@ -322,14 +332,12 @@ public class CustomerProjectServiceImpl implements CustomerProjectService {
 			orderJson.put("startTime", o.getStartTime());
 			if(!"".equals(o.getActStartTime()) && o.getActStartTime() != null) {
 				orderJson.put("actStartTime", TimeFormatUtil.stringToTimeStamp(o.getActStartTime()));
-			}else {
-				orderJson.put("actStartTime", null);
 			}
-			orderJson.put("orderState", dictMapper.selectByCodeAndStateCode(ORDER_FLOW, o.getOrderState(), employee.getCompanyId()));
+			if(o.getOrderState() != null) {
+				orderJson.put("orderState", dictMapper.selectByCodeAndStateCode(ORDER_FLOW, o.getOrderState(), employee.getCompanyId()));
+			}
 			if(o.getApplyOrderState() != null) {
 				orderJson.put("applyOrderState", dictMapper.selectByCodeAndStateCode(APPLY_FLOW, o.getApplyOrderState(), employee.getCompanyId()));
-			}else {
-				orderJson.put("applyOrderState", null);
 			}
 			orderJson.put("times", o.getProjectNum()+"/"+customerProject.getCount());
 			orderJson.put("evaluate", o.getEvaluate());

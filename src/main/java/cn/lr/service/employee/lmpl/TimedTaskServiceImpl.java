@@ -27,8 +27,6 @@ import cn.lr.dao.employeeRestMapper;
 import cn.lr.dao.employeeTaskMapper;
 import cn.lr.dao.orderMapper;
 import cn.lr.po.company;
-import cn.lr.po.customerPerformance;
-import cn.lr.po.customerProject;
 import cn.lr.po.employee;
 import cn.lr.po.employeeApply;
 import cn.lr.po.employeeAttendance;

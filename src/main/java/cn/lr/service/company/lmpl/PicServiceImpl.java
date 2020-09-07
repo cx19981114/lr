@@ -87,7 +87,8 @@ public class PicServiceImpl implements PicService {
 	}
 	@Override
 	public Integer deletePic(JSONObject data) {
-		pic pic = picMapper.selectByPic(data.getString("pic"));
+		// picId = picPath
+		pic pic = picMapper.selectByPic(data.getString("picId"));
 		if(pic == null || pic.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"))) {
 			throw new BusiException("该图片不存在");
 		}

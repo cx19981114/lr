@@ -127,4 +127,17 @@
     from tb_company a
     where state > (select stateCode from tb_dict where name = "数据" and stateName = "已失效" and companyId = a.id)
   </select>
+   <select id="selectCompanyCondition" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_company a
+    where state > (select stateCode from tb_dict where name = "数据" and stateName = "已失效" ) 
+    and name like concat('%',#{search,jdbcType=VARCHAR},'%') order by dateTime desc limit #{page},#{size}
+  </select>
+   <select id="selectCompanyConditionCount" resultType="Integer">
+    select count(*)
+    from tb_company a
+    where state > (select stateCode from tb_dict where name = "数据" and stateName = "已失效" ) 
+    and name like concat('%',#{search,jdbcType=VARCHAR},'%')
+  </select>
 </mapper>

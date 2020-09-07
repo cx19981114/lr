@@ -214,8 +214,11 @@ public class EmployeeTaskServiceImpl implements EmployeeTaskService {
 		dataJSonApply.put("companyId", data.getInteger("companyId"));
 		ApplyRankService.addApplyRank(dataJSonApply);
 		
-		data.put("employeeTaskId", employeeTask.getId());
-		this.affirmEmployeeTask(data);
+		employeeTask = employeeTaskMapper.selectByPrimaryKey(employeeTask.getId());
+		if(employeeTask.getState() != stateCG) {
+			data.put("employeeTaskId", employeeTask.getId());
+			this.affirmEmployeeTask(data);
+		}
 		return employeeTask.getId();
 	}
 

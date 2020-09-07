@@ -50,7 +50,17 @@ public class LoginServiceImpl implements LoginService {
 	@Override
 	public employeeDTO checkLogin(JSONObject data) {
 		String phone = data.getString("phone");
+		Integer postId = data.getInteger("postId");
 		employee employee = employeeMapper.selectByPhone(phone);
+		if(postId != null && postId == 0) {
+			if(employee.getPassword().endsWith(EncryptionUtil.encryping(data.getString("password")))) {
+				employeeDTO employeeDTO = new employeeDTO();
+				employeeDTO.setName(employee.getName());
+				employeeDTO.setPhone(employee.getPhone());
+				return employeeDTO;
+				
+			}
+		}
 		company company = companyMapper.selectByPrimaryKey(employee.getCompanyId());
 		if(employee == null || employee.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",employee.getCompanyId())) {
 			throw new BusiException("该手机号不存在");

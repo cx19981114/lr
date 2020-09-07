@@ -13,6 +13,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.lr.dao.companyMapper;
 import cn.lr.dao.dictMapper;
+import cn.lr.dto.Page;
 import cn.lr.exception.BusiException;
 import cn.lr.po.company;
 import cn.lr.service.company.CompanyService;
@@ -29,6 +30,8 @@ public class CompanyServiceImpl implements CompanyService {
 	
 	@Value("${data.type}")
 	private String DATA_TYPE;
+	@Value("${pageSize}")
+	private Integer PAGESIZE;
 	
 	@Override
 	public Integer addCompany(JSONObject data) {
@@ -103,5 +106,18 @@ public class CompanyServiceImpl implements CompanyService {
 	          timeJson.add(time);
 	      }
 	    return timeJson;
+	}
+	
+	public Page<company> getCompanyList(JSONObject data){
+		String search = data.getString("search");
+		Integer pageNum = data.getInteger("pageNum");
+		List<company> company = companyMapper.selectCompanyCondition(search,(pageNum-1)*PAGESIZE, PAGESIZE);
+		int total = companyMapper.selectCompanyConditionCount(search);
+		Page<company> page = new Page<company>();
+		page.setPageNum(pageNum);
+		page.setPageSize(PAGESIZE);
+		page.setTotal(total);
+		page.setList(company);
+		return page;
 	}
 }

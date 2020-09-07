@@ -19,6 +19,7 @@ import cn.lr.dao.dictMapper;
 import cn.lr.dao.dynamicMapper;
 import cn.lr.dao.employeeMapper;
 import cn.lr.dao.employeeRestMapper;
+import cn.lr.dao.postMapper;
 import cn.lr.dao.rankMapper;
 import cn.lr.dto.EmployeeRestDTO;
 import cn.lr.dto.Page;
@@ -50,6 +51,8 @@ public class EmployeeRestServiceImpl implements EmployeeRestService {
 	dynamicMapper dynamicMapper;
 	@Autowired
 	applyRankMapper applyRankMapper;
+	@Autowired
+	postMapper postMapper;
 
 	@Autowired
 	ApplyRankService ApplyRankService;
@@ -114,25 +117,51 @@ public class EmployeeRestServiceImpl implements EmployeeRestService {
 		Integer employeeId = data.getInteger("employeeId");
 		employee employee = employeeMapper.selectByPrimaryKey(employeeId);
 		Integer pageNum = data.getInteger("pageNum");
+		Integer stateYSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"));
+		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效",data.getInteger("companyId"));
 		Integer stateWSQ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未申请",data.getInteger("companyId"));
 		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
 		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", data.getInteger("companyId"));
 		Integer stateSHZ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", data.getInteger("companyId"));
 		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
 		List<Integer> stateList = new ArrayList<Integer>();
-		stateList.add(stateWSQ);
-		stateList.add(stateCG);
-		stateList.add(stateSHZ);
-		stateList.add(stateWSH);
-		stateList.add(stateWTJ);
 		String date = TimeFormatUtil.timeStampToString(data.getTimestamp("date").getTime());
 		List<Integer> employeeIdList = new ArrayList<>();
-		employeeIdList.add(employee.getId());
-		String underList = employee.getUnderIdList();
-		if (underList != null && !"".equals(underList)) {
-			String[] underIdList = underList.split("-");
-			for (int i = 0; i < underIdList.length; i++) {
-				employeeIdList.add(Integer.valueOf(underIdList[i]));
+		String leader = employee.getId()+"-"+employee.getLeaderIdList();
+		System.out.println(leader);
+		if(leader != null && !"".equals(leader)) {
+			String[] leaderIdList = leader.split("-");
+			stateList.add(stateWSX);
+			for(int i = 0;i<leaderIdList.length;i++) {
+				employee employee2 = employeeMapper.selectByPrimaryKey(Integer.valueOf(leaderIdList[i]));
+				if (employee2 == null || employee2.getState() == stateYSX) {
+					throw new BusiException("该职员不存在");
+				}
+				if(employee2.getPostId() == postMapper.selectByNameAndCompany("店长", data.getInteger("companyId"), stateList)) {
+					employeeIdList.add(employee2.getId());
+					String under = employee2.getUnderIdList();
+					String[] underIdList = null;
+					int flag = 1;
+					while(!"".equals(under)  && under != null) {
+						if(flag == 1) {
+							underIdList = under.split("-");
+							under = "";
+							flag = 0;
+						}
+						for (int j = 0; j < underIdList.length; j++) {
+							employee employee3 = employeeMapper.selectByPrimaryKey(Integer.valueOf(underIdList[j]));
+							if (employee3 == null || employee3.getState() == stateYSX) {
+								throw new BusiException("该职员不存在");
+							}
+							if(employee3.getUnderIdList() != null && !"".equals(employee3.getUnderIdList())) {
+								under += employee3.getUnderIdList();
+								flag = 1;
+							}
+							employeeIdList.add(Integer.valueOf(underIdList[i]));
+						}
+					}
+				break;
+				}
 			}
 		}
 		List<Integer> types = new ArrayList<>();
@@ -146,6 +175,12 @@ public class EmployeeRestServiceImpl implements EmployeeRestService {
 			types.add(dictMapper.selectByCodeAndStateName(ATTENDANCE_TYPE,data.getString("type") , data.getInteger("companyId")));
 			
 		}
+		stateList.clear();
+		stateList.add(stateWSQ);
+		stateList.add(stateCG);
+		stateList.add(stateSHZ);
+		stateList.add(stateWSH);
+		stateList.add(stateWTJ);
 		List<employeeRest> employeeRests = employeeRestMapper.selectByEmployeeTeam(employeeIdList,stateList,date,types,
 				(pageNum-1)*PAGESIZE, PAGESIZE);
 		List<EmployeeRestDTO> jsonObjects = new ArrayList<EmployeeRestDTO>();
@@ -207,14 +242,42 @@ public class EmployeeRestServiceImpl implements EmployeeRestService {
 		stateList.add(stateWSH);
 		stateList.add(stateWTJ);
 		List<Integer> employeeIdList = new ArrayList<>();
+		String leader = employee.getLeaderIdList();
+		if(leader != null && !"".equals(leader)) {
+			String[] leaderIdList = leader.split("-");
+			for(int i = 0;i<leaderIdList.length;i++) {
+				employee employee2 = employeeMapper.selectByPrimaryKey(Integer.valueOf(leaderIdList[i]));
+				if (employee2 == null || employee2.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",
+						data.getInteger("companyId"))) {
+					throw new BusiException("该职员不存在");
+				}
+				employeeIdList.add(Integer.valueOf(leaderIdList[i]));
+			}
+		}
 		employeeIdList.add(employee.getId());
-		String underList = employee.getUnderIdList();
-		if (underList != null && !"".equals(underList)) {
-			String[] underIdList = underList.split("-");
+		String under = employee.getUnderIdList();
+		String[] underIdList = null;
+		int flag = 1;
+		while(!"".equals(under)  && under != null) {
+			if(flag == 1) {
+				underIdList = under.split("-");
+				under = "";
+				flag = 0;
+			}
 			for (int i = 0; i < underIdList.length; i++) {
+				employee employee2 = employeeMapper.selectByPrimaryKey(Integer.valueOf(underIdList[i]));
+				if (employee2 == null || employee2.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",
+						data.getInteger("companyId"))) {
+					throw new BusiException("该职员不存在");
+				}
+				if(employee2.getUnderIdList() != null && !"".equals(employee2.getUnderIdList())) {
+					under += employee2.getUnderIdList();
+					flag = 1;
+				}
 				employeeIdList.add(Integer.valueOf(underIdList[i]));
 			}
 		}
+		System.out.println(employeeIdList.size());
 		String now = TimeFormatUtil.timeStampToString(new Date().getTime());
 		List<Integer> types = new ArrayList<>();
 		List<dict> stings = dictMapper.selectByName("行程安排", data.getInteger("companyId"));
@@ -224,7 +287,6 @@ public class EmployeeRestServiceImpl implements EmployeeRestService {
 		List<employeeRest> employeeRests = employeeRestMapper.selectByEmployeeTeam(employeeIdList,stateList,now,types, 0,
 				Integer.MAX_VALUE);
 		List<List<JSONObject>> jsonObjects = new ArrayList<List<JSONObject>>();
-		int flag = 0;
 		List<JSONObject> jsonPart = new ArrayList<JSONObject>();
 		for(int i = 0;i<employeeIdList.size();i++) {
 			if (i % 5 == 0 && i != 0) {

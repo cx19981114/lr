@@ -243,7 +243,7 @@
     from tb_customerperformance
     where employeeId = #{employeeId,jdbcType=INTEGER} 
      <if test="state != null">
-    	and state not in
+    	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
 	         #{item,jdbcType=INTEGER}
 	    </foreach>
@@ -255,7 +255,7 @@
     from tb_customerperformance
     where employeeId = #{employeeId,jdbcType=INTEGER} 
      <if test="state != null">
-    	and state not in
+    	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
 	         #{item,jdbcType=INTEGER}
 	    </foreach>

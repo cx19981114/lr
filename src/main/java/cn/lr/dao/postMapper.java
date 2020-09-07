@@ -25,4 +25,6 @@ public interface postMapper {
 			@Param("size") Integer size);
 
 	int selectByCompanyCount(@Param("companyId")Integer companyId,@Param("state") List<Integer> state);
+	
+	int selectByNameAndCompany(@Param("name") String name,@Param("companyId")Integer companyId,@Param("state") List<Integer> state);
 }

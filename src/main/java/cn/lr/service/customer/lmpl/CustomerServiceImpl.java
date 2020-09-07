@@ -63,6 +63,9 @@ public class CustomerServiceImpl implements CustomerService {
 	private Integer PAGESIZE;
 	@Value("${apply.flow}")
 	private String APPLY_FLOW;
+	@Value("${noImg}")
+	private String NOIMG;
+	
 	@Override
 	public Integer addCustomer(JSONObject data) {
 		Integer employeeId = data.getInteger("employeeId");
@@ -80,7 +83,11 @@ public class CustomerServiceImpl implements CustomerService {
 		customer.setPhone(data.getString("phone"));
 		customer.setPlan(data.getString("plan"));
 		customer.setSex(data.getString("sex"));
-		customer.setPic(data.getString("pic"));
+		if(data.getString("pic") != null) {
+			customer.setPic(data.getString("pic"));
+		}else {
+			customer.setPic(NOIMG);
+		}
 		customer.setMoney(data.getInteger("money"));
 		customer.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交",data.getInteger("companyId")));
 		int count = customerMapper.insertSelective(customer);
@@ -117,7 +124,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public CustomerDTO getCustomer(JSONObject data) throws ParseException {
 		customer customer = customerMapper.selectByPrimaryKey(data.getInteger("customerId"));
-		if(customer == null || customer.getState() != dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功",data.getInteger("companyId"))) {
+		if(customer == null || customer.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"))) {
 			throw new BusiException("该客户不存在");
 		}
 		return this.sCustomerDTO(customer);
@@ -128,9 +135,15 @@ public class CustomerServiceImpl implements CustomerService {
 		Integer employeeId = data.getInteger("employeeId");
 		Integer pageNum = data.getInteger("pageNum");
 		String searchString = data.getString("search");
-		Integer state = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
+		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", data.getInteger("companyId"));
+		Integer stateSHZ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", data.getInteger("companyId"));
 		List<Integer> stateList = new ArrayList<Integer>();
-		stateList.add(state);
+		stateList.add(stateCG);
+		stateList.add(stateWTJ);
+		stateList.add(stateWSH);
+		stateList.add(stateSHZ);
 		List<customer> customers = customerMapper.selectByEmployeeId(employeeId,stateList,searchString,(pageNum-1)*PAGESIZE,PAGESIZE);
 		List<JSONObject> jsonObjects = new ArrayList<JSONObject>();
 		for(customer c : customers) {
@@ -171,9 +184,15 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public List<JSONObject> getNewCustomerTypeByEmployee(JSONObject data) {
 		Integer employeeId = data.getInteger("employeeId");
-		Integer state = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
+		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", data.getInteger("companyId"));
+		Integer stateSHZ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", data.getInteger("companyId"));
 		List<Integer> stateList = new ArrayList<Integer>();
-		stateList.add(state);
+		stateList.add(stateCG);
+		stateList.add(stateWTJ);
+		stateList.add(stateWSH);
+		stateList.add(stateSHZ);
 		int day = customerMapper.selectByEmployeeIdDayCount(employeeId,stateList);
 		int mon = customerMapper.selectByEmployeeIdMonCount(employeeId,stateList);
 		int qtr = customerMapper.selectByEmployeeIdQtrCount(employeeId,stateList);
@@ -204,9 +223,15 @@ public class CustomerServiceImpl implements CustomerService {
 		Integer pageNum = data.getInteger("pageNum");
 		String type = data.getString("type");
 		String search = data.getString("search");
-		Integer state = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
+		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", data.getInteger("companyId"));
+		Integer stateSHZ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", data.getInteger("companyId"));
 		List<Integer> stateList = new ArrayList<Integer>();
-		stateList.add(state);
+		stateList.add(stateCG);
+		stateList.add(stateWTJ);
+		stateList.add(stateWSH);
+		stateList.add(stateSHZ);
 		List<customer> customers = new ArrayList<>();
 		List<JSONObject> jsonObjects = new ArrayList<>();
 		int total = 0;
@@ -263,9 +288,15 @@ public class CustomerServiceImpl implements CustomerService {
 		Integer pageNum = data.getInteger("pageNum");
 		String type = data.getString("type");
 		String search = data.getString("search");
-		Integer state = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
+		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", data.getInteger("companyId"));
+		Integer stateSHZ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", data.getInteger("companyId"));
 		List<Integer> stateList = new ArrayList<Integer>();
-		stateList.add(state);
+		stateList.add(stateCG);
+		stateList.add(stateWTJ);
+		stateList.add(stateWSH);
+		stateList.add(stateSHZ);
 		List<customer> customers = new ArrayList<>();
 		List<JSONObject> jsonObjects = new ArrayList<>();
 		int total = 0;
@@ -318,9 +349,15 @@ public class CustomerServiceImpl implements CustomerService {
 		Integer pageNum = data.getInteger("pageNum");
 		String type = data.getString("type");
 		String search = data.getString("search");
-		Integer state = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
+		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", data.getInteger("companyId"));
+		Integer stateSHZ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", data.getInteger("companyId"));
 		List<Integer> stateList = new ArrayList<Integer>();
-		stateList.add(state);
+		stateList.add(stateCG);
+		stateList.add(stateWTJ);
+		stateList.add(stateWSH);
+		stateList.add(stateSHZ);
 		List<customer> customers = new ArrayList<>();
 		List<JSONObject> jsonObjects = new ArrayList<>();
 		int total = 0;
@@ -373,9 +410,15 @@ public class CustomerServiceImpl implements CustomerService {
 		Integer employeeId = data.getInteger("employeeId");
 		Integer pageNum = data.getInteger("pageNum");
 		String search = data.getString("search");
-		Integer state = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
+		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", data.getInteger("companyId"));
+		Integer stateSHZ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", data.getInteger("companyId"));
 		List<Integer> stateList = new ArrayList<Integer>();
-		stateList.add(state);
+		stateList.add(stateCG);
+		stateList.add(stateWTJ);
+		stateList.add(stateWSH);
+		stateList.add(stateSHZ);
 		List<customer> customers = new ArrayList<>();
 		List<JSONObject> jsonObjects = new ArrayList<>();
 		int total = 0;
@@ -419,9 +462,15 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 	public CustomerDTO sCustomerDTO(customer customer) throws ParseException {
 		employee employee = employeeMapper.selectByPrimaryKey(customer.getEmployeeId());
-		Integer state = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", employee.getCompanyId());
+		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", employee.getCompanyId());
+		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", employee.getCompanyId());
+		Integer stateSHZ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", employee.getCompanyId());
+		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", employee.getCompanyId());
 		List<Integer> stateList = new ArrayList<Integer>();
-		stateList.add(state);
+		stateList.add(stateCG);
+		stateList.add(stateSHZ);
+		stateList.add(stateWSH);
+		stateList.add(stateWTJ);
 		List<customerProject> projectList = customerProjectMapper.selectByCustomer(customer.getId(), stateList);
 		CustomerDTO customerDTO = new CustomerDTO();
 		customerDTO.setProjectNum(projectList.size());
@@ -444,9 +493,15 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public JSONObject getCustomerChart(JSONObject data) {
 		Integer employeeId = data.getInteger("employeeId");
-		Integer state = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
+		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", data.getInteger("companyId"));
+		Integer stateSHZ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", data.getInteger("companyId"));
 		List<Integer> stateList = new ArrayList<Integer>();
-		stateList.add(state);
+		stateList.add(stateCG);
+		stateList.add(stateWTJ);
+		stateList.add(stateWSH);
+		stateList.add(stateSHZ);
 		String[] category = new String[] {"Mon","Tue","Wed","Thu","Fri","Sat","Sun"};
 		JSONObject option = new JSONObject();
 		JSONObject xAxis = new JSONObject();

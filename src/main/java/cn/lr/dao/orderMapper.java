@@ -20,18 +20,18 @@ public interface orderMapper {
 	int updateByPrimaryKey(order record);
 
 	List<order> selectByEmployeeCondition(@Param("employeeId") List<Integer> employeeId,
-			@Param("state") List<Integer> state, @Param("date") String date, @Param("startTime") String startTime,
-			@Param("stateCG") Integer stateCG, @Param("page") Integer page, @Param("size") Integer size);
+			@Param("stateType") List<Integer> stateType, @Param("date") String date, @Param("startTime") String startTime,
+			@Param("state")List<Integer> state, @Param("page") Integer page, @Param("size") Integer size);
 
 	int selectByEmployeeConditionCount(@Param("employeeId") List<Integer> employeeId,
-			@Param("state") List<Integer> state, @Param("date") String date, @Param("startTime") String startTime,
-			@Param("stateCG") Integer stateCG);
+			@Param("stateType") List<Integer> stateType, @Param("date") String date, @Param("startTime") String startTime,
+			@Param("state")List<Integer> state);
 
 	int selectByEmployeeConditionCount1(@Param("employeeId") List<Integer> employeeId,
-			@Param("state") List<Integer> state, @Param("date") String date, @Param("stateCG") Integer stateCG);
+			@Param("stateType") List<Integer> stateType, @Param("date") String date, @Param("state")List<Integer> state);
 
 	List<order> selectByEmployeeIdDate(@Param("employeeId") Integer employeeId, @Param("date") String date,
-			@Param("state") List<Integer> state);
+			@Param("applyState") List<Integer> applyState,@Param("orderState") List<Integer> orderState);
 
 	int selectByEmployeeIdCount(@Param("employeeId") List<Integer> employeeId, @Param("state") List<Integer> state);
 

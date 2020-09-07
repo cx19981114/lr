@@ -40,6 +40,12 @@ public class ProjectServiceImpl implements ProjectService {
 		project.setContent(data.getString("content"));
 		project.setName(data.getString("name"));
 		project.setState(dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效",data.getInteger("companyId")));
+		if(data.getInteger("money") == null) {
+			throw new BusiException("请填写项目价格");
+		}
+		if(data.getInteger("num") == null) {
+			throw new BusiException("请填写项目次数");
+		}
 		project.setMoney(data.getInteger("money"));
 		project.setNum(data.getInteger("num"));
 		int count = projectMapper.insertSelective(project);
@@ -55,8 +61,8 @@ public class ProjectServiceImpl implements ProjectService {
 		project.setCompanyId(data.getInteger("companyId"));
 		project.setContent(data.getString("content"));
 		project.setName(data.getString("name"));
-		project.setMoney(data.getInteger("money"));
-		project.setNum(data.getInteger("num"));
+//		project.setMoney(data.getInteger("money"));
+//		project.setNum(data.getInteger("num"));
 		int count = projectMapper.updateByPrimaryKeySelective(project);
 		if(count == 0) {
 			throw new BusiException("更新project表失败");

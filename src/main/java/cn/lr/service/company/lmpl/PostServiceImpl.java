@@ -49,6 +49,8 @@ public class PostServiceImpl implements PostService {
 	private String PRETASK_TYPE;
 	@Value("${task.type}")
 	private String TASK_TYPE;
+	@Value("${noImg}")
+	private String NOIMG;
 
 	@Override
 	public Integer addPost(JSONObject data) {
@@ -56,7 +58,11 @@ public class PostServiceImpl implements PostService {
 		record.setCompanyId(data.getInteger("companyId"));
 		record.setName(data.getString("name"));
 		record.setPermissionList(data.getString("permissionList"));
-		record.setPic(data.getString("pic"));
+		if(data.getString("pic") != null) {
+			record.setPic(data.getString("pic"));
+		}else {
+			record.setPic(NOIMG);
+		}
 		record.setLeaderPostId(data.getInteger("leaderPostId"));
 		record.setNum(0);
 		record.setState(dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId")));
@@ -90,6 +96,9 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public Integer deletePost(JSONObject data) {
 		post test2 = postMapper.selectByPrimaryKey(data.getInteger("postId"));
+		if(test2.getLeaderPostId() == 0) {
+			throw new BusiException("经营者无法删除");
+		}
 		test2.setState(dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId")));
 		if (test2.getNum() != 0) {
 			throw new BusiException("该职位下有职员存在");
@@ -157,13 +166,12 @@ public class PostServiceImpl implements PostService {
 
 	public PostDTO sePostDTO(post post) {
 		PostDTO postDTO = new PostDTO();
-		if(post.getLeaderPostId() == 0) {
-			return postDTO;
-		}
-		post post2 = postMapper.selectByPrimaryKey(post.getLeaderPostId());
-		if (!post.getName().contains("店长")) {
-			postDTO.setLeaderPostId(post.getLeaderPostId());
-			postDTO.setLeaderPostName(post2.getName());
+		if(post.getLeaderPostId() != 0) {
+			post post2 = postMapper.selectByPrimaryKey(post.getLeaderPostId());
+			if (!post.getName().contains("店长")) {
+				postDTO.setLeaderPostId(post.getLeaderPostId());
+				postDTO.setLeaderPostName(post2.getName());
+			}
 		}
 		postTask postTask = postTaskMapper.selectByPost(post.getId());
 		postDTO.setCompanyId(post.getCompanyId());
