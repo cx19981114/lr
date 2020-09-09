@@ -29,6 +29,7 @@ import cn.lr.po.customerPerformance;
 import cn.lr.po.dynamic;
 import cn.lr.po.employee;
 import cn.lr.po.employeeLogTomorrow;
+import cn.lr.po.statisticType;
 import cn.lr.service.customer.CustomerPerformanceService;
 import cn.lr.service.employee.ApplyRankService;
 import cn.lr.service.employee.DynamicService;
@@ -360,5 +361,54 @@ public class CustomerPerformanceServiceImpl implements CustomerPerformanceServic
 		dataJson.put("ApplyRankDTO", ApplyRankService.getApplyRankByDynamic(dataJSonDynamic));
 		
 		return dataJson;
+	}
+	public List<JSONObject> getCustomerConsumeMoney(JSONObject data){
+		Integer customerId = data.getInteger("customerId");
+		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
+		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", data.getInteger("companyId"));
+		Integer stateSHZ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(stateCG);
+		stateList.add(stateWTJ);
+		stateList.add(stateWSH);
+		stateList.add(stateSHZ);
+		List<statisticType> statisticTypes = customerPerformanceMapper.selectByCustomerComsumer(customerId, stateList);
+		List<JSONObject> moneyList = new ArrayList<JSONObject>();
+		int i = 0;
+		for(statisticType s:statisticTypes) {
+			JSONObject moneyJsonObject = new JSONObject();
+			moneyJsonObject.put("title", s.getMonDate());
+			moneyJsonObject.put("money", s.getMoney());
+			moneyJsonObject.put("index", i++);
+			moneyList.add(moneyJsonObject);
+		}
+		return moneyList;
+	}
+	public Page<CustomerPerformanceDTO> getCustomerConsumeMoneyList(JSONObject data) throws ParseException{
+		Integer customerId = data.getInteger("customerId");
+		Integer pageNum = data.getInteger("pageNum");
+		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
+		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", data.getInteger("companyId"));
+		Integer stateSHZ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(stateCG);
+		stateList.add(stateWTJ);
+		stateList.add(stateWSH);
+		stateList.add(stateSHZ);
+		List<customerPerformance> customerPerformances = customerPerformanceMapper.selectByCustomerComsumerList(customerId,data.getString("date"),stateList,(pageNum-1)*PAGESIZE, PAGESIZE);
+		List<CustomerPerformanceDTO> jsonObjects = new ArrayList<CustomerPerformanceDTO>();
+		for(customerPerformance c:customerPerformances) {
+			CustomerPerformanceDTO customerPerformanceDTO = this.sCustomerPerformanceDTO(c);
+			jsonObjects.add(customerPerformanceDTO);
+		}
+		int total = customerPerformanceMapper.selectByCustomerComsumerListCount(customerId,data.getString("date"),stateList);
+		Page<CustomerPerformanceDTO> page = new Page<CustomerPerformanceDTO>();
+		page.setPageNum(pageNum);
+		page.setPageSize(PAGESIZE);
+		page.setTotal(total);
+		page.setList(jsonObjects);
+		return page;
 	}
 }

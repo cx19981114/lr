@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import cn.lr.po.customerPerformance;
+import cn.lr.po.statisticType;
 
 public interface customerPerformanceMapper {
     int deleteByPrimaryKey(Integer id);
@@ -44,4 +45,10 @@ public interface customerPerformanceMapper {
 	List<customerPerformance> selectByEmployee(@Param("employeeId")Integer employeeId,@Param("state") List<Integer> state,@Param("page") Integer page,@Param("size") Integer size);
     
     int selectByEmployeeCount(@Param("employeeId")Integer employeeId,@Param("state") List<Integer> state);
+    
+    List<statisticType> selectByCustomerComsumer(@Param("customerId")Integer customerId,@Param("state") List<Integer> state);
+    
+    List<customerPerformance> selectByCustomerComsumerList(@Param("customerId")Integer customerId,@Param("date")String date,@Param("state") List<Integer> state,@Param("page") Integer page,@Param("size") Integer size);
+    
+    int selectByCustomerComsumerListCount(@Param("customerId")Integer customerId,@Param("date")String date,@Param("state") List<Integer> state);
 }

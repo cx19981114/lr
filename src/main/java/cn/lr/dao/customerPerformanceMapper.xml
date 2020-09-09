@@ -11,6 +11,10 @@
     <result column="note" jdbcType="VARCHAR" property="note" />
     <result column="state" jdbcType="INTEGER" property="state" />
   </resultMap>
+  <resultMap id="StatisticResultMap" type="cn.lr.po.statisticType">
+    <result column="monDate" jdbcType="VARCHAR" property="monDate" />
+    <result column="money" jdbcType="INTEGER" property="money" />
+  </resultMap>
   <sql id="Base_Column_List">
     id, customerId, employeeId, dateTime, type, money, note, state
   </sql>
@@ -261,4 +265,42 @@
 	    </foreach>
     </if> 
   </select>
+  <select id="selectByCustomerComsumer"  resultMap="StatisticResultMap">
+  select date_format(dateTime ,'%Y-%m') as monDate,sum(money) as money
+  from tb_customerperformance 
+  where customerId = #{customerId,jdbcType=INTEGER}
+   <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    group by date_format(dateTime ,'%Y-%m')
+  </select>
+  <select id="selectByCustomerComsumerList"  resultMap="BaseResultMap">
+  select 
+  <include refid="Base_Column_List" />
+  from tb_customerperformance 
+  where customerId = #{customerId,jdbcType=INTEGER}
+   <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    and dateTime like concat(#{date},"%")  order by dateTime desc limit #{page},#{size}
+  </select>
+  <select id="selectByCustomerComsumerListCount"  resultType="Integer">
+  select count(*)
+  from tb_customerperformance 
+  where customerId = #{customerId,jdbcType=INTEGER}
+   <if test="state != null">
+    	and state in
+	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    and dateTime like concat(#{date},"%")
+  </select>
+  
 </mapper>

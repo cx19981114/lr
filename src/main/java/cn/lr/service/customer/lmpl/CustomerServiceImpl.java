@@ -14,6 +14,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.lr.dao.applyRankMapper;
 import cn.lr.dao.customerMapper;
+import cn.lr.dao.customerPerformanceMapper;
 import cn.lr.dao.customerProjectMapper;
 import cn.lr.dao.dictMapper;
 import cn.lr.dao.dynamicMapper;
@@ -25,6 +26,7 @@ import cn.lr.exception.BusiException;
 import cn.lr.po.customer;
 import cn.lr.po.customerProject;
 import cn.lr.po.employee;
+import cn.lr.po.statisticType;
 import cn.lr.service.customer.CustomerPerformanceService;
 import cn.lr.service.customer.CustomerService;
 import cn.lr.service.employee.ApplyRankService;
@@ -404,7 +406,45 @@ public class CustomerServiceImpl implements CustomerService {
 		page.setList(jsonObjects);
 		return page;
 	}
-	
+	public List<JSONObject> getCustomerServiceType(JSONObject data){
+		Integer employeeId = data.getInteger("employeeId");
+		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
+		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", data.getInteger("companyId"));
+		Integer stateSHZ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(stateCG);
+		stateList.add(stateWTJ);
+		stateList.add(stateWSH);
+		stateList.add(stateSHZ);
+		List<JSONObject> serviceTypeList = new ArrayList<JSONObject>();
+		JSONObject serviceTypeJsonObject = new JSONObject();
+		int total = customerMapper.selectByConsumeMonCount(employeeId,stateList);
+		serviceTypeJsonObject.put("title", "当月消费");
+		serviceTypeJsonObject.put("count", total);
+		serviceTypeList.add(serviceTypeJsonObject);
+		
+		serviceTypeJsonObject = new JSONObject();
+		total = customerMapper.selectByConsumeQtrCount(employeeId,stateList);
+		serviceTypeJsonObject.put("title", "三月消费");
+		serviceTypeJsonObject.put("count", total);
+		serviceTypeList.add(serviceTypeJsonObject);
+		
+		serviceTypeJsonObject = new JSONObject();
+		total = customerMapper.selectByServiceMonCount(employeeId,stateList);
+		serviceTypeJsonObject.put("title", "当月服务");
+		serviceTypeJsonObject.put("count", total);
+		serviceTypeList.add(serviceTypeJsonObject);
+		
+		serviceTypeJsonObject = new JSONObject();
+		total = customerMapper.selectByServiceQtrCount(employeeId,stateList);
+		serviceTypeJsonObject.put("title", "三月服务");
+		serviceTypeJsonObject.put("count", total);
+		serviceTypeList.add(serviceTypeJsonObject);
+		
+		return serviceTypeList;
+		
+	}
 	@Override
 	public Page<JSONObject> getCustomerByUnService(JSONObject data) throws ParseException {
 		Integer employeeId = data.getInteger("employeeId");
@@ -538,4 +578,5 @@ public class CustomerServiceImpl implements CustomerService {
 		option.put("series", seriesList);
 		return option;
 	}
+	
 }

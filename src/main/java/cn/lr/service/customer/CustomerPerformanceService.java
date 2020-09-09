@@ -1,6 +1,7 @@
 package cn.lr.service.customer;
 
 import java.text.ParseException;
+import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 
@@ -26,4 +27,8 @@ public interface CustomerPerformanceService {
 	public Page<CustomerPerformanceDTO> getCustomerPerformanceByEmployee(JSONObject data) throws ParseException;
 	
 	public JSONObject getCustomerPerformanceDetail(JSONObject data) throws ParseException;
+	
+	public List<JSONObject> getCustomerConsumeMoney(JSONObject data);
+	
+	public Page<CustomerPerformanceDTO> getCustomerConsumeMoneyList(JSONObject data) throws ParseException;
 }

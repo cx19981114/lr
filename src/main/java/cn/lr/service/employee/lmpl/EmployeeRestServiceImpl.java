@@ -67,6 +67,10 @@ public class EmployeeRestServiceImpl implements EmployeeRestService {
 	private String ATTENDANCE_TYPE;
 	@Value("${apply.flow}")
 	private String APPLY_FLOW;
+	@Value("${leader}")
+	private String LEADER;
+	@Value("${admin}")
+	private String ADMIN;
 
 	@Override
 	public Page<EmployeeRestDTO> getEmployeeRestByEmployee(JSONObject data) throws ParseException {
@@ -128,7 +132,6 @@ public class EmployeeRestServiceImpl implements EmployeeRestService {
 		String date = TimeFormatUtil.timeStampToString(data.getTimestamp("date").getTime());
 		List<Integer> employeeIdList = new ArrayList<>();
 		String leader = employee.getId()+"-"+employee.getLeaderIdList();
-		System.out.println(leader);
 		if(leader != null && !"".equals(leader)) {
 			String[] leaderIdList = leader.split("-");
 			stateList.add(stateWSX);
@@ -137,7 +140,8 @@ public class EmployeeRestServiceImpl implements EmployeeRestService {
 				if (employee2 == null || employee2.getState() == stateYSX) {
 					throw new BusiException("该职员不存在");
 				}
-				if(employee2.getPostId() == postMapper.selectByNameAndCompany("店长", data.getInteger("companyId"), stateList)) {
+				if(employee2.getPostId() == postMapper.selectByNameAndCompany(LEADER, data.getInteger("companyId"), stateList)
+						|| employee2.getPostId() == postMapper.selectByNameAndCompany(ADMIN, data.getInteger("companyId"), stateList)) {
 					employeeIdList.add(employee2.getId());
 					String under = employee2.getUnderIdList();
 					String[] underIdList = null;
@@ -157,7 +161,7 @@ public class EmployeeRestServiceImpl implements EmployeeRestService {
 								under += employee3.getUnderIdList();
 								flag = 1;
 							}
-							employeeIdList.add(Integer.valueOf(underIdList[i]));
+							employeeIdList.add(Integer.valueOf(underIdList[j]));
 						}
 					}
 				break;
@@ -230,60 +234,64 @@ public class EmployeeRestServiceImpl implements EmployeeRestService {
 	public List<List<JSONObject>> getEmployeeRestByEmployeeTeamList(JSONObject data) throws ParseException {
 		Integer employeeId = data.getInteger("employeeId");
 		employee employee = employeeMapper.selectByPrimaryKey(employeeId);
+		Integer stateYSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"));
+		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效",data.getInteger("companyId"));
 		Integer stateWSQ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未申请",data.getInteger("companyId"));
 		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
 		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", data.getInteger("companyId"));
 		Integer stateSHZ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", data.getInteger("companyId"));
 		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
 		List<Integer> stateList = new ArrayList<Integer>();
-		stateList.add(stateWSQ);
-		stateList.add(stateCG);
-		stateList.add(stateSHZ);
-		stateList.add(stateWSH);
-		stateList.add(stateWTJ);
 		List<Integer> employeeIdList = new ArrayList<>();
-		String leader = employee.getLeaderIdList();
+		String leader = employee.getId()+"-"+employee.getLeaderIdList();
 		if(leader != null && !"".equals(leader)) {
 			String[] leaderIdList = leader.split("-");
+			stateList.add(stateWSX);
 			for(int i = 0;i<leaderIdList.length;i++) {
 				employee employee2 = employeeMapper.selectByPrimaryKey(Integer.valueOf(leaderIdList[i]));
-				if (employee2 == null || employee2.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",
-						data.getInteger("companyId"))) {
+				if (employee2 == null || employee2.getState() == stateYSX) {
 					throw new BusiException("该职员不存在");
 				}
-				employeeIdList.add(Integer.valueOf(leaderIdList[i]));
+				if(employee2.getPostId() == postMapper.selectByNameAndCompany(LEADER, data.getInteger("companyId"), stateList)
+						|| employee2.getPostId() == postMapper.selectByNameAndCompany(ADMIN, data.getInteger("companyId"), stateList)) {
+					employeeIdList.add(employee2.getId());
+					String under = employee2.getUnderIdList();
+					String[] underIdList = null;
+					int flag = 1;
+					while(!"".equals(under)  && under != null) {
+						if(flag == 1) {
+							underIdList = under.split("-");
+							under = "";
+							flag = 0;
+						}
+						for (int j = 0; j < underIdList.length; j++) {
+							employee employee3 = employeeMapper.selectByPrimaryKey(Integer.valueOf(underIdList[j]));
+							if (employee3 == null || employee3.getState() == stateYSX) {
+								throw new BusiException("该职员不存在");
+							}
+							if(employee3.getUnderIdList() != null && !"".equals(employee3.getUnderIdList())) {
+								under += employee3.getUnderIdList();
+								flag = 1;
+							}
+							employeeIdList.add(Integer.valueOf(underIdList[j]));
+						}
+					}
+				break;
+				}
 			}
 		}
-		employeeIdList.add(employee.getId());
-		String under = employee.getUnderIdList();
-		String[] underIdList = null;
-		int flag = 1;
-		while(!"".equals(under)  && under != null) {
-			if(flag == 1) {
-				underIdList = under.split("-");
-				under = "";
-				flag = 0;
-			}
-			for (int i = 0; i < underIdList.length; i++) {
-				employee employee2 = employeeMapper.selectByPrimaryKey(Integer.valueOf(underIdList[i]));
-				if (employee2 == null || employee2.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",
-						data.getInteger("companyId"))) {
-					throw new BusiException("该职员不存在");
-				}
-				if(employee2.getUnderIdList() != null && !"".equals(employee2.getUnderIdList())) {
-					under += employee2.getUnderIdList();
-					flag = 1;
-				}
-				employeeIdList.add(Integer.valueOf(underIdList[i]));
-			}
-		}
-		System.out.println(employeeIdList.size());
 		String now = TimeFormatUtil.timeStampToString(new Date().getTime());
 		List<Integer> types = new ArrayList<>();
 		List<dict> stings = dictMapper.selectByName("行程安排", data.getInteger("companyId"));
 		for(dict d:stings) {
 			types.add(dictMapper.selectByCodeAndStateName(ATTENDANCE_TYPE, d.getStateName(), data.getInteger("companyId")));
 		}
+		stateList.clear();
+		stateList.add(stateWSQ);
+		stateList.add(stateCG);
+		stateList.add(stateSHZ);
+		stateList.add(stateWSH);
+		stateList.add(stateWTJ);
 		List<employeeRest> employeeRests = employeeRestMapper.selectByEmployeeTeam(employeeIdList,stateList,now,types, 0,
 				Integer.MAX_VALUE);
 		List<List<JSONObject>> jsonObjects = new ArrayList<List<JSONObject>>();
@@ -293,7 +301,7 @@ public class EmployeeRestServiceImpl implements EmployeeRestService {
 				jsonObjects.add(jsonPart);
 				jsonPart = new ArrayList<JSONObject>();
 			}
-			flag = 0;
+			int flag = 0;
 			JSONObject rest = new JSONObject();
 			for (employeeRest e : employeeRests) {
 				if(employeeIdList.get(i) == e.getOperatorId()) {
@@ -306,6 +314,8 @@ public class EmployeeRestServiceImpl implements EmployeeRestService {
 					rest.put("employeeRestId", employeeRestDTO.getId());
 					rest.put("img", employeeRestDTO.getPic());
 					rest.put("name", employeeRestDTO.getName());
+					rest.put("employeeId", employeeRestDTO.getEmployeeId());
+					rest.put("id", employeeRestDTO.getId());
 					flag = 1;
 				}
 			}
@@ -313,7 +323,9 @@ public class EmployeeRestServiceImpl implements EmployeeRestService {
 				employee employee2 = employeeMapper.selectByPrimaryKey(employeeIdList.get(i));
 				rest.put("img", employee2.getPic());
 				rest.put("name", employee2.getName());
+				rest.put("employeeId", employee2.getId());
 				rest.put("type", "暂无");
+				rest.put("id", null);
 			}
 			jsonPart.add(rest);
 		}

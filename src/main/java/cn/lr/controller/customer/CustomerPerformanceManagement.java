@@ -1,5 +1,7 @@
 package cn.lr.controller.customer;
 
+import java.util.List;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -170,6 +172,44 @@ public class CustomerPerformanceManagement {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误",session.getId());
 		}finally {
 			LoggerUtil.LOGGER.info("-------------end 根据业绩获取顾客业绩信息--------------------");
+		}
+	}
+	@PostMapping("/getCustomerConsumeMoney")
+	@ResponseBody
+	public String getCustomerConsumeMoney(@RequestBody String data, HttpSession session) {
+		LoggerUtil.LOGGER.info("-------------enter 根据顾客按月获取消费信息--------------------");
+		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
+		LoggerUtil.LOGGER.debug("data : {}", data);
+		JSONObject dataJson = JSON.parseObject(data);
+		dataJson.put("companyId", session.getAttribute("companyId"));
+		try {
+			List<JSONObject> jsonObject = CustomerPerformanceService.getCustomerConsumeMoney(dataJson);
+			return ResultJsonUtil.toJsonString(200, jsonObject, "根据顾客按月获取消费信息成功",session.getId());
+		} catch (BusiException e) {
+			return ResultJsonUtil.toJsonString(101, null, e.getMessage(),session.getId());
+		} catch (Exception e) {
+			return ResultJsonUtil.toJsonString(404, null, "系统未知错误",session.getId());
+		}finally {
+			LoggerUtil.LOGGER.info("-------------end 根据顾客按月获取消费信息--------------------");
+		}
+	}
+	@PostMapping("/getCustomerConsumeMoneyList")
+	@ResponseBody
+	public String getCustomerConsumeMoneyList(@RequestBody String data, HttpSession session) {
+		LoggerUtil.LOGGER.info("-------------enter 根据顾客和月份获取消费列表信息--------------------");
+		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
+		LoggerUtil.LOGGER.debug("data : {}", data);
+		JSONObject dataJson = JSON.parseObject(data);
+		dataJson.put("companyId", session.getAttribute("companyId"));
+		try {
+			Page<CustomerPerformanceDTO> cusPage = CustomerPerformanceService.getCustomerConsumeMoneyList(dataJson);
+			return ResultJsonUtil.toJsonString(200, cusPage, "根据顾客和月份获取消费列表信息成功",session.getId());
+		} catch (BusiException e) {
+			return ResultJsonUtil.toJsonString(101, null, e.getMessage(),session.getId());
+		} catch (Exception e) {
+			return ResultJsonUtil.toJsonString(404, null, "系统未知错误",session.getId());
+		}finally {
+			LoggerUtil.LOGGER.info("-------------end 根据顾客和月份获取消费列表信息--------------------");
 		}
 	}
 }
