@@ -17,6 +17,7 @@ import cn.lr.dao.applyRankMapper;
 import cn.lr.dao.dictMapper;
 import cn.lr.dao.dynamicMapper;
 import cn.lr.dao.employeeMapper;
+import cn.lr.dao.postMapper;
 import cn.lr.dao.rankMapper;
 import cn.lr.dto.DynamicDTO;
 import cn.lr.dto.Page;
@@ -43,6 +44,8 @@ public class DynamicServiceImpl implements DynamicService {
 	applyCheckMapper applyCheckMapper;
 	@Autowired
 	applyRankMapper applyRankMapper;
+	@Autowired
+	postMapper postMapper;
 
 	@Value("${pageSize}")
 	private Integer PAGESIZE;
@@ -52,9 +55,13 @@ public class DynamicServiceImpl implements DynamicService {
 	private String DATA_TYPE;
 	@Value("${check.flow}")
 	private String CHECK_FLOW;
+	@Value("${admin}")
+	private String ADMIN;
 
 	@Override
 	public Integer writeDynamic(JSONObject data) {
+		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效",data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
 		dynamic record = new dynamic();
 		record.setNote(data.getString("note") == null ? null :"无");
 		record.setDateTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
@@ -68,6 +75,12 @@ public class DynamicServiceImpl implements DynamicService {
 		if (employee.getLeaderIdList() != null && !"".equals(employee.getLeaderIdList())) {
 			record.setCheckId(Integer.valueOf(employee.getLeaderIdList().split("-")[0]));
 			record.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交",data.getInteger("companyId")));
+		}else if(data.getString("name").equals("新增客户")){
+			stateList.add(stateWSX);
+			Integer postId = postMapper.selectByNameAndCompany(ADMIN, data.getInteger("companyId"), stateList);
+			List<employee> employees = employeeMapper.selectByPostId(employee.getCompanyId(), postId, stateList, 0, Integer.MAX_VALUE);
+			record.setCheckId(employees.get(0).getId());
+			record.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核",data.getInteger("companyId")));
 		}else {
 			record.setCheckId(employee.getId());
 			record.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功",data.getInteger("companyId")));

@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import cn.lr.po.order;
+import cn.lr.po.statisticType;
 
 public interface orderMapper {
 	int deleteByPrimaryKey(Integer id);
@@ -35,18 +36,18 @@ public interface orderMapper {
 
 	int selectByEmployeeIdCount(@Param("employeeId") List<Integer> employeeId, @Param("state") List<Integer> state);
 
-	List<order> selectByEmployeeIdHistory(@Param("employeeId") Integer employeeId,
+	List<order> selectByEmployeeIdHistory(@Param("employeeId") Integer employeeId,@Param("date") String date,
 			@Param("applyState") List<Integer> applyState, @Param("orderState") List<Integer> orderState,
 			@Param("page") Integer page, @Param("size") Integer size);
 
-	Integer selectByEmployeeIdHistoryCount(@Param("employeeId") Integer employeeId,
+	Integer selectByEmployeeIdHistoryCount(@Param("employeeId") Integer employeeId,@Param("date") String date,
 			@Param("applyState") List<Integer> applyState, @Param("orderState") List<Integer> orderState);
 
-	List<order> selectByCustomerIdHistory(@Param("customerId") Integer customerId,
+	List<order> selectByCustomerIdHistory(@Param("customerId") Integer customerId,@Param("date") String date,
 			@Param("applyState") List<Integer> applyState, @Param("orderState") List<Integer> orderState,
 			@Param("page") Integer page, @Param("size") Integer size);
 
-	Integer selectByCustomerIdHistoryCount(@Param("customerId") Integer customerId,
+	Integer selectByCustomerIdHistoryCount(@Param("customerId") Integer customerId,@Param("date") String date,
 			@Param("applyState") List<Integer> applyState, @Param("orderState") List<Integer> orderState);
 
 	List<order> selectByProjectIdHistory(@Param("customerProjectId") Integer customerProjectId,
@@ -105,4 +106,10 @@ public interface orderMapper {
 			@Param("page") Integer page, @Param("size") Integer size);
 
 	int selectByEmployeeCount(@Param("employeeId") Integer employeeId, @Param("state") List<Integer> state);
+	
+	List<statisticType> selectByCustomerHistory(@Param("customerId")Integer customerId,@Param("applyState") List<Integer> applyState,
+			@Param("orderState") List<Integer> orderState);
+	
+	List<statisticType> selectByEmployeeHistory(@Param("employeeId")Integer employeeId,@Param("applyState") List<Integer> applyState,
+			@Param("orderState") List<Integer> orderState);
 }

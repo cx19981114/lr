@@ -7,7 +7,8 @@
     <result column="sex" jdbcType="VARCHAR" property="sex" />
     <result column="birth" jdbcType="VARCHAR" property="birth" />
     <result column="phone" jdbcType="VARCHAR" property="phone" />
-    <result column="employeeId" jdbcType="INTEGER" property="employeeId" />
+    <result column="employeeIdList" jdbcType="VARCHAR" property="employeeIdList" />
+    <result column="operatorId" jdbcType="INTEGER" property="operatorId" />
     <result column="habit" jdbcType="VARCHAR" property="habit" />
     <result column="plan" jdbcType="VARCHAR" property="plan" />
     <result column="note" jdbcType="VARCHAR" property="note" />
@@ -19,7 +20,7 @@
     <result column="activeServiceTime" jdbcType="VARCHAR" property="activeServiceTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, name, sex, birth, phone, employeeId, habit, plan, note, money, dateTime, state, pic, activeConsumeTime, activeServiceTime
+    id, name, sex, birth, phone, employeeIdList,operatorId, habit, plan, note, money, dateTime, state, pic, activeConsumeTime, activeServiceTime
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -33,12 +34,12 @@
   </delete>
   <insert id="insert" parameterType="cn.lr.po.customer" useGeneratedKeys="true" keyProperty="id">
     insert into tb_customer (id, name, sex, 
-      birth, phone, employeeId, 
+      birth, phone, employeeIdList, operatorId,
       habit, plan, note, 
       money, dateTime, state, pic, activeConsumeTime, activeServiceTime
       )
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, 
-      #{birth,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{employeeId,jdbcType=INTEGER}, 
+      #{birth,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{employeeIdList,jdbcType=VARCHAR},#{operatorId,jdbcType=INTEGER}, 
       #{habit,jdbcType=VARCHAR}, #{plan,jdbcType=VARCHAR}, #{note,jdbcType=VARCHAR}, 
       #{money,jdbcType=INTEGER}, #{dateTime,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER},
       #{pic,jdbcType=VARCHAR}, #{activeConsumeTime,jdbcType=VARCHAR}, #{activeServiceTime,jdbcType=VARCHAR}
@@ -62,8 +63,11 @@
       <if test="phone != null">
         phone,
       </if>
-      <if test="employeeId != null">
-        employeeId,
+      <if test="employeeIdList != null">
+        employeeIdList,
+      </if>
+      <if test="operatorId != null">
+        operatorId,
       </if>
       <if test="habit != null">
         habit,
@@ -109,8 +113,11 @@
       <if test="phone != null">
         #{phone,jdbcType=VARCHAR},
       </if>
-      <if test="employeeId != null">
-        #{employeeId,jdbcType=INTEGER},
+      <if test="employeeIdList != null">
+        #{employeeIdList,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorId != null">
+        #{operatorId,jdbcType=INTEGER},
       </if>
       <if test="habit != null">
         #{habit,jdbcType=VARCHAR},
@@ -156,8 +163,11 @@
       <if test="phone != null">
         phone = #{phone,jdbcType=VARCHAR},
       </if>
-      <if test="employeeId != null">
-        employeeId = #{employeeId,jdbcType=INTEGER},
+      <if test="employeeIdList != null">
+        employeeIdList = #{employeeIdList,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorId != null">
+        operatorId = #{operatorId,jdbcType=INTEGER},
       </if>
       <if test="habit != null">
         habit = #{habit,jdbcType=VARCHAR},
@@ -195,7 +205,8 @@
       sex = #{sex,jdbcType=VARCHAR},
       birth = #{birth,jdbcType=VARCHAR},
       phone = #{phone,jdbcType=VARCHAR},
-      employeeId = #{employeeId,jdbcType=INTEGER},
+      employeeIdList = #{employeeIdList,jdbcType=VARCHAR},
+      operatorId = #{operatorId,jdbcType=INTEGER},
       habit = #{habit,jdbcType=VARCHAR},
       plan = #{plan,jdbcType=VARCHAR},
       note = #{note,jdbcType=VARCHAR},
@@ -212,7 +223,7 @@
     select 
     <include refid="Base_Column_List" />
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    where employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -224,7 +235,7 @@
   <select id="selectByEmployeeIdCount"  resultType="Integer">
     select count(*)
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    where  employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -237,7 +248,7 @@
     select 
     <include refid="Base_Column_List" />
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    where  employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -250,7 +261,7 @@
     select 
     <include refid="Base_Column_List" />
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    where  employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -262,7 +273,7 @@
   <select id="selectByEmployeeIdDayCount"  resultType="Integer">
     select count(*)
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    where  employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -276,7 +287,7 @@
     select 
     <include refid="Base_Column_List" />
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    where  employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -288,7 +299,7 @@
   <select id="selectByEmployeeIdMonCount"  resultType="Integer">
     select count(*)
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    where  employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -302,7 +313,7 @@
     select 
     <include refid="Base_Column_List" />
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    where  employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -314,7 +325,7 @@
    <select id="selectByEmployeeIdQtrCount"  resultType="Integer">
     select count(*)
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    where  employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -328,7 +339,7 @@
     select 
     <include refid="Base_Column_List" />
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    where  employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -340,7 +351,7 @@
    <select id="selectByEmployeeIdYearCount"  resultType="Integer">
     select count(*)
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    where  employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -354,7 +365,7 @@
     select 
     <include refid="Base_Column_List" />
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    where  employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -366,7 +377,7 @@
   <select id="selectByConsumeMonCount"  resultType="Integer">
     select count(*)
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    where  employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -380,7 +391,7 @@
     select 
     <include refid="Base_Column_List" />
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    where  employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -392,7 +403,7 @@
    <select id="selectByConsumeQtrCount"  resultType="Integer">
     select count(*)
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    where  employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
     <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -406,7 +417,7 @@
     select 
     <include refid="Base_Column_List" />
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    where  employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -418,7 +429,7 @@
   <select id="selectByServiceMonCount"  resultType="Integer">
     select count(*)
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    where  employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -432,7 +443,7 @@
     select 
     <include refid="Base_Column_List" />
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    where  employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -444,7 +455,7 @@
    <select id="selectByServiceQtrCount"  resultType="Integer">
     select count(*)
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    where  employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -458,7 +469,7 @@
     select 
     <include refid="Base_Column_List" />
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    where  employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -470,7 +481,7 @@
    <select id="selectByUnServiceQtrCount"  resultType="Integer">
     select count(*)
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    where  employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -483,7 +494,7 @@
   <select id="selectByConsumeDay" resultType="Integer">
     select count(*)
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    where  employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -496,7 +507,7 @@
   <select id="selectByServiceDay" resultType="Integer">
     select count(*)
     from tb_customer
-    where employeeId = #{employeeId,jdbcType=INTEGER} 
+    where  employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">

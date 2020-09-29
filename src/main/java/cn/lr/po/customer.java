@@ -11,7 +11,9 @@ public class customer {
 
     private String phone;
 
-    private Integer employeeId;
+    private String employeeIdList;
+    
+    private Integer operatorId;
 
     private String habit;
 
@@ -30,6 +32,14 @@ public class customer {
     private String activeConsumeTime;
     
     private String activeServiceTime;
+
+	public Integer getOperatorId() {
+		return operatorId;
+	}
+
+	public void setOperatorId(Integer operatorId) {
+		this.operatorId = operatorId;
+	}
 
 	public String getActiveConsumeTime() {
 		return activeConsumeTime;
@@ -95,15 +105,15 @@ public class customer {
         this.phone = phone == null ? null : phone.trim();
     }
 
-    public Integer getEmployeeId() {
-        return employeeId;
-    }
+    public String getEmployeeIdList() {
+		return employeeIdList;
+	}
 
-    public void setEmployeeId(Integer employeeId) {
-        this.employeeId = employeeId;
-    }
+	public void setEmployeeIdList(String employeeIdList) {
+		this.employeeIdList = employeeIdList;
+	}
 
-    public String getHabit() {
+	public String getHabit() {
         return habit;
     }
 

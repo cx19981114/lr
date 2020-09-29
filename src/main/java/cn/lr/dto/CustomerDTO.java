@@ -1,6 +1,9 @@
 package cn.lr.dto;
 
 import java.sql.Timestamp;
+import java.util.List;
+
+import com.alibaba.fastjson.JSONObject;
 
 public class CustomerDTO {
 	private Integer id;
@@ -12,10 +15,12 @@ public class CustomerDTO {
     private String birth;
 
     private String phone;
-
-    private Integer employeeId;
     
-    private String employeeName;
+    private String operatorName;
+    
+    private Integer operatorId;
+    
+    private List<JSONObject> employeeList;
 
     private String habit;
 
@@ -32,6 +37,22 @@ public class CustomerDTO {
     private String pic;
     
     private Integer projectNum;
+
+	public String getOperatorName() {
+		return operatorName;
+	}
+
+	public void setOperatorName(String operatorName) {
+		this.operatorName = operatorName;
+	}
+
+	public Integer getOperatorId() {
+		return operatorId;
+	}
+
+	public void setOperatorId(Integer operatorId) {
+		this.operatorId = operatorId;
+	}
 
 	public Integer getProjectNum() {
 		return projectNum;
@@ -81,20 +102,12 @@ public class CustomerDTO {
 		this.phone = phone;
 	}
 
-	public Integer getEmployeeId() {
-		return employeeId;
+	public List<JSONObject> getEmployeeList() {
+		return employeeList;
 	}
 
-	public void setEmployeeId(Integer employeeId) {
-		this.employeeId = employeeId;
-	}
-
-	public String getEmployeeName() {
-		return employeeName;
-	}
-
-	public void setEmployeeName(String employeeName) {
-		this.employeeName = employeeName;
+	public void setEmployeeList(List<JSONObject> employeeList) {
+		this.employeeList = employeeList;
 	}
 
 	public String getHabit() {

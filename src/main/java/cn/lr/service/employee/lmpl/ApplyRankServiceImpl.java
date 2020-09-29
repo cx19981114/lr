@@ -122,9 +122,13 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 	private String PATH;
 	@Value("${picActPath}")
 	private String ACTPATH;
+	@Value("${admin}")
+	private String ADMIN;
 
 	@Override
 	public Integer addApplyRank(JSONObject data) {
+		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效",data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
 		applyRank applyRank = new applyRank();
 		String checkIdList = employeeMapper.selectByPrimaryKey(data.getInteger("employeeId")).getLeaderIdList();
 		String[] checkId = checkIdList.split("-");
@@ -132,6 +136,7 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 		String checkTimeList = "";
 		String noteList = "";
 		String now = TimeFormatUtil.timeStampToString(new Date().getTime());
+		dynamic dynamic = dynamicMapper.selectByPrimaryKey(data.getInteger("dynamicId"));
 		if (checkIdList == null || "".equals(checkIdList)) {
 			Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
 			applyRank.setStartTime(now);
@@ -139,7 +144,6 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 			applyRank.setState(stateCG);
 			applyRank.setCheckNumber(0);
 			applyRank.setDynamicId(data.getInteger("dynamicId"));
-			dynamic dynamic = dynamicMapper.selectByPrimaryKey(data.getInteger("dynamicId"));
 			String name = dynamic.getTb_name();
 			Integer id = dynamic.getTb_id();
 			if ("每日打卡".equals(name)) {
@@ -222,14 +226,6 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 				if (count == 0) {
 					throw new BusiException("修改客户服务项目状态失败");
 				}
-				customer customer = customerMapper.selectByPrimaryKey(customerProject.getCustomerId());
-				project project = projectMapper.selectByPrimaryKey(customerProject.getProjectId());
-				customer.setMoney(customer.getMoney() - project.getMoney());
-				customer.setActiveConsumeTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
-				count = customerMapper.updateByPrimaryKeySelective(customer);
-				if (count == 0) {
-					throw new BusiException("更新customer表失败");
-				}
 			} else if ("新增顾客".equals(name)) {
 				customerPerformance customerPerformance = customerPerformanceMapper.selectByPrimaryKey(id);
 				if (customerPerformance == null || customerPerformance.getState() == dictMapper
@@ -247,8 +243,6 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 					throw new BusiException("该顾客不存在");
 				}
 				customer.setState(stateCG);
-				customer.setActiveConsumeTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
-				customer.setActiveServiceTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
 				count = customerMapper.updateByPrimaryKeySelective(customer);
 				if (count == 0) {
 					throw new BusiException("修改顾客状态失败");
@@ -264,13 +258,6 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 				if (count == 0) {
 					throw new BusiException("修改业绩状态失败");
 				}
-				customer customer = customerMapper.selectByPrimaryKey(customerPerformance.getCustomerId());
-				customer.setMoney(customer.getMoney() + customerPerformance.getMoney());
-				customer.setActiveConsumeTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
-				count = customerMapper.updateByPrimaryKeySelective(customer);
-				if (count == 0) {
-					throw new BusiException("更新customer表失败");
-				}
 			} else if ("预约项目".equals(name)) {
 				order order = orderMapper.selectByPrimaryKey(id);
 				if (order == null
@@ -279,13 +266,7 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 				}
 				order.setApplyState(stateCG);
 				order.setOrderState(dictMapper.selectByCodeAndStateName(ORDER_FLOW, "未开始", data.getInteger("companyId")));
-				customer customer = customerMapper.selectByPrimaryKey(order.getCustomerId());
-				customer.setActiveServiceTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
-				int count = customerMapper.updateByPrimaryKeySelective(customer);
-				if (count == 0) {
-					throw new BusiException("修改顾客活跃时间失败");
-				}
-				count = orderMapper.updateByPrimaryKeySelective(order);
+				int count = orderMapper.updateByPrimaryKeySelective(order);
 				if (count == 0) {
 					throw new BusiException("修改预约状态失败");
 				}
@@ -300,21 +281,27 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 				if (count == 0) {
 					throw new BusiException("修改预约状态失败");
 				}
-				customerProject customerProject = customerProjectMapper
-						.selectByPrimaryKey(order.getCustomerProjectId());
-				customerProject.setRestCount(customerProject.getRestCount() - 1);
-				customerProject.setIngCount(customerProject.getIngCount() + 1);
-				count = customerProjectMapper.updateByPrimaryKeySelective(customerProject);
-				if (count == 0) {
-					throw new BusiException("修改项目剩余数量失败");
-				}
-				customer customer = customerMapper.selectByPrimaryKey(customerProject.getCustomerId());
-				customer.setActiveServiceTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
-				count = customerMapper.updateByPrimaryKeySelective(customer);
-				if (count == 0) {
-					throw new BusiException("修改顾客活跃时间失败");
-				}
 			}
+		} else if("新增顾客".equals(dynamic.getTb_name())){
+			employee employee = employeeMapper.selectByPrimaryKey(dynamic.getEmployeeId());
+			stateList.add(stateWSX);
+			Integer postId = postMapper.selectByNameAndCompany(ADMIN, data.getInteger("companyId"), stateList);
+			List<employee> employees = employeeMapper.selectByPostId(employee.getCompanyId(), postId, stateList, 0, Integer.MAX_VALUE);
+			checkIdList = "";
+			for (employee employee2:employees) {
+				checkIdList += employee2.getId()+"-";
+				checkList += dictMapper.selectByCodeAndStateName(CHECK_FLOW, "未审核", data.getInteger("companyId")) + "-";
+				checkTimeList += now + "--";
+				noteList += "未审核-";
+			}
+			applyRank.setStartTime(now);
+			applyRank.setCheckList(checkList);
+			applyRank.setCheckTimeList(checkTimeList);
+			applyRank.setNoteList(noteList);
+			applyRank.setCheckIdList(checkIdList);
+			applyRank.setCheckNumber(0);
+			applyRank.setDynamicId(data.getInteger("dynamicId"));
+			applyRank.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId")));
 		} else{
 			for (int i = 0; i < checkId.length; i++) {
 				checkList += dictMapper.selectByCodeAndStateName(CHECK_FLOW, "未审核", data.getInteger("companyId")) + "-";
@@ -545,16 +532,6 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 			if (count == 0) {
 				throw new BusiException("修改客户服务项目状态失败");
 			}
-			if (state == dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", companyId)) {
-				customer customer = customerMapper.selectByPrimaryKey(customerProject.getCustomerId());
-				project project = projectMapper.selectByPrimaryKey(customerProject.getProjectId());
-				customer.setMoney(customer.getMoney() - project.getMoney());
-				customer.setActiveConsumeTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
-				count = customerMapper.updateByPrimaryKeySelective(customer);
-				if (count == 0) {
-					throw new BusiException("更新customer表失败");
-				}
-			}
 		} else if ("新增顾客".equals(name)) {
 			customerPerformance customerPerformance = customerPerformanceMapper.selectByPrimaryKey(id);
 			if (customerPerformance == null || customerPerformance.getState() == dictMapper
@@ -572,10 +549,6 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 				throw new BusiException("该顾客不存在");
 			}
 			customer.setState(state);
-			if (state == dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", companyId)) {
-				customer.setActiveConsumeTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
-				customer.setActiveServiceTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
-			}
 			count = customerMapper.updateByPrimaryKeySelective(customer);
 			if (count == 0) {
 				throw new BusiException("修改顾客状态失败");
@@ -591,16 +564,6 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 			if (count == 0) {
 				throw new BusiException("修改业绩状态失败");
 			}
-			if (state == dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", companyId)) {
-				customer customer = customerMapper.selectByPrimaryKey(customerPerformance.getCustomerId());
-				customer.setMoney(customer.getMoney() + customerPerformance.getMoney());
-				customer.setActiveConsumeTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
-				count = customerMapper.updateByPrimaryKeySelective(customer);
-				if (count == 0) {
-					throw new BusiException("更新customer表失败");
-				}
-
-			}
 		} else if ("预约项目".equals(name)) {
 			order order = orderMapper.selectByPrimaryKey(id);
 			if (order == null
@@ -608,15 +571,6 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 				throw new BusiException("该预约不存在");
 			}
 			order.setApplyState(state);
-			if (state == dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", companyId)) {
-				order.setOrderState(dictMapper.selectByCodeAndStateName(ORDER_FLOW, "未开始", companyId));
-				customer customer = customerMapper.selectByPrimaryKey(order.getCustomerId());
-				customer.setActiveServiceTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
-				count = customerMapper.updateByPrimaryKeySelective(customer);
-				if (count == 0) {
-					throw new BusiException("修改顾客活跃时间失败");
-				}
-			}
 			count = orderMapper.updateByPrimaryKeySelective(order);
 			if (count == 0) {
 				throw new BusiException("修改预约状态失败");
@@ -631,22 +585,6 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 			count = orderMapper.updateByPrimaryKeySelective(order);
 			if (count == 0) {
 				throw new BusiException("修改预约状态失败");
-			}
-			if (state == dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", companyId)) {
-				customerProject customerProject = customerProjectMapper
-						.selectByPrimaryKey(order.getCustomerProjectId());
-				customerProject.setRestCount(customerProject.getRestCount() - 1);
-				customerProject.setIngCount(customerProject.getIngCount() + 1);
-				count = customerProjectMapper.updateByPrimaryKeySelective(customerProject);
-				if (count == 0) {
-					throw new BusiException("修改项目剩余数量失败");
-				}
-				customer customer = customerMapper.selectByPrimaryKey(customerProject.getCustomerId());
-				customer.setActiveServiceTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
-				count = customerMapper.updateByPrimaryKeySelective(customer);
-				if (count == 0) {
-					throw new BusiException("修改顾客活跃时间失败");
-				}
 			}
 		}
 	}
@@ -758,8 +696,7 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 			if (employee.getLeaderIdList() != null && !employee.getLeaderIdList().equals("")) {
 				String leaderId = employee.getLeaderIdList().split("-")[0];
 				employee employee2 = employeeMapper.selectByPrimaryKey(Integer.valueOf(leaderId));
-				if (employee2 == null || employee2.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",
-						data.getInteger("companyId"))) {
+				if (employee2 == null) {
 					throw new BusiException("该职员不存在");
 				}
 				employeeDTO.setLeaderName(employee2.getName());

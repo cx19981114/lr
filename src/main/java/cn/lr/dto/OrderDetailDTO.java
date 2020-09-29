@@ -16,6 +16,8 @@ public class OrderDetailDTO {
     private Integer rank;
 
     private String note;
+    
+    private String applyState;
 
     private String orderState;
     
@@ -33,6 +35,14 @@ public class OrderDetailDTO {
     
     private String evaluate;
     
+	public String getApplyState() {
+		return applyState;
+	}
+
+	public void setApplyState(String applyState) {
+		this.applyState = applyState;
+	}
+
 	public String getStartTime() {
 		return startTime;
 	}

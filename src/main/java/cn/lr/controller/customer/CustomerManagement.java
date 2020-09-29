@@ -41,7 +41,7 @@ public class CustomerManagement {
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(),session.getId());
 		} catch (Exception e) {
-			return ResultJsonUtil.toJsonString(404, null, "系统未知错误",session.getId());
+			return ResultJsonUtil.toJsonString(404, e.getMessage(), "系统未知错误",session.getId());
 		}finally {
 			LoggerUtil.LOGGER.info("-------------end 添加客户信息--------------------");
 		}
@@ -64,6 +64,26 @@ public class CustomerManagement {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误",session.getId());
 		}finally {
 			LoggerUtil.LOGGER.info("-------------end 修改客户信息--------------------");
+		}
+	}
+	@PostMapping("/modifyCustomerPrincipal")
+	@ResponseBody
+	public String modifyCustomerPrincipal(@RequestBody String data, HttpSession session) {
+		LoggerUtil.LOGGER.info("-------------enter 修改客户负责人信息--------------------");
+		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
+		LoggerUtil.LOGGER.debug("data : {}", data);
+		JSONObject dataJson = JSON.parseObject(data);
+		dataJson.put("companyId", session.getAttribute("companyId"));
+		try {
+			CustomerService.getCustomer(dataJson);
+			int id = CustomerService.modifyCustomerPrincipal(dataJson);
+			return ResultJsonUtil.toJsonString(200, id, "修改客户负责人信息成功",session.getId());
+		} catch (BusiException e) {
+			return ResultJsonUtil.toJsonString(101, null, e.getMessage(),session.getId());
+		} catch (Exception e) {
+			return ResultJsonUtil.toJsonString(404, null, "系统未知错误",session.getId());
+		}finally {
+			LoggerUtil.LOGGER.info("-------------end 修改客户负责人信息--------------------");
 		}
 	}
 	@PostMapping("/getCustomer")

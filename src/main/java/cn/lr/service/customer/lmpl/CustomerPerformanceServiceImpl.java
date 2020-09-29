@@ -79,15 +79,25 @@ public class CustomerPerformanceServiceImpl implements CustomerPerformanceServic
 		customerPerformance customerPerformance = new customerPerformance();
 		customerPerformance.setCustomerId(data.getInteger("customerId"));
 		customerPerformance.setDateTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
-		customerPerformance.setEmployeeId(data.getInteger("employeeId"));
+		customerPerformance.setEmployeeIdList(data.getInteger("employeeId")+"-");
 		customerPerformance.setMoney(data.getInteger("money"));
 		customerPerformance.setNote(data.getString("note"));
 		customerPerformance.setState(stateWTJ);
+		customerPerformance.setOperatorId(data.getInteger("employeeId"));
 		customerPerformance.setType(dictMapper.selectByCodeAndStateName(CUSTOMERPERFORMAN_TYPE, data.getString("type"), data.getInteger("companyId")));
 		int count = customerPerformanceMapper.insertSelective(customerPerformance);
 		if(count == 0) {
 			throw new BusiException("插入customerPerfoemance表失败");
 		}
+		
+		customer customer = customerMapper.selectByPrimaryKey(customerPerformance.getCustomerId());
+		customer.setMoney(customer.getMoney() + customerPerformance.getMoney());
+		customer.setActiveConsumeTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
+		count = customerMapper.updateByPrimaryKeySelective(customer);
+		if (count == 0) {
+			throw new BusiException("更新customer表失败");
+		}
+		
 		JSONObject dataJSonDynamic = new JSONObject();
 		dataJSonDynamic.put("note", data.getString("note"));
 		dataJSonDynamic.put("name", data.getString("type"));
@@ -120,6 +130,23 @@ public class CustomerPerformanceServiceImpl implements CustomerPerformanceServic
 		int count = customerPerformanceMapper.updateByPrimaryKeySelective(customerPerformance);
 		if (count == 0) {
 			throw new BusiException("更新customerPerformance表失败");
+		}
+		
+		if(customerPerformance.getType() == dictMapper.selectByCodeAndStateName(CUSTOMERPERFORMAN_TYPE, "新增顾客", data.getInteger("companyId"))) {
+			customer customer = customerMapper.selectByPrimaryKey(customerPerformance.getCustomerId());
+			customer.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核失败",data.getInteger("companyId")));
+			count = customerMapper.updateByPrimaryKeySelective(customer);
+			if(count == 0) {
+				throw new BusiException("更新customer表失败");
+			}
+		}else {
+			customer customer = customerMapper.selectByPrimaryKey(customerPerformance.getCustomerId());
+			customer.setMoney(customer.getMoney() - customerPerformance.getMoney());
+//			customer.setActiveConsumeTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
+			count = customerMapper.updateByPrimaryKeySelective(customer);
+			if (count == 0) {
+				throw new BusiException("更新customer表失败");
+			}
 		}
 		JSONObject dataJSonDynamic = new JSONObject();
 		dataJSonDynamic.put("name", dictMapper.selectByCodeAndStateCode(CUSTOMERPERFORMAN_TYPE, customerPerformance.getType(), data.getInteger("companyId")));
@@ -200,6 +227,9 @@ public class CustomerPerformanceServiceImpl implements CustomerPerformanceServic
 		customer customer = customerMapper.selectByPrimaryKey(customerPerformance.getCustomerId());
 		if(customerPerformance.getType() == dictMapper.selectByCodeAndStateName(CUSTOMERPERFORMAN_TYPE, "新增顾客", data.getInteger("companyId"))) {
 			customer.setState(dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId")));
+		}else {
+			customer.setMoney(customer.getMoney() - customerPerformance.getMoney());
+//			customer.setActiveConsumeTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
 		}
 		count = customerMapper.updateByPrimaryKeySelective(customer);
 		if(count == 0) {
@@ -300,20 +330,28 @@ public class CustomerPerformanceServiceImpl implements CustomerPerformanceServic
 	
 	public CustomerPerformanceDTO sCustomerPerformanceDTO(customerPerformance customerPerformance) throws ParseException {
 		CustomerPerformanceDTO customerPerformanceDTO = new CustomerPerformanceDTO();
-		employee employee = employeeMapper.selectByPrimaryKey(customerPerformance.getEmployeeId());
-		String type = dictMapper.selectByCodeAndStateCode(CUSTOMERPERFORMAN_TYPE, customerPerformance.getType(),employee.getCompanyId());
-		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", employee.getCompanyId());
+		employee opEmployee = employeeMapper.selectByPrimaryKey(customerPerformance.getOperatorId());
+		Integer companyId = opEmployee.getCompanyId();
+		String[] employeeIdList = customerPerformance.getEmployeeIdList().split("-");
+		List<String> employeeNameList = new ArrayList<>();
+		for(int i = 0;i<employeeIdList.length;i++) {
+			employee employee = employeeMapper.selectByPrimaryKey(Integer.valueOf(employeeIdList[i]));
+			employeeNameList.add(employee.getName());
+		}
+		String type = dictMapper.selectByCodeAndStateCode(CUSTOMERPERFORMAN_TYPE, customerPerformance.getType(),companyId);
+		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", companyId);
 		List<Integer> stateList = new ArrayList<Integer>();
 		customerPerformanceDTO.setCustomerName(customerMapper.selectByPrimaryKey(customerPerformance.getCustomerId()).getName());
 		customerPerformanceDTO.setDateTime(TimeFormatUtil.stringToTimeStamp(customerPerformance.getDateTime()));
-		customerPerformanceDTO.setEmployeeName(employee.getName());
+		customerPerformanceDTO.setEmployeeNameList(employeeNameList);
 		customerPerformanceDTO.setId(customerPerformance.getId());
 		customerPerformanceDTO.setMoney(customerPerformance.getMoney());
 		customerPerformanceDTO.setNote(customerPerformance.getNote());
+		customerPerformanceDTO.setOperatorName(opEmployee.getName());
 		stateList.add(stateWSX);
-		customerPerformanceDTO.setRank(rankMapper.selectByName(type, employee.getCompanyId(),stateList));
+		customerPerformanceDTO.setRank(rankMapper.selectByName(type, companyId,stateList));
 		customerPerformanceDTO.setType(type);
-		customerPerformanceDTO.setState(dictMapper.selectByCodeAndStateCode(APPLY_FLOW, customerPerformance.getState(), employee.getCompanyId()));
+		customerPerformanceDTO.setState(dictMapper.selectByCodeAndStateCode(APPLY_FLOW, customerPerformance.getState(), companyId));
 		return customerPerformanceDTO;
 	}
 	public Page<CustomerPerformanceDTO> getCustomerPerformanceByEmployee(JSONObject data) throws ParseException {

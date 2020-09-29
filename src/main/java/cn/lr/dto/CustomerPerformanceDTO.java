@@ -1,6 +1,7 @@
 package cn.lr.dto;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 public class CustomerPerformanceDTO {
 
@@ -8,7 +9,9 @@ public class CustomerPerformanceDTO {
 
     private String customerName;
     
-    private String employeeName;
+    private String operatorName;
+    
+    private List<String> employeeNameList;
 
     private String type;
     
@@ -21,6 +24,14 @@ public class CustomerPerformanceDTO {
     private String note;
     
     private String state;
+
+	public String getOperatorName() {
+		return operatorName;
+	}
+
+	public void setOperatorName(String operatorName) {
+		this.operatorName = operatorName;
+	}
 
 	public String getState() {
 		return state;
@@ -46,12 +57,12 @@ public class CustomerPerformanceDTO {
 		this.customerName = customerName;
 	}
 
-	public String getEmployeeName() {
-		return employeeName;
+	public List<String> getEmployeeNameList() {
+		return employeeNameList;
 	}
 
-	public void setEmployeeName(String employeeName) {
-		this.employeeName = employeeName;
+	public void setEmployeeNameList(List<String> employeeNameList) {
+		this.employeeNameList = employeeNameList;
 	}
 
 	public String getType() {

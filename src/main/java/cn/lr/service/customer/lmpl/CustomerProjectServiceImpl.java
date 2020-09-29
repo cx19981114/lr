@@ -83,6 +83,7 @@ public class CustomerProjectServiceImpl implements CustomerProjectService {
 	public Integer addCustomerProject(JSONObject data) {
 		customer customer = customerMapper.selectByPrimaryKey(data.getInteger("customerId"));
 		project project = projectMapper.selectByPrimaryKey(data.getInteger("projectId"));
+		String now = TimeFormatUtil.timeStampToString(new Date().getTime());
 		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
 		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
 		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
@@ -93,14 +94,20 @@ public class CustomerProjectServiceImpl implements CustomerProjectService {
 		customerProject customerProject = new customerProject();
 		customerProject.setCount(project.getNum());
 		customerProject.setCustomerId(data.getInteger("customerId"));
-		customerProject.setDateTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
+		customerProject.setDateTime(now);
 		customerProject.setProjectId(project.getId());
-		customerProject.setEmployeeId(customer.getEmployeeId());
+		customerProject.setEmployeeId(data.getInteger("employeeId"));
 		customerProject.setRestCount(project.getNum());
 		customerProject.setState(stateWTJ);
 		int count =  customerProjectMapper.insertSelective(customerProject);
 		if(count == 0) {
 			throw new BusiException("插入customerProject表失败");
+		}
+		customer.setMoney(customer.getMoney() - project.getMoney());
+		customer.setActiveConsumeTime(now);
+		count = customerMapper.updateByPrimaryKeySelective(customer);
+		if (count == 0) {
+			throw new BusiException("更新customer表失败");
 		}
 		
 		JSONObject dataJSonDynamic = new JSONObject();
@@ -191,7 +198,16 @@ public class CustomerProjectServiceImpl implements CustomerProjectService {
 		if (count == 0) {
 			throw new BusiException("更新customerProject表失败");
 		}
-
+		
+		customer customer = customerMapper.selectByPrimaryKey(customerProject.getCustomerId());
+		project project = projectMapper.selectByPrimaryKey(customerProject.getProjectId());
+		customer.setMoney(customer.getMoney() + project.getMoney());
+//		customer.setActiveConsumeTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
+		count = customerMapper.updateByPrimaryKeySelective(customer);
+		if (count == 0) {
+			throw new BusiException("更新customer表失败");
+		}
+		
 		JSONObject dataJSonDynamic = new JSONObject();
 		dataJSonDynamic.put("name", Type);
 		dataJSonDynamic.put("id", customerProject.getId());
@@ -214,6 +230,14 @@ public class CustomerProjectServiceImpl implements CustomerProjectService {
 		int count = customerProjectMapper.updateByPrimaryKeySelective(customerProject);
 		if (count == 0) {
 			throw new BusiException("更新customerProject表失败");
+		}
+		customer customer = customerMapper.selectByPrimaryKey(customerProject.getCustomerId());
+		project project = projectMapper.selectByPrimaryKey(customerProject.getProjectId());
+		customer.setMoney(customer.getMoney() + project.getMoney());
+//		customer.setActiveConsumeTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
+		count = customerMapper.updateByPrimaryKeySelective(customer);
+		if (count == 0) {
+			throw new BusiException("更新customer表失败");
 		}
 		
 		JSONObject dataJSonDynamic = new JSONObject();

@@ -5,7 +5,9 @@ public class customerPerformance {
 
     private Integer customerId;
 
-    private Integer employeeId;
+    private Integer operatorId;
+    
+    private String employeeIdList;
 
     private String dateTime;
 
@@ -17,7 +19,15 @@ public class customerPerformance {
 
     private Integer state;
 
-    public Integer getId() {
+    public Integer getOperatorId() {
+		return operatorId;
+	}
+
+	public void setOperatorId(Integer operatorId) {
+		this.operatorId = operatorId;
+	}
+
+	public Integer getId() {
         return id;
     }
 
@@ -33,15 +43,15 @@ public class customerPerformance {
         this.customerId = customerId;
     }
 
-    public Integer getEmployeeId() {
-        return employeeId;
-    }
+    public String getEmployeeIdList() {
+		return employeeIdList;
+	}
 
-    public void setEmployeeId(Integer employeeId) {
-        this.employeeId = employeeId;
-    }
+	public void setEmployeeIdList(String employeeIdList) {
+		this.employeeIdList = employeeIdList;
+	}
 
-    public String getDateTime() {
+	public String getDateTime() {
         return dateTime;
     }
 

@@ -24,9 +24,9 @@ import cn.lr.dto.CustomerDTO;
 import cn.lr.dto.Page;
 import cn.lr.exception.BusiException;
 import cn.lr.po.customer;
+import cn.lr.po.customerPerformance;
 import cn.lr.po.customerProject;
 import cn.lr.po.employee;
-import cn.lr.po.statisticType;
 import cn.lr.service.customer.CustomerPerformanceService;
 import cn.lr.service.customer.CustomerService;
 import cn.lr.service.employee.ApplyRankService;
@@ -51,6 +51,8 @@ public class CustomerServiceImpl implements CustomerService {
 	dynamicMapper dynamicMapper;
 	@Autowired
 	applyRankMapper applyRankMapper;
+	@Autowired
+	customerPerformanceMapper customerPerformanceMapper;
 	
 	@Autowired
 	ApplyRankService ApplyRankService;
@@ -67,24 +69,34 @@ public class CustomerServiceImpl implements CustomerService {
 	private String APPLY_FLOW;
 	@Value("${noImg}")
 	private String NOIMG;
+	@Value("${customerPerforman.type}")
+	private String CUSTOMERPERFORMAN_TYPE;
 	
 	@Override
 	public Integer addCustomer(JSONObject data) {
-		Integer employeeId = data.getInteger("employeeId");
-		employee employee = employeeMapper.selectByPrimaryKey(employeeId);
-		if(employee == null || employee.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"))) {
-			throw new BusiException("该职工不存在");
+		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
+		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
+		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		String now = TimeFormatUtil.timeStampToString(new Date().getTime());
+		List<Integer> stateList = new ArrayList<Integer>();
+		String[] employeeIdList = data.getString("employeeId").split("-");
+		for(int i = 0;i<employeeIdList.length;i++) {
+			employee employee = employeeMapper.selectByPrimaryKey(Integer.valueOf(employeeIdList[i]));
+			if(employee == null || employee.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"))) {
+				throw new BusiException("该职工不存在");
+			}
 		}
 		customer customer = new customer();
 		customer.setBirth(data.getString("birth"));
-		customer.setDateTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
-		customer.setEmployeeId(data.getInteger("employeeId"));
+		customer.setDateTime(now);
+		customer.setEmployeeIdList(data.getString("employeeId")+"-");
 		customer.setHabit(data.getString("habit"));
 		customer.setName(data.getString("name"));
 		customer.setNote(data.getString("note"));
 		customer.setPhone(data.getString("phone"));
 		customer.setPlan(data.getString("plan"));
 		customer.setSex(data.getString("sex"));
+		customer.setOperatorId(data.getInteger("operatorId"));
 		if(data.getString("pic") != null) {
 			customer.setPic(data.getString("pic"));
 		}else {
@@ -92,20 +104,55 @@ public class CustomerServiceImpl implements CustomerService {
 		}
 		customer.setMoney(data.getInteger("money"));
 		customer.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交",data.getInteger("companyId")));
+		customer.setActiveConsumeTime(now);
+		customer.setActiveServiceTime(now);
 		int count = customerMapper.insertSelective(customer);
 		if(count == 0) {
 			throw new BusiException("插入customer表失败");
 		}
-		data.put("type", "新增顾客");
-		data.put("customerId", customer.getId());
-		CustomerPerformanceService.addCustomerPerformance(data);
+		
+		customerPerformance customerPerformance = new customerPerformance();
+		customerPerformance.setCustomerId(customer.getId());
+		customerPerformance.setDateTime(now);
+		customerPerformance.setEmployeeIdList(data.getString("employeeId")+"-");
+		customerPerformance.setMoney(data.getInteger("money"));
+		customerPerformance.setNote(data.getString("note"));
+		customerPerformance.setState(stateWTJ);
+		customerPerformance.setOperatorId(data.getInteger("operatorId"));
+		customerPerformance.setType(dictMapper.selectByCodeAndStateName(CUSTOMERPERFORMAN_TYPE, "新增顾客", data.getInteger("companyId")));
+		count = customerPerformanceMapper.insertSelective(customerPerformance);
+		if(count == 0) {
+			throw new BusiException("插入customerPerfoemance表失败");
+		}
+		JSONObject dataJSonDynamic = new JSONObject();
+		dataJSonDynamic.put("note", data.getString("note"));
+		dataJSonDynamic.put("name", "新增顾客");
+		dataJSonDynamic.put("id", customerPerformance.getId());
+		dataJSonDynamic.put("employeeId", data.getInteger("operatorId"));
+		dataJSonDynamic.put("companyId", data.getInteger("companyId"));
+		stateList.clear();
+		stateList.add(stateWSX);
+		dataJSonDynamic.put("rank", rankMapper.selectByName("新增顾客",data.getInteger("companyId"),stateList));
+		int dynamicId = DynamicService.writeDynamic(dataJSonDynamic);
+
+		JSONObject dataJSonApply = new JSONObject();
+		dataJSonApply.put("employeeId", data.getInteger("operatorId"));
+		dataJSonApply.put("dynamicId", dynamicId);
+		dataJSonApply.put("companyId", data.getInteger("companyId"));
+		ApplyRankService.addApplyRank(dataJSonApply);
+		
+		customerPerformance = customerPerformanceMapper.selectByPrimaryKey(customerPerformance.getId());
+		if(customerPerformance.getState() != stateCG) {
+			data.put("customerPerformanceId", customerPerformance.getId());
+			CustomerPerformanceService.affirmCustomerPerformance(data);
+		}
 		return customer.getId();
 	}
 
 	@Override
 	public Integer modifyCustomer(JSONObject data) {
 		customer customer = customerMapper.selectByPrimaryKey(data.getInteger("customerId"));
-		if(data.getInteger("employeeId") != customer.getEmployeeId()) {
+		if(customer.getOperatorId() != data.getInteger("operatorId") && !customer.getEmployeeIdList().contains(data.getInteger("operatorId")+"-")) {
 			throw new BusiException("该客户不属于该员工");
 		}
 		customer.setBirth(data.getString("brith"));
@@ -116,9 +163,35 @@ public class CustomerServiceImpl implements CustomerService {
 		customer.setPlan(data.getString("plan"));
 		customer.setSex(data.getString("sex"));
 		customer.setPic(data.getString("pic"));
+		customer.setEmployeeIdList(data.getString("employeeId")+"-");
 		int count = customerMapper.updateByPrimaryKeySelective(customer);
 		if(count == 0) {
 			throw new BusiException("更新customer表失败");
+		}
+		customerPerformance customerPerformance = customerPerformanceMapper.selectByCustomerId(customer.getId());
+		customerPerformance.setEmployeeIdList(data.getString("employeeId")+"-");
+		count = customerPerformanceMapper.updateByPrimaryKeySelective(customerPerformance);
+		if(count == 0) {
+			throw new BusiException("更新customerPerformance表失败");
+		}
+		return customer.getId();
+	}
+	@Override
+	public Integer modifyCustomerPrincipal(JSONObject data) {
+		customer customer = customerMapper.selectByPrimaryKey(data.getInteger("customerId"));
+		if(!customer.getEmployeeIdList().contains(String.valueOf(data.getInteger("operatorId")))) {
+			throw new BusiException("该客户不属于该员工");
+		}
+		customer.setEmployeeIdList(data.getString("employeeId")+"-");
+		int count = customerMapper.updateByPrimaryKeySelective(customer);
+		if(count == 0) {
+			throw new BusiException("更新customer表失败");
+		}
+		customerPerformance customerPerformance = customerPerformanceMapper.selectByCustomerId(customer.getId());
+		customerPerformance.setEmployeeIdList(data.getString("employeeId")+"-");
+		count = customerPerformanceMapper.updateByPrimaryKeySelective(customerPerformance);
+		if(count == 0) {
+			throw new BusiException("更新customerPerformance表失败");
 		}
 		return customer.getId();
 	}
@@ -155,7 +228,7 @@ public class CustomerServiceImpl implements CustomerService {
 			customer.put("name", c.getName());
 			customer.put("phone", c.getPhone());
 			customer.put("birth", c.getBirth());
-			customer.put("employeeName", employeeMapper.selectByPrimaryKey(c.getEmployeeId()).getName());
+			customer.put("employeeName", employeeMapper.selectByPrimaryKey(employeeId).getName());
 			jsonObjects.add(customer);
 		}
 		int total = customerMapper.selectByEmployeeIdCount(employeeId,stateList,searchString);
@@ -170,9 +243,15 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public List<JSONObject> getCustomerByEmployeeList(JSONObject data) {
 		Integer employeeId = data.getInteger("employeeId");
-		Integer state = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
+		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
+		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", data.getInteger("companyId"));
+		Integer stateSHZ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", data.getInteger("companyId"));
 		List<Integer> stateList = new ArrayList<Integer>();
-		stateList.add(state);
+		stateList.add(stateCG);
+		stateList.add(stateWTJ);
+		stateList.add(stateWSH);
+		stateList.add(stateSHZ);
 		List<customer> customers = customerMapper.selectByEmployeeIdList(employeeId,stateList);
 		List<JSONObject> jsonObjects = new ArrayList<JSONObject>();
 		for(customer c : customers) {
@@ -260,7 +339,7 @@ public class CustomerServiceImpl implements CustomerService {
 					customer.put("pic", c.getPic());
 					customer.put("name", c.getName());
 					customer.put("phone", c.getPhone());
-					customer.put("employeeName", employeeMapper.selectByPrimaryKey(c.getEmployeeId()).getName());
+					customer.put("employeeName", employeeMapper.selectByPrimaryKey(employeeId).getName());
 					jsonObjects.add(customer);
 				}
 			}else {
@@ -269,7 +348,7 @@ public class CustomerServiceImpl implements CustomerService {
 				customer.put("pic", c.getPic());
 				customer.put("name", c.getName());
 				customer.put("phone", c.getPhone());
-				customer.put("employeeName", employeeMapper.selectByPrimaryKey(c.getEmployeeId()).getName());
+				customer.put("employeeName", employeeMapper.selectByPrimaryKey(employeeId).getName());
 				jsonObjects.add(customer);
 			}
 		}
@@ -320,7 +399,7 @@ public class CustomerServiceImpl implements CustomerService {
 					customer.put("name", c.getName());
 					customer.put("phone", c.getPhone());
 					customer.put("dateTime", TimeFormatUtil.stringToTimeStamp(c.getActiveConsumeTime()));
-					customer.put("employeeName", employeeMapper.selectByPrimaryKey(c.getEmployeeId()).getName());
+					customer.put("employeeName", employeeMapper.selectByPrimaryKey(employeeId).getName());
 					jsonObjects.add(customer);
 				}
 			}else {
@@ -329,7 +408,7 @@ public class CustomerServiceImpl implements CustomerService {
 				customer.put("pic", c.getPic());
 				customer.put("name", c.getName());
 				customer.put("phone", c.getPhone());
-				customer.put("employeeName", employeeMapper.selectByPrimaryKey(c.getEmployeeId()).getName());
+				customer.put("employeeName", employeeMapper.selectByPrimaryKey(employeeId).getName());
 				customer.put("dateTime", TimeFormatUtil.stringToTimeStamp(c.getActiveConsumeTime()));
 				jsonObjects.add(customer);
 			}
@@ -380,7 +459,7 @@ public class CustomerServiceImpl implements CustomerService {
 					customer.put("pic", c.getPic());
 					customer.put("name", c.getName());
 					customer.put("phone", c.getPhone());
-					customer.put("employeeName", employeeMapper.selectByPrimaryKey(c.getEmployeeId()).getName());
+					customer.put("employeeName", employeeMapper.selectByPrimaryKey(employeeId).getName());
 					customer.put("dateTime", TimeFormatUtil.stringToTimeStamp(c.getActiveServiceTime()));
 					jsonObjects.add(customer);
 				}
@@ -390,7 +469,7 @@ public class CustomerServiceImpl implements CustomerService {
 				customer.put("pic", c.getPic());
 				customer.put("name", c.getName());
 				customer.put("phone", c.getPhone());
-				customer.put("employeeName", employeeMapper.selectByPrimaryKey(c.getEmployeeId()).getName());
+				customer.put("employeeName", employeeMapper.selectByPrimaryKey(employeeId).getName());
 				customer.put("dateTime", TimeFormatUtil.stringToTimeStamp(c.getActiveServiceTime()));
 				jsonObjects.add(customer);
 			}
@@ -442,6 +521,12 @@ public class CustomerServiceImpl implements CustomerService {
 		serviceTypeJsonObject.put("count", total);
 		serviceTypeList.add(serviceTypeJsonObject);
 		
+		serviceTypeJsonObject = new JSONObject();
+		total = customerMapper.selectByUnServiceQtrCount(employeeId,stateList);
+		serviceTypeJsonObject.put("title", "三月未消费");
+		serviceTypeJsonObject.put("count", total);
+		serviceTypeList.add(serviceTypeJsonObject);
+		
 		return serviceTypeList;
 		
 	}
@@ -474,7 +559,7 @@ public class CustomerServiceImpl implements CustomerService {
 					customer.put("pic", c.getPic());
 					customer.put("name", c.getName());
 					customer.put("phone", c.getPhone());
-					customer.put("employeeName", employeeMapper.selectByPrimaryKey(c.getEmployeeId()).getName());
+					customer.put("employeeName", employeeMapper.selectByPrimaryKey(employeeId).getName());
 					customer.put("dateTime", TimeFormatUtil.stringToTimeStamp(c.getActiveServiceTime()));
 					jsonObjects.add(customer);
 				}
@@ -484,7 +569,7 @@ public class CustomerServiceImpl implements CustomerService {
 				customer.put("pic", c.getPic());
 				customer.put("name", c.getName());
 				customer.put("phone", c.getPhone());
-				customer.put("employeeName", employeeMapper.selectByPrimaryKey(c.getEmployeeId()).getName());
+				customer.put("employeeName", employeeMapper.selectByPrimaryKey(employeeId).getName());
 				customer.put("dateTime", TimeFormatUtil.stringToTimeStamp(c.getActiveServiceTime()));
 				jsonObjects.add(customer);
 			}
@@ -501,11 +586,21 @@ public class CustomerServiceImpl implements CustomerService {
 		return page;
 	}
 	public CustomerDTO sCustomerDTO(customer customer) throws ParseException {
-		employee employee = employeeMapper.selectByPrimaryKey(customer.getEmployeeId());
-		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", employee.getCompanyId());
-		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", employee.getCompanyId());
-		Integer stateSHZ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", employee.getCompanyId());
-		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", employee.getCompanyId());
+		employee opEmployee = employeeMapper.selectByPrimaryKey(customer.getOperatorId());
+		Integer companyId = opEmployee.getCompanyId();
+		List<JSONObject> employeeList = new ArrayList<>();
+		String[] employeeIdList = customer.getEmployeeIdList().split("-");
+		for(int i = 0;i<employeeIdList.length;i++) {
+			JSONObject employeeJson = new JSONObject();
+			employee employee = employeeMapper.selectByPrimaryKey(Integer.valueOf(employeeIdList[i]));
+			employeeJson.put("name", employee.getName());
+			employeeJson.put("id", employee.getId());
+			employeeList.add(employeeJson);
+		}
+		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交",companyId);
+		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核",companyId);
+		Integer stateSHZ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", companyId);
+		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", companyId);
 		List<Integer> stateList = new ArrayList<Integer>();
 		stateList.add(stateCG);
 		stateList.add(stateSHZ);
@@ -516,8 +611,9 @@ public class CustomerServiceImpl implements CustomerService {
 		customerDTO.setProjectNum(projectList.size());
 		customerDTO.setBirth(customer.getBirth());
 		customerDTO.setDateTime(TimeFormatUtil.stringToTimeStamp(customer.getDateTime()));
-		customerDTO.setEmployeeId(customer.getEmployeeId());
-		customerDTO.setEmployeeName(employeeMapper.selectByPrimaryKey(customer.getEmployeeId()).getName());
+		customerDTO.setEmployeeList(employeeList);
+		customerDTO.setOperatorId(opEmployee.getId());
+		customerDTO.setOperatorName(opEmployee.getName());
 		customerDTO.setHabit(customer.getHabit());
 		customerDTO.setId(customer.getId());
 		customerDTO.setMoney(customer.getMoney());
@@ -527,7 +623,7 @@ public class CustomerServiceImpl implements CustomerService {
 		customerDTO.setPic(customer.getPic());
 		customerDTO.setPlan(customer.getPlan());
 		customerDTO.setSex(customer.getSex());
-		customerDTO.setState(dictMapper.selectByCodeAndStateCode(APPLY_FLOW, customer.getState(),employee.getCompanyId()));
+		customerDTO.setState(dictMapper.selectByCodeAndStateCode(APPLY_FLOW, customer.getState(),companyId));
 		return customerDTO;
 	}
 	@Override

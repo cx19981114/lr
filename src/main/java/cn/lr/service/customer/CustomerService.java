@@ -36,4 +36,6 @@ public interface CustomerService {
 	public Page<JSONObject> getCustomerByUnService(JSONObject data) throws ParseException;
 	
 	public List<JSONObject> getCustomerServiceType(JSONObject data);
+	
+	public Integer modifyCustomerPrincipal(JSONObject data);
 }

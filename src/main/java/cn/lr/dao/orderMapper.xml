@@ -20,6 +20,10 @@
     <result column="orderState" jdbcType="INTEGER" property="orderState" />
     <result column="applyOrderState" jdbcType="INTEGER" property="applyOrderState" />
   </resultMap>
+  <resultMap id="StatisticResultMap" type="cn.lr.po.statisticType">
+    <result column="monDate" jdbcType="VARCHAR" property="monDate" />
+    <result column="money" jdbcType="INTEGER" property="money" />
+  </resultMap>
   <sql id="Base_Column_List">
     id, customerId, employeeId, customerProjectId, projectId, date, startTime, dateTime, 
     actStartTime, actEndTime, note, evaluate, pic, projectNum, applyState, orderState,applyOrderState
@@ -365,6 +369,9 @@
 	         #{item,jdbcType=INTEGER}
 	    </foreach>
     </if> 
+    <if test = "date != null">
+    	and dateTime like concat(#{date},'%')
+    </if>
     order by date,startTime limit #{page},#{size}
   </select>
    <select id="selectByEmployeeIdHistoryCount" resultType="Integer">
@@ -383,6 +390,9 @@
 	         #{item,jdbcType=INTEGER}
 	    </foreach>
     </if> 
+    <if test = "date != null">
+    	and dateTime like concat(#{date},'%')
+    </if>
   </select>
    <select id="selectByCustomerIdHistory" resultMap="BaseResultMap">
     select 
@@ -401,6 +411,9 @@
 	         #{item,jdbcType=INTEGER}
 	    </foreach>
     </if> 
+    <if test = "date != null">
+    	and dateTime like concat(#{date},'%')
+    </if>
     order by actStartTime desc limit #{page},#{size}
   </select>
    <select id="selectByCustomerIdHistoryCount" resultType="Integer">
@@ -418,7 +431,10 @@
 	    <foreach collection="orderState" item="item" open="(" close=")" index="index" separator=",">
 	         #{item,jdbcType=INTEGER}
 	    </foreach>
-    </if> 
+    </if>
+    <if test = "date != null">
+    	and dateTime like concat(#{date},'%')
+    </if>
   </select>
    <select id="selectByProjectIdHistory" resultMap="BaseResultMap">
     select 
@@ -732,5 +748,41 @@
 	         #{item,jdbcType=INTEGER}
 	    </foreach>
     </if>
+  </select>
+   <select id="selectByCustomerHistory"  resultMap="StatisticResultMap">
+  select date_format(dateTime ,'%Y-%m') as monDate,count(*) as money
+  from tb_order 
+  where customerId = #{customerId,jdbcType=INTEGER}
+   <if test="applyState != null">
+    	and applyState in
+	    <foreach collection="applyState" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+   <if test="orderState != null">
+    	and orderState in
+	    <foreach collection="orderState" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    group by date_format(dateTime ,'%Y-%m')
+  </select>
+   <select id="selectByEmployeeHistory"  resultMap="StatisticResultMap">
+  select date_format(dateTime ,'%Y-%m') as monDate,count(*) as money
+  from tb_order 
+  where employeeId = #{employeeId,jdbcType=INTEGER}
+   <if test="applyState != null">
+    	and applyState in
+	    <foreach collection="applyState" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    <if test="orderState != null">
+    	and orderState in
+	    <foreach collection="orderState" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if> 
+    group by date_format(dateTime ,'%Y-%m')
   </select>
 </mapper>

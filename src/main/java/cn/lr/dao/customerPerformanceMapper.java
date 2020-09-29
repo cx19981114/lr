@@ -51,4 +51,6 @@ public interface customerPerformanceMapper {
     List<customerPerformance> selectByCustomerComsumerList(@Param("customerId")Integer customerId,@Param("date")String date,@Param("state") List<Integer> state,@Param("page") Integer page,@Param("size") Integer size);
     
     int selectByCustomerComsumerListCount(@Param("customerId")Integer customerId,@Param("date")String date,@Param("state") List<Integer> state);
+    
+    customerPerformance selectByCustomerId(Integer customerId);
 }

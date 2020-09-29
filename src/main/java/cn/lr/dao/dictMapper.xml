@@ -111,7 +111,6 @@
      <if test="stateName != null">
         and stateName = #{stateName}
      </if>  
-     and companyId = #{companyId};
   </select>
   
    <select id="selectByCodeAndStateCode" resultType="string">
@@ -121,12 +120,11 @@
     <if test="stateCode != null">
         and stateCode = #{stateCode}
      </if> 
-     and companyId = #{companyId};
   </select>
   
    <select id="selectByName" resultMap="BaseResultMap">
     select  <include refid="Base_Column_List" />
     from tb_dict
-    where name = #{name} and companyId = #{companyId};
+    where name = #{name};
   </select>
 </mapper>
