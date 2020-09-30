@@ -26,4 +26,8 @@ public interface companyMapper {
     List<company> selectCompanyCondition(@Param("search")String search,@Param("page") Integer page,@Param("size") Integer size);
    
     int selectCompanyConditionCount(@Param("search")String search);
+    
+    List<company> selectCompanyConditionMore(@Param("search")String search,@Param("id")Integer id,@Param("state")String state,@Param("page") Integer page,@Param("size") Integer size);
+    
+    int selectCompanyConditionCountMore(@Param("search")String search,@Param("id")Integer id,@Param("state")String state);
 }

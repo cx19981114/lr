@@ -11,16 +11,20 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSONObject;
 
+import cn.lr.dao.companyMapper;
 import cn.lr.dao.dictMapper;
 import cn.lr.dao.dynamicMapper;
 import cn.lr.dao.employeeMapper;
 import cn.lr.dao.employeeTaskMapper;
+import cn.lr.dao.postMapper;
 import cn.lr.dao.postTaskMapper;
 import cn.lr.dao.taskMapper;
 import cn.lr.dto.Page;
 import cn.lr.exception.BusiException;
+import cn.lr.po.company;
 import cn.lr.po.dynamic;
 import cn.lr.po.employee;
+import cn.lr.po.post;
 import cn.lr.po.postTask;
 import cn.lr.po.task;
 import cn.lr.service.company.TaskService;
@@ -44,6 +48,10 @@ public class TaskServiceImpl implements TaskService {
 	dynamicMapper dynamicMapper;
 	@Autowired
 	employeeMapper employeeMapper;
+	@Autowired
+	companyMapper companyMapper;
+	@Autowired
+	postMapper postMapper;
 
 	@Value("${data.type}")
 	private String DATA_TYPE;
@@ -377,36 +385,53 @@ public class TaskServiceImpl implements TaskService {
 
 	public void AddTaskByExcel(JSONObject data) throws Exception {
 		Workbook rwb = Workbook.getWorkbook(new File(ACTPATH + data.getString("file")));
+//		Workbook rwb = Workbook.getWorkbook(new File("C:\\Users\\23847\\eclipse-workspace\\lr\\upload"+data.getString("file")));
 		Sheet rs = rwb.getSheet("task");// 或者rwb.getSheet(0)
 		int clos = rs.getColumns();// 得到所有的列
 		int rows = rs.getRows();// 得到所有的行
 		System.out.println(clos + " rows:" + rows);
+		String companyName = rs.getCell(1, 0).getContents();
+		company company = new company();
+		company.setName(companyName);
+		company = companyMapper.selectByName(company);
+		if(company == null) {
+			throw new BusiException("公司名称输入错误");
+		}
 		for (int i = 1; i < rows; i++) {
 			for (int j = 0; j < clos; j++) {
-				System.out.println(j);
-				if(rs.getCell(0, i).getContents().equals("")) {
-					break;
+				String total = rs.getCell(j++, i).getContents();
+				if("岗位名称".equals(total)) {
+					String postName = rs.getCell(j++, i).getContents();
+					Integer post = postMapper.selectByNameAndCompany(postName, company.getId(), null);
+					if(post == null) {
+						throw new BusiException("岗位名称输入格式错误");
+					}
+					i++;
+					for (int p = i; p < rows; p++,i++) {
+						if(rs.getCell(0, i).getContents().equals("")) {
+							break;
+						}
+						for (int q = 0; q < clos; q++) {
+							String step = rs.getCell(q++, p).getContents();
+							String prevType = rs.getCell(q++, p).getContents();
+							String type = rs.getCell(q++, p).getContents();
+							String name = rs.getCell(q++, p).getContents();
+							String content = rs.getCell(q++, p).getContents();
+							String rank = rs.getCell(q++, p).getContents();
+							JSONObject dataJsonObject = new JSONObject();
+							dataJsonObject.put("companyId", company.getId());
+							dataJsonObject.put("postIdList", post);
+							dataJsonObject.put("step", Integer.valueOf(step));
+							dataJsonObject.put("prevType", prevType);
+							dataJsonObject.put("type", type);
+							dataJsonObject.put("name", name);
+							dataJsonObject.put("content", content);
+							dataJsonObject.put("rank", Integer.valueOf(rank));
+							this.addTask(dataJsonObject);
+						}
+						
+					}
 				}
-				String companyId = rs.getCell(j++, i).getContents();
-				String step = rs.getCell(j++, i).getContents();
-				String prevType = rs.getCell(j++, i).getContents();
-				String type = rs.getCell(j++, i).getContents();
-				String name = rs.getCell(j++, i).getContents();
-				String content = rs.getCell(j++, i).getContents();
-				String rank = rs.getCell(j++, i).getContents();
-				String postIdList = rs.getCell(j++, i).getContents();
-				System.out.println(j);
-				JSONObject dataJsonObject = new JSONObject();
-				dataJsonObject.put("companyId", Integer.valueOf(companyId));
-				dataJsonObject.put("step", Integer.valueOf(step));
-				dataJsonObject.put("prevType", prevType);
-				dataJsonObject.put("type", type);
-				dataJsonObject.put("name", name);
-				dataJsonObject.put("content", content);
-				dataJsonObject.put("rank", Integer.valueOf(rank));
-				dataJsonObject.put("postIdList", Integer.valueOf(postIdList));
-				this.addTask(dataJsonObject);
-
 			}
 		}
 	}

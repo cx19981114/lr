@@ -20,4 +20,6 @@ public interface CompanyService {
 	public List<JSONObject> getTimeList(JSONObject data);
 	
 	public Page<company> getCompanyList(JSONObject data);
+	
+	public Page<company> getCompanyListCondition(JSONObject data);
 }

@@ -189,7 +189,7 @@ public class TaskManagement {
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(),session.getId());
 		} catch (Exception e) {
-			return ResultJsonUtil.toJsonString(404, null, "系统未知错误",session.getId());
+			return ResultJsonUtil.toJsonString(404, e.getMessage(), "系统未知错误",session.getId());
 		}finally {
 			LoggerUtil.LOGGER.info("-------------end 根据表格导入任务--------------------");
 		}

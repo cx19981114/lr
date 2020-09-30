@@ -120,4 +120,18 @@ public class CompanyServiceImpl implements CompanyService {
 		page.setList(company);
 		return page;
 	}
+	public Page<company> getCompanyListCondition(JSONObject data){
+		String search = data.getString("search");
+		Integer id = data.getInteger("id");
+		String state = data.getString("state");
+		Integer pageNum = data.getInteger("pageNum");
+		List<company> company = companyMapper.selectCompanyConditionMore(search,id,state,(pageNum-1)*PAGESIZE, PAGESIZE);
+		int total = companyMapper.selectCompanyConditionCountMore(search,id,state);
+		Page<company> page = new Page<company>();
+		page.setPageNum(pageNum);
+		page.setPageSize(PAGESIZE);
+		page.setTotal(total);
+		page.setList(company);
+		return page;
+	}
 }
