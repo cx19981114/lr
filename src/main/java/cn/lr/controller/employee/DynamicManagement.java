@@ -34,7 +34,9 @@ public class DynamicManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			dynamic dynamic = DynamicService.getDynamic(dataJson);
 			return ResultJsonUtil.toJsonString(200, dynamic, "获取动态成功", session.getId());
@@ -53,7 +55,9 @@ public class DynamicManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Page<DynamicDTO> dynamics = DynamicService.getDynamicByCheck(dataJson);
 			return ResultJsonUtil.toJsonString(200, dynamics, "根据审核人获取申请成功", session.getId());
@@ -72,7 +76,9 @@ public class DynamicManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Page<DynamicDTO> dynamics = DynamicService.getDynamicByEmployee(dataJson);
 			return ResultJsonUtil.toJsonString(200, dynamics, "根据职员获取申请成功", session.getId());
@@ -91,7 +97,9 @@ public class DynamicManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Page<DynamicDTO> dynamics = DynamicService.getDynamicByCompany(dataJson);
 			return ResultJsonUtil.toJsonString(200, dynamics, "根据公司获取动态成功", session.getId());
@@ -110,7 +118,9 @@ public class DynamicManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Page<DynamicDTO> dynamics = DynamicService.getDynamicByCheckHistory(dataJson);
 			return ResultJsonUtil.toJsonString(200, dynamics, "根据审核人获取申请历史成功", session.getId());
@@ -129,7 +139,9 @@ public class DynamicManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Integer idInteger = DynamicService.setStateAbnormal(dataJson);
 			return ResultJsonUtil.toJsonString(200, idInteger, "获取异常申诉成功", session.getId());
@@ -148,7 +160,9 @@ public class DynamicManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Page<DynamicDTO> dynamics = DynamicService.getAbnormalDynamic(dataJson);
 			return ResultJsonUtil.toJsonString(200, dynamics, "获取异常申诉列表成功", session.getId());
@@ -167,7 +181,9 @@ public class DynamicManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Integer idInteger = DynamicService.setStateAgain(dataJson);
 			return ResultJsonUtil.toJsonString(200, idInteger, "将申请重返审核列表成功", session.getId());

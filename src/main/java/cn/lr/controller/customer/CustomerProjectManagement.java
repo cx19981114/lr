@@ -40,7 +40,9 @@ public class CustomerProjectManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			CustomerService.getCustomer(dataJson);
 			ProjectService.getProject(dataJson);
@@ -61,7 +63,9 @@ public class CustomerProjectManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			CustomerService.getCustomer(dataJson);
 			List<JSONObject> projects= CustomerProjectService.getCustomerProjectByCustomer(dataJson);
@@ -81,7 +85,9 @@ public class CustomerProjectManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			CustomerProjectService.getCustomerProject(dataJson);
 			int id = CustomerProjectService.deleteCustomerProject(dataJson);
@@ -101,7 +107,9 @@ public class CustomerProjectManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			CustomerProjectService.getCustomerProject(dataJson);
 			int id = CustomerProjectService.annulCustomerProject(dataJson);
@@ -121,7 +129,9 @@ public class CustomerProjectManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Integer CustomerProjects = CustomerProjectService.affirmCustomerProject(dataJson);
 			return ResultJsonUtil.toJsonString(200, CustomerProjects, "确认提交服务顾客项目信息成功", session.getId());
@@ -140,7 +150,9 @@ public class CustomerProjectManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Page<CustomerProjectDTO> customerProjectDTOs = CustomerProjectService.getCustomerProjectByEmployee(dataJson);
 			return ResultJsonUtil.toJsonString(200, customerProjectDTOs, " 根据职员获取项目信息成功", session.getId());
@@ -159,7 +171,9 @@ public class CustomerProjectManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			JSONObject customerProjectDTOs = CustomerProjectService.getCustomerProjectDetail(dataJson);
 			return ResultJsonUtil.toJsonString(200, customerProjectDTOs, " 根据项目获取项目信息成功", session.getId());

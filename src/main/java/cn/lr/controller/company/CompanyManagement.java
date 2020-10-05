@@ -36,7 +36,9 @@ public class CompanyManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			int id = CompanyService.addCompany(dataJson);
 			return ResultJsonUtil.toJsonString(200, null, "添加公司信息成功",session.getId());
@@ -55,7 +57,9 @@ public class CompanyManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			CompanyService.getCompany(dataJson);
 			int id = CompanyService.modifyCompany(dataJson);
@@ -75,7 +79,9 @@ public class CompanyManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(),session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			CompanyService.getCompany(dataJson);
 			int id = CompanyService.deleteCompany(dataJson);
@@ -95,7 +101,9 @@ public class CompanyManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			company company = CompanyService.getCompany(dataJson);
 			return ResultJsonUtil.toJsonString(200, company, "获取公司信息成功",session.getId());
@@ -114,7 +122,9 @@ public class CompanyManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			CompanyService.getCompany(dataJson);
 			List<JSONObject> time = CompanyService.getTimeList(dataJson);
@@ -134,7 +144,9 @@ public class CompanyManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Page<company> companies = CompanyService.getCompanyList(dataJson);
 			return ResultJsonUtil.toJsonString(200, companies, "获取所有公司成功",session.getId());
@@ -153,7 +165,9 @@ public class CompanyManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Page<company> companies = CompanyService.getCompanyListCondition(dataJson);
 			return ResultJsonUtil.toJsonString(200, companies, "根据条件获取所有公司成功",session.getId());

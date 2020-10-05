@@ -25,4 +25,6 @@ public interface PostService {
 	public PostDTO sePostDTO(post post);
 	
 	public List<JSONObject> getTaskByPostList(JSONObject data);
+	
+	public Page<PostDTO> getPostList(JSONObject data);
 }

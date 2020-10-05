@@ -34,7 +34,9 @@ public class CustomerManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			int id = CustomerService.addCustomer(dataJson);
 			return ResultJsonUtil.toJsonString(200, id, "添加客户信息成功",session.getId());
@@ -53,7 +55,9 @@ public class CustomerManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			CustomerService.getCustomer(dataJson);
 			int id = CustomerService.modifyCustomer(dataJson);
@@ -73,7 +77,9 @@ public class CustomerManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			CustomerService.getCustomer(dataJson);
 			int id = CustomerService.modifyCustomerPrincipal(dataJson);
@@ -93,7 +99,9 @@ public class CustomerManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			CustomerDTO customerDTO = CustomerService.getCustomer(dataJson);
 			return ResultJsonUtil.toJsonString(200, customerDTO, "获取客户信息成功",session.getId());
@@ -112,7 +120,9 @@ public class CustomerManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Page<JSONObject> customers = CustomerService.getCustomerByEmployee(dataJson);
 			return ResultJsonUtil.toJsonString(200, customers, "根据职员获取客户信息成功",session.getId());
@@ -131,7 +141,9 @@ public class CustomerManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			List<JSONObject> customers = CustomerService.getCustomerByEmployeeList(dataJson);
 			return ResultJsonUtil.toJsonString(200, customers, "根据职员获取客户部分信息成功",session.getId());
@@ -150,7 +162,9 @@ public class CustomerManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			List<JSONObject> customers = CustomerService.getNewCustomerTypeByEmployee(dataJson);
 			return ResultJsonUtil.toJsonString(200, customers, "根据职员获取客户类型信息成功",session.getId());
@@ -169,7 +183,9 @@ public class CustomerManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Page<JSONObject> customers = CustomerService.getNewCustomerByEmployeeTime(dataJson);
 			return ResultJsonUtil.toJsonString(200, customers, "根据职员和时间段获取客户信息成功",session.getId());
@@ -188,7 +204,9 @@ public class CustomerManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Page<JSONObject> customers = CustomerService.getCustomerByService(dataJson);
 			return ResultJsonUtil.toJsonString(200, customers, "根据职员获取最近服务顾客成功",session.getId());
@@ -207,7 +225,9 @@ public class CustomerManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Page<JSONObject> customers = CustomerService.getCustomerByConsume(dataJson);
 			return ResultJsonUtil.toJsonString(200, customers, "根据职员获取最近消费顾客成功",session.getId());
@@ -226,7 +246,9 @@ public class CustomerManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Page<JSONObject> customers = CustomerService.getCustomerByUnService(dataJson);
 			return ResultJsonUtil.toJsonString(200, customers, "根据职员获取最经三个月未服务客户成功",session.getId());
@@ -245,7 +267,9 @@ public class CustomerManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			JSONObject chart = CustomerService.getCustomerChart(dataJson);
 			return ResultJsonUtil.toJsonString(200, chart, "根据职员获取活跃客户图表成功",session.getId());
@@ -264,7 +288,9 @@ public class CustomerManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			List<JSONObject> serviceType = CustomerService.getCustomerServiceType(dataJson);
 			return ResultJsonUtil.toJsonString(200, serviceType, "根据职员获取活跃客户类型成功",session.getId());

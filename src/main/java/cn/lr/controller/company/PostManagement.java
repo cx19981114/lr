@@ -37,7 +37,9 @@ public class PostManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}, companyId : {}", session.getId(), session.getAttribute("employeeId"),session.getAttribute("comapnyId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			CompanyService.getCompany(dataJson);
 			int id = PostService.addPost(dataJson);
@@ -57,7 +59,9 @@ public class PostManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}, companyId : {}", session.getId(), session.getAttribute("employeeId"),session.getAttribute("comapnyId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			CompanyService.getCompany(dataJson);
 			PostService.getPost(dataJson);
@@ -78,7 +82,9 @@ public class PostManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}, companyId : {}", session.getId(), session.getAttribute("employeeId"),session.getAttribute("comapnyId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			CompanyService.getCompany(dataJson);
 			PostService.getPost(dataJson);
@@ -101,10 +107,34 @@ public class PostManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}, companyId : {}", session.getId(), session.getAttribute("employeeId"),session.getAttribute("comapnyId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			CompanyService.getCompany(dataJson);
 			Page<post> posts = PostService.getPostByCompany(dataJson);
+			return ResultJsonUtil.toJsonString(200, posts, "根据公司获取岗位信息成功",session.getId());
+		} catch (BusiException e) {
+			return ResultJsonUtil.toJsonString(101, null, e.getMessage(),session.getId());
+		} catch (Exception e) {
+			return ResultJsonUtil.toJsonString(404, null, "系统未知错误",session.getId());
+		}finally {
+			LoggerUtil.LOGGER.info("-------------end 根据公司获得岗位信息--------------------");
+		}
+	}
+	@PostMapping("/getPostListDTO")
+	@ResponseBody
+	public String getPostListDTO(@RequestBody String data, HttpSession session) {
+		LoggerUtil.LOGGER.info("-------------enter 根据公司获得岗位信息--------------------");
+		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}, companyId : {}", session.getId(), session.getAttribute("employeeId"),session.getAttribute("comapnyId"));
+		LoggerUtil.LOGGER.debug("data : {}", data);
+		JSONObject dataJson = JSON.parseObject(data);
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
+		try {
+			CompanyService.getCompany(dataJson);
+			Page<PostDTO> posts = PostService.getPostList(dataJson);
 			return ResultJsonUtil.toJsonString(200, posts, "根据公司获取岗位信息成功",session.getId());
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(),session.getId());
@@ -121,7 +151,9 @@ public class PostManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}, companyId : {}", session.getId(), session.getAttribute("employeeId"),session.getAttribute("comapnyId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			CompanyService.getCompany(dataJson);
 			PostDTO post = PostService.getPost(dataJson);
@@ -141,7 +173,9 @@ public class PostManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}, companyId : {}", session.getId(), session.getAttribute("employeeId"),session.getAttribute("comapnyId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			CompanyService.getCompany(dataJson);
 			List<JSONObject> post = PostService.getPostTypeAndCount(dataJson);
@@ -161,7 +195,9 @@ public class PostManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}, companyId : {}", session.getId(), session.getAttribute("employeeId"),session.getAttribute("comapnyId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			PostService.getPost(dataJson);
 			List<JSONObject> post = PostService.getTaskByPostList(dataJson);

@@ -35,7 +35,9 @@ public class EmployeeTaskMangement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			//返回的是申请列表的Id
 			int id = EmployeeTaskService.addEmployeeTask(dataJson);
@@ -56,7 +58,9 @@ public class EmployeeTaskMangement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			int id = EmployeeTaskService.deleteEmployeeTask(dataJson);
 			return ResultJsonUtil.toJsonString(200, null, "删除任务积分成功", session.getId());
@@ -75,7 +79,9 @@ public class EmployeeTaskMangement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			int id = EmployeeTaskService.annulEmployeeTask(dataJson);
 			return ResultJsonUtil.toJsonString(200, null, "撤销任务积分成功", session.getId());
@@ -94,7 +100,9 @@ public class EmployeeTaskMangement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Page<task> employeeTasks = EmployeeTaskService.getTaskByEmployee(dataJson);
 			return ResultJsonUtil.toJsonString(200, employeeTasks, "根据职员获取任务积分信息成功", session.getId());
@@ -113,7 +121,9 @@ public class EmployeeTaskMangement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			List<JSONObject> employeeTasks = EmployeeTaskService.getTaskByEmployeeList(dataJson);
 			return ResultJsonUtil.toJsonString(200, employeeTasks, "根据职员获取任务积分信息成功", session.getId());
@@ -132,7 +142,9 @@ public class EmployeeTaskMangement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			JSONObject employeeTaskDTO = EmployeeTaskService.getEmployeeTask(dataJson);
 			return ResultJsonUtil.toJsonString(200, employeeTaskDTO, "根据职员获取任务积分信息详细成功", session.getId());
@@ -151,7 +163,9 @@ public class EmployeeTaskMangement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Integer employeeTasks = EmployeeTaskService.affirmEmployeeTask(dataJson);
 			return ResultJsonUtil.toJsonString(200, employeeTasks, "确认提交申请(任务)信息成功", session.getId());
@@ -170,7 +184,9 @@ public class EmployeeTaskMangement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Integer employeeTasks = EmployeeTaskService.modifyEmployeeTask(dataJson);
 			return ResultJsonUtil.toJsonString(200, null, "修改任务信息成功", session.getId());
@@ -189,7 +205,9 @@ public class EmployeeTaskMangement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Page<EmployeeTaskDTO> task = EmployeeTaskService.getEmployeeTaskByEmployee(dataJson);
 			return ResultJsonUtil.toJsonString(200, task, "获取任务申请信息成功", session.getId());

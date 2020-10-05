@@ -34,7 +34,9 @@ public class EmployeeRestManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			int id = EmployeeRestService.addEmployeeRest(dataJson);
 			return ResultJsonUtil.toJsonString(200, id, "添加行程成功", session.getId());
@@ -53,7 +55,9 @@ public class EmployeeRestManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			EmployeeRestService.getEmployeeRest(dataJson);
 			int id = EmployeeRestService.modifyEmployeeRest(dataJson);
@@ -73,7 +77,9 @@ public class EmployeeRestManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			EmployeeRestService.getEmployeeRest(dataJson);
 			int id = EmployeeRestService.deleteEmployeeRest(dataJson);
@@ -93,7 +99,9 @@ public class EmployeeRestManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			EmployeeRestService.getEmployeeRest(dataJson);
 			int id = EmployeeRestService.annulEmployeeRest(dataJson);
@@ -113,7 +121,9 @@ public class EmployeeRestManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			JSONObject employeeRest = EmployeeRestService.getEmployeeRest(dataJson);
 			return ResultJsonUtil.toJsonString(200, employeeRest, "获取行程信息成功", session.getId());
@@ -132,7 +142,9 @@ public class EmployeeRestManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Page<EmployeeRestDTO> employeeRests = EmployeeRestService.getEmployeeRestByEmployee(dataJson);
 			return ResultJsonUtil.toJsonString(200, employeeRests, "根据职员获取行程信息成功", session.getId());
@@ -151,7 +163,9 @@ public class EmployeeRestManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			List<JSONObject> employeeRests = EmployeeRestService.getEmployeeRestTypeList(dataJson);
 			return ResultJsonUtil.toJsonString(200, employeeRests, "根据职员获取每日行程总信息成功", session.getId());
@@ -170,7 +184,9 @@ public class EmployeeRestManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Page<EmployeeRestDTO> employeeRests = EmployeeRestService.getEmployeeRestByEmployeeTeam(dataJson);
 			return ResultJsonUtil.toJsonString(200, employeeRests, "根据职员获取团队每日行程信息成功", session.getId());
@@ -189,7 +205,9 @@ public class EmployeeRestManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			List<List<JSONObject>> employeeRests = EmployeeRestService.getEmployeeRestByEmployeeTeamList(dataJson);
 			return ResultJsonUtil.toJsonString(200, employeeRests, "根据职员获取团队每日行程列表信息成功", session.getId());
@@ -208,7 +226,9 @@ public class EmployeeRestManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Integer employeeRests = EmployeeRestService.affirmEmployeeRest(dataJson);
 			return ResultJsonUtil.toJsonString(200, employeeRests, "确认提交申请(每日行程)信息成功", session.getId());
@@ -227,7 +247,9 @@ public class EmployeeRestManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			EmployeeRestDTO employeeRest = EmployeeRestService.getEmployeeRestByEmployeeNew(dataJson);
 			return ResultJsonUtil.toJsonString(200, employeeRest, "根据职员获取每日行程(最新)信息成功", session.getId());

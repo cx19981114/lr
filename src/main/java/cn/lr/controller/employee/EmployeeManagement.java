@@ -40,7 +40,9 @@ public class EmployeeManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+		}
 		try {
 			CompanyService.getCompany(dataJson);
 			PostService.getPost(dataJson);
@@ -61,7 +63,9 @@ public class EmployeeManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+		}
 		try {
 			EmployeeService.getEmployee(dataJson);
 			int id = EmployeeService.modifyEmployee(dataJson);
@@ -81,7 +85,9 @@ public class EmployeeManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			CompanyService.getCompany(dataJson);
 			PostService.getPost(dataJson);
@@ -103,7 +109,7 @@ public class EmployeeManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {dataJson.put("companyId", session.getAttribute("companyId"));}
 		try {
 			CompanyService.getCompany(dataJson);
 			PostService.getPost(dataJson);
@@ -124,7 +130,7 @@ public class EmployeeManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {dataJson.put("companyId", session.getAttribute("companyId"));}
 		try {
 			CompanyService.getCompany(dataJson);
 			Page<employeeDTO> employees = EmployeeService.getEmployeeByCompany(dataJson);
@@ -144,7 +150,9 @@ public class EmployeeManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+		}
 		try {
 			CompanyService.getCompany(dataJson);
 			PostService.getPost(dataJson);
@@ -165,7 +173,7 @@ public class EmployeeManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {dataJson.put("companyId", session.getAttribute("companyId"));}
 		try {
 			CompanyService.getCompany(dataJson);
 			List<JSONObject> employees = EmployeeService.getEmployeeByPostAll(dataJson);
@@ -185,7 +193,9 @@ public class EmployeeManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+		}
 		try {
 			CompanyService.getCompany(dataJson);
 			PostService.getPost(dataJson);
@@ -206,7 +216,9 @@ public class EmployeeManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+		}
 		try {
 			List<JSONObject> employees = EmployeeService.getEmployeeUnder(dataJson);
 			return ResultJsonUtil.toJsonString(200, employees, "根据用户Id获得所有下属信息成功",session.getId());
@@ -225,7 +237,9 @@ public class EmployeeManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+		}
 		try {
 			JSONObject businessJson = EmployeeService.getBusiness(dataJson);
 			return ResultJsonUtil.toJsonString(200, businessJson, "获取客户预约，目标业绩，服务项目信息成功",session.getId());
@@ -244,7 +258,9 @@ public class EmployeeManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+		}
 		try {
 			JSONObject dayJson = EmployeeService.getDayMsg(dataJson);
 			return ResultJsonUtil.toJsonString(200, dayJson, "获取今日客户数量，今日积分，今日作息信息成功",session.getId());

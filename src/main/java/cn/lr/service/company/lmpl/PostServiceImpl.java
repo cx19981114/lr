@@ -136,7 +136,26 @@ public class PostServiceImpl implements PostService {
 		page.setList(posts);
 		return page;
 	}
-
+	@Override
+	public Page<PostDTO> getPostList(JSONObject data) {
+		Integer companyId = data.getInteger("companyId");
+		Integer pageNum = data.getInteger("pageNum");
+		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(stateWSX);
+		List<PostDTO> postDTOs = new ArrayList<PostDTO>();
+		List<post> posts = postMapper.selectByCompany(companyId, stateList, (pageNum - 1) * PAGESIZE, PAGESIZE);
+		for(post p:posts) {
+			postDTOs.add(this.sePostDTO(p));
+		}
+		int total = postMapper.selectByCompanyCount(companyId, stateList);
+		Page<PostDTO> page = new Page<PostDTO>();
+		page.setPageNum(pageNum);
+		page.setPageSize(PAGESIZE);
+		page.setTotal(total);
+		page.setList(postDTOs);
+		return page;
+	}
 	@Override
 	public List<JSONObject> getPostTypeAndCount(JSONObject data) {
 		Integer companyId = data.getInteger("companyId");

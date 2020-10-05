@@ -32,7 +32,9 @@ public class EmployeeRankManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Page<EmployeeRankDTO> employeeRanks = EmployeeRankService.getEmployeeRankByCompany(dataJson);
 			return ResultJsonUtil.toJsonString(200, employeeRanks, "根据公司获取所有职员积分信息成功", session.getId());
@@ -51,7 +53,9 @@ public class EmployeeRankManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			EmployeeRankDTO employeeRank = EmployeeRankService.getEmployeeRankByEmployee(dataJson);
 			return ResultJsonUtil.toJsonString(200, employeeRank, "根据职员获取积分信息成功", session.getId());
@@ -70,7 +74,9 @@ public class EmployeeRankManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			String employee = EmployeeRankService.getEmployeeRankFrist(dataJson);
 			return ResultJsonUtil.toJsonString(200, employee, "根据公司获取排名第一职员姓名", session.getId());

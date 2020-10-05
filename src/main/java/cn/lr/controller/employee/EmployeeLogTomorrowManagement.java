@@ -32,7 +32,9 @@ public class EmployeeLogTomorrowManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			int id = EmployeeLogTomorrowService.addEmployeeLogTomorrow(dataJson);
 			return ResultJsonUtil.toJsonString(200, null, "添加明日计划成功", session.getId());
@@ -51,7 +53,9 @@ public class EmployeeLogTomorrowManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			EmployeeLogTomorrowService.getEmployeeLogTomorrow(dataJson);
 			int id = EmployeeLogTomorrowService.modifyEmployeeLogTomorrow(dataJson);
@@ -71,7 +75,9 @@ public class EmployeeLogTomorrowManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			EmployeeLogTomorrowService.getEmployeeLogTomorrow(dataJson);
 			int id = EmployeeLogTomorrowService.deleteEmployeeLogTomorrow(dataJson);
@@ -91,7 +97,9 @@ public class EmployeeLogTomorrowManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			EmployeeLogTomorrowService.getEmployeeLogTomorrow(dataJson);
 			int id = EmployeeLogTomorrowService.annulEmployeeLogTomorrow(dataJson);
@@ -111,7 +119,9 @@ public class EmployeeLogTomorrowManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			JSONObject EmployeeLogTomorrow = EmployeeLogTomorrowService.getEmployeeLogTomorrow(dataJson);
 			return ResultJsonUtil.toJsonString(200, EmployeeLogTomorrow, "获取明日计划信息成功", session.getId());
@@ -130,7 +140,9 @@ public class EmployeeLogTomorrowManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Page<EmployeeLogTomorrowDTO> employeeLogTomorrows = EmployeeLogTomorrowService.getEmployeeLogTomorrowByEmployee(dataJson);
 			return ResultJsonUtil.toJsonString(200, employeeLogTomorrows, "根据职员获取明日计划信息成功", session.getId());
@@ -149,7 +161,9 @@ public class EmployeeLogTomorrowManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Integer employeeLogTomorrows = EmployeeLogTomorrowService.affirmEmployeeLogTomorrow(dataJson);
 			return ResultJsonUtil.toJsonString(200, employeeLogTomorrows, "确认提交申请(明日计划)信息成功", session.getId());
@@ -168,7 +182,9 @@ public class EmployeeLogTomorrowManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			EmployeeLogTomorrowDTO employeeLogTomorrow = EmployeeLogTomorrowService.getEmployeeLogTomorrowByEmployeeNew(dataJson);
 			return ResultJsonUtil.toJsonString(200, employeeLogTomorrow, "根据职员获取明日计划(最新)信息成功", session.getId());

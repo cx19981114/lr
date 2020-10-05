@@ -55,7 +55,9 @@ public class LoginManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Integer id = LoginService.sendMsg(dataJson);
 			return ResultJsonUtil.toJsonString(200, id, "发送验证码成功",session.getId());
@@ -75,7 +77,9 @@ public class LoginManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Integer id = LoginService.checkCode(dataJson);
 			session.setAttribute("employeeId", id);
@@ -96,7 +100,9 @@ public class LoginManagement {
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
 		dataJson.put("employeeId", session.getAttribute("employeeId"));
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			int id = LoginService.modifyPasswordFrist(dataJson);
 			return ResultJsonUtil.toJsonString(200, id, "修改密码成功",session.getId());

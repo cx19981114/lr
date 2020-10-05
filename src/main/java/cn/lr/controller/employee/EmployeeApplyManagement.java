@@ -32,7 +32,9 @@ public class EmployeeApplyManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			int id = EmployeeApplyService.addEmployeeApply(dataJson);
 			return ResultJsonUtil.toJsonString(200, id, "添加申请成功", session.getId());
@@ -51,7 +53,9 @@ public class EmployeeApplyManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			EmployeeApplyService.getEmployeeApply(dataJson);
 			int id = EmployeeApplyService.modifyEmployeeApply(dataJson);
@@ -71,7 +75,9 @@ public class EmployeeApplyManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			EmployeeApplyService.getEmployeeApply(dataJson);
 			int id = EmployeeApplyService.deleteEmployeeApply(dataJson);
@@ -91,7 +97,9 @@ public class EmployeeApplyManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			EmployeeApplyService.getEmployeeApply(dataJson);
 			int id = EmployeeApplyService.annulEmployeeApply(dataJson);
@@ -111,7 +119,9 @@ public class EmployeeApplyManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			JSONObject employeeApply = EmployeeApplyService.getEmployeeApply(dataJson);
 			return ResultJsonUtil.toJsonString(200, employeeApply, "获取申请信息成功", session.getId());
@@ -130,7 +140,9 @@ public class EmployeeApplyManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Page<EmployeeApplyDTO> employeeApplys = EmployeeApplyService.getEmployeeApplyByEmployee(dataJson);
 			return ResultJsonUtil.toJsonString(200, employeeApplys, "根据职员获取申请信息成功", session.getId());
@@ -149,7 +161,9 @@ public class EmployeeApplyManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Integer employeeApplys = EmployeeApplyService.affirmEmployeeApply(dataJson);
 			return ResultJsonUtil.toJsonString(200, employeeApplys, "确认提交申请信息成功", session.getId());

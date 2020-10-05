@@ -41,7 +41,9 @@ public class CustomerPerformanceManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			EmployeeService.getEmployee(dataJson);
 			CustomerService.getCustomer(dataJson);
@@ -62,7 +64,9 @@ public class CustomerPerformanceManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			CustomerPerformanceService.getCustomerPerformance(dataJson);
 			int id = CustomerPerformanceService.annulCustomerPerformance(dataJson);
@@ -82,7 +86,9 @@ public class CustomerPerformanceManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			CustomerPerformanceService.getCustomerPerformance(dataJson);
 			int id = CustomerPerformanceService.affirmCustomerPerformance(dataJson);
@@ -102,7 +108,9 @@ public class CustomerPerformanceManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			CustomerPerformanceService.getCustomerPerformance(dataJson);
 			int id = CustomerPerformanceService.deleteCustomerPerformance(dataJson);
@@ -122,7 +130,9 @@ public class CustomerPerformanceManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			EmployeeService.getEmployee(dataJson);
 			JSONObject cpJsonObject = CustomerPerformanceService.getCustomerPerformanceByEmployeeCondition(dataJson);
@@ -142,7 +152,9 @@ public class CustomerPerformanceManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			EmployeeService.getEmployee(dataJson);
 			Page<CustomerPerformanceDTO> customerPerformanceDTOs = CustomerPerformanceService.getCustomerPerformanceByEmployee(dataJson);
@@ -162,7 +174,9 @@ public class CustomerPerformanceManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			JSONObject jsonObject = CustomerPerformanceService.getCustomerPerformanceDetail(dataJson);
 			return ResultJsonUtil.toJsonString(200, jsonObject, "根据业绩获取顾客业绩信息成功",session.getId());
@@ -181,7 +195,9 @@ public class CustomerPerformanceManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			List<JSONObject> jsonObject = CustomerPerformanceService.getCustomerConsumeMoney(dataJson);
 			return ResultJsonUtil.toJsonString(200, jsonObject, "根据顾客按月获取消费信息成功",session.getId());
@@ -200,7 +216,9 @@ public class CustomerPerformanceManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Page<CustomerPerformanceDTO> cusPage = CustomerPerformanceService.getCustomerConsumeMoneyList(dataJson);
 			return ResultJsonUtil.toJsonString(200, cusPage, "根据顾客和月份获取消费列表信息成功",session.getId());

@@ -50,7 +50,9 @@ public class EmployeeAttendanceManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			int id = EmployeeAttendanceService.addEmployeeAttendance(dataJson);
 			return ResultJsonUtil.toJsonString(200, null, "添加打卡成功", session.getId());
@@ -69,7 +71,9 @@ public class EmployeeAttendanceManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			EmployeeAttendanceService.getEmployeeAttendance(dataJson);
 			int id = EmployeeAttendanceService.modifyEmployeeAttendance(dataJson);
@@ -89,7 +93,9 @@ public class EmployeeAttendanceManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			EmployeeAttendanceService.getEmployeeAttendance(dataJson);
 			int id = EmployeeAttendanceService.deleteEmployeeAttendance(dataJson);
@@ -109,7 +115,9 @@ public class EmployeeAttendanceManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			EmployeeAttendanceService.getEmployeeAttendance(dataJson);
 			int id = EmployeeAttendanceService.annulEmployeeAttendance(dataJson);
@@ -129,7 +137,9 @@ public class EmployeeAttendanceManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			JSONObject employeeAttendance = EmployeeAttendanceService.getEmployeeAttendance(dataJson);
 			return ResultJsonUtil.toJsonString(200, employeeAttendance, "获取打卡信息成功", session.getId());
@@ -148,7 +158,9 @@ public class EmployeeAttendanceManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Page<EmployeeAttendanceDTO> employeeAttendances = EmployeeAttendanceService.getEmployeeAttendanceByEmployee(dataJson);
 			return ResultJsonUtil.toJsonString(200, employeeAttendances, "根据职员获取每日打卡信息成功", session.getId());
@@ -167,7 +179,9 @@ public class EmployeeAttendanceManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			Integer employeeAttendances = EmployeeAttendanceService.affirmEmployeeAttendance(dataJson);
 			return ResultJsonUtil.toJsonString(200, employeeAttendances, "确认提交申请(每日打卡)信息成功", session.getId());
@@ -186,7 +200,9 @@ public class EmployeeAttendanceManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			EmployeeAttendanceDTO employeeAttendance = EmployeeAttendanceService.getEmployeeAttendanceByEmployeeNew(dataJson);
 			return ResultJsonUtil.toJsonString(200, employeeAttendance, "根据职员获取每日打卡(最新)信息成功", session.getId());

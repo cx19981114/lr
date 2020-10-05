@@ -42,7 +42,9 @@ public class ApplyRankManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			ApplyRankService.getApplyRankByDynamic(dataJson);
 			int id = ApplyRankService.modifyApplyRank(dataJson);
@@ -62,7 +64,9 @@ public class ApplyRankManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			List<ApplyRankDTO> applyRankDTOs = ApplyRankService.getApplyRank(dataJson);
 			return ResultJsonUtil.toJsonString(200, applyRankDTOs, "获取申请信息成功", session.getId());
@@ -81,7 +85,9 @@ public class ApplyRankManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			DynamicService.getDynamic(dataJson);
 			List<ApplyRankDTO> applyRankDTOs = ApplyRankService.getApplyRankByDynamic(dataJson);
@@ -101,7 +107,9 @@ public class ApplyRankManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			EmployeeService.getEmployee(dataJson);
 			List<employeeDTO> employeeDTOs = ApplyRankService.getCheckList(dataJson);

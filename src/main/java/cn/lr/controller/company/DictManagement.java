@@ -32,7 +32,9 @@ public class DictManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("companyId", session.getAttribute("companyId"));
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+			}
 		try {
 			List<JSONObject> dict = DictService.getDictType(dataJson);
 			return ResultJsonUtil.toJsonString(200, dict, "成功获取字典表类型信息",session.getId());
