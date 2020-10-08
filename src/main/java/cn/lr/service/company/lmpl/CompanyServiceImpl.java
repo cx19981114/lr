@@ -13,9 +13,13 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.lr.dao.companyMapper;
 import cn.lr.dao.dictMapper;
+import cn.lr.dao.postMapper;
+import cn.lr.dao.postTaskMapper;
 import cn.lr.dto.Page;
 import cn.lr.exception.BusiException;
 import cn.lr.po.company;
+import cn.lr.po.post;
+import cn.lr.po.postTask;
 import cn.lr.service.company.CompanyService;
 import cn.lr.util.DateUtil;
 import cn.lr.util.TimeFormatUtil;
@@ -27,16 +31,25 @@ public class CompanyServiceImpl implements CompanyService {
 	companyMapper companyMapper;
 	@Autowired
 	dictMapper dictMapper;
+	@Autowired
+	postMapper postMapper;
+	@Autowired
+	postTaskMapper postTaskMapper;
 	
 	@Value("${data.type}")
 	private String DATA_TYPE;
 	@Value("${pageSize}")
 	private Integer PAGESIZE;
+	@Value("${noImg}")
+	private String NOIMG;
+	@Value("${permissionList}")
+	private String PERMISSIONLIST;
 	
 	@Override
 	public Integer addCompany(JSONObject data) {
 		company record = new company();
 		record.setName(data.getString("name"));
+		
 		record.setAddress(data.getString("address"));
 		record.setDateTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
 		record.setStartTime(data.getString("startTime"));
@@ -50,6 +63,25 @@ public class CompanyServiceImpl implements CompanyService {
 		count = companyMapper.updateByPrimaryKey(record);
 		if(count == 0) {
 			throw new BusiException("更新公司表失败");
+		}
+		// 添加post
+		post post = new post();
+		post.setCompanyId(record.getId());
+		post.setName("经营者");
+		post.setPermissionList(PERMISSIONLIST);
+		post.setPic(NOIMG);
+		post.setLeaderPostId(0);
+		post.setNum(0);
+		post.setState(dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId")));
+		count = postMapper.insert(post);
+		if (count == 0) {
+			throw new BusiException("添加post表失败");
+		}
+		postTask postTask = new postTask();
+		postTask.setPostId(record.getId());
+		count = postTaskMapper.insertSelective(postTask);
+		if (count == 0) {
+			throw new BusiException("添加postTask表失败");
 		}
 		return record.getId();
 	}

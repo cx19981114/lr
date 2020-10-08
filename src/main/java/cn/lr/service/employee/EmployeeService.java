@@ -34,4 +34,6 @@ public interface EmployeeService {
 	
 	public employeeDTO sEmployeeDTO(employee employee);
 	
+	public Integer addEmployeeJYZ(JSONObject data);
+	
 }

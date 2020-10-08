@@ -110,9 +110,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 	@Override
 	public Integer addEmployee(JSONObject data) {
-		employee employee = employeeMapper.selectByPhone(data.getString("phone"));
-		if (employee != null && employee.getState() != dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",
-				data.getInteger("companyId"))) {
+		Integer stateYSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(stateYSX);
+		employee employee = employeeMapper.selectByPhone(data.getString("phone"),stateList);
+		if (employee != null) {
 			throw new BusiException("该号码已存在");
 		}
 		employee record = new employee();
@@ -138,13 +140,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 		if (count == 0) {
 			throw new BusiException("插入employee表失败");
 		}
-		// 插入employeeTask表
-		employeeTask employeeTask = new employeeTask();
-		employeeTask.setEmployeeId(record.getId());
-		count = employeeTaskMapper.insertSelective(employeeTask);
-		if (count == 0) {
-			throw new BusiException("插入employeeTask表失败");
-		}
 		// 添加领导表的下属List
 		if (data.getInteger("leaderId") != null) {
 			employee test = employeeMapper.selectByPrimaryKey(data.getInteger("leaderId"));
@@ -167,7 +162,43 @@ public class EmployeeServiceImpl implements EmployeeService {
 		}
 		return record.getId();
 	}
-
+	@Override
+	public Integer addEmployeeJYZ(JSONObject data) {
+		Integer stateYSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(stateYSX);
+		employee employee = employeeMapper.selectByPhone(data.getString("phone"),stateList);
+		if (employee != null) {
+			throw new BusiException("该号码已存在");
+		}
+		employee record = new employee();
+		record.setPassword(EncryptionUtil.encryping("123456"));
+		record.setCompanyId(data.getInteger("companyId"));
+		record.setName(data.getString("name"));
+		record.setPhone(data.getString("phone"));
+		if (data.getString("pic") != null) {
+			record.setPic(data.getString("pic"));
+		} else {
+			record.setPic(NOIMG);
+		}
+		post post = new post();
+		post.setCompanyId(data.getInteger("companyId"));
+		post.setName("经营者");
+		post = postMapper.selectByCompanyIdAndPostName(post);
+		post.setNum(post.getNum() + 1);
+		int count = postMapper.updateByPrimaryKeySelective(post);
+		if (count == 0) {
+			throw new BusiException("更新post表失败");
+		}
+		record.setPostId(post.getId());
+		record.setSex(data.getString("sex"));
+		record.setState(dictMapper.selectByCodeAndStateName(EMPLOYEE_TYPE, "未激活", data.getInteger("companyId")));
+		count = employeeMapper.insertSelective(record);
+		if (count == 0) {
+			throw new BusiException("插入employee表失败");
+		}
+		return record.getId();
+	}
 	@Override
 	public Integer modifyEmployee(JSONObject data) {
 		if (data.getString("password") != null) {

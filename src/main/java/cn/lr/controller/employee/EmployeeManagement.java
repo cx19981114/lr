@@ -56,6 +56,28 @@ public class EmployeeManagement {
 			LoggerUtil.LOGGER.info("-------------end 添加职员信息--------------------");
 		}
 	}
+	@PostMapping("/addEmployeeJYZ")
+	@ResponseBody
+	public String addEmployeeJYZ(@RequestBody String data, HttpSession session) {
+		LoggerUtil.LOGGER.info("-------------enter 添加经营者信息--------------------");
+		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
+		LoggerUtil.LOGGER.debug("data : {}", data);
+		JSONObject dataJson = JSON.parseObject(data);
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+		}
+		try {
+			CompanyService.getCompany(dataJson);
+			int id = EmployeeService.addEmployeeJYZ(dataJson);
+			return ResultJsonUtil.toJsonString(200, id, "添加经营者信息成功",session.getId());
+		} catch (BusiException e) {
+			return ResultJsonUtil.toJsonString(101, null, e.getMessage(),session.getId());
+		} catch (Exception e) {
+			return ResultJsonUtil.toJsonString(404, null, "系统未知错误",session.getId());
+		}finally {
+			LoggerUtil.LOGGER.info("-------------end 添加经营者信息--------------------");
+		}
+	}
 	@PostMapping("/modifyEmployee")
 	@ResponseBody
 	public String modifyEmployee(@RequestBody String data, HttpSession session) {

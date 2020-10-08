@@ -35,7 +35,7 @@ public class PermissionServiceImpl implements PermissionService {
 		Integer stateWSX  = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
 		List<Integer> stateList = new ArrayList<Integer>();
 		stateList.add(stateWSX);
-		List<permission> permissions = permissionMapper.selectByCompany(data.getInteger("companyId"), stateList);
+		List<permission> permissions = permissionMapper.selectByCompany(stateList);
 		List<JSONObject> permissionJsonList = new ArrayList<JSONObject>();
 		for(permission  p :permissions) {
 			JSONObject permissionJson = new JSONObject();

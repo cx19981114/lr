@@ -19,7 +19,7 @@ public interface employeeMapper {
 
     int updateByPrimaryKey(employee record);
     
-    employee selectByPhone(String phone);
+    employee selectByPhone(@Param("phone")String phone,@Param("state")List<Integer> state);
     
     List<employee> selectByCompanyId(@Param("companyId") Integer companyId,@Param("state") List<Integer> state,@Param("page") Integer page,@Param("size") Integer size);
 

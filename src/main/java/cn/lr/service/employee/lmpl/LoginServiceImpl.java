@@ -1,7 +1,9 @@
 package cn.lr.service.employee.lmpl;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,7 +53,13 @@ public class LoginServiceImpl implements LoginService {
 	public employeeDTO checkLogin(JSONObject data) {
 		String phone = data.getString("phone");
 		Integer postId = data.getInteger("postId");
-		employee employee = employeeMapper.selectByPhone(phone);
+		Integer stateYSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(stateYSX);
+		employee employee = employeeMapper.selectByPhone(phone,stateList);
+		if(employee == null) {
+			throw new BusiException("该手机号不存在");
+		}
 		if(postId != null && postId == 0) {
 			if(employee.getPassword().endsWith(EncryptionUtil.encryping(data.getString("password")))) {
 				employeeDTO employeeDTO = new employeeDTO();
@@ -62,9 +70,7 @@ public class LoginServiceImpl implements LoginService {
 			}
 		}
 		company company = companyMapper.selectByPrimaryKey(employee.getCompanyId());
-		if(employee == null || employee.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",employee.getCompanyId())) {
-			throw new BusiException("该手机号不存在");
-		}else if(employee.getState() == dictMapper.selectByCodeAndStateName(EMPLOYEE_TYPE, "未激活",employee.getCompanyId())) {
+		if(employee.getState() == dictMapper.selectByCodeAndStateName(EMPLOYEE_TYPE, "未激活",employee.getCompanyId())) {
 			throw new EmployeeUnactiveException("用户未激活");
 		}else if(!employee.getPassword().endsWith(EncryptionUtil.encryping(data.getString("password")))){
 			throw new BusiException("密码错误");
@@ -76,8 +82,11 @@ public class LoginServiceImpl implements LoginService {
 	@Override
 	public Integer sendMsg(JSONObject data) throws Exception {
 		String phone = data.getString("phone");
-		employee employee = employeeMapper.selectByPhone(phone);
-		if(employee == null || employee.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"))) {
+		Integer stateYSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(stateYSX);
+		employee employee = employeeMapper.selectByPhone(phone,stateList);
+		if(employee == null) {
 			throw new BusiException("该手机号不存在");
 		}
 		String [] params = SendMessageUtil.sendMsgByTxPlatform(phone);
@@ -94,8 +103,11 @@ public class LoginServiceImpl implements LoginService {
 	@Override
 	public Integer checkCode(JSONObject data) throws ParseException {
 		String phone = data.getString("phone");
-		employee employee = employeeMapper.selectByPhone(phone);
-		if(employee == null || employee.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"))) {
+		Integer stateYSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(stateYSX);
+		employee employee = employeeMapper.selectByPhone(phone,stateList);
+		if(employee == null) {
 			throw new BusiException("该手机号不存在");
 		}
 		String nowTime = TimeFormatUtil.timeStampToString(new Date().getTime());
