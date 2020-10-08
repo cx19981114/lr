@@ -36,4 +36,6 @@ public interface EmployeeService {
 	
 	public Integer addEmployeeJYZ(JSONObject data);
 	
+	public Page<employeeDTO> getEmployeeByPostJYZ(JSONObject data);
+	
 }

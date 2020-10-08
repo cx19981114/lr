@@ -122,7 +122,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 		record.setCompanyId(data.getInteger("companyId"));
 		record.setName(data.getString("name"));
 		record.setPhone(data.getString("phone"));
-		if (data.getString("pic") != null) {
+		if (data.getString("pic") != null && !"".equals(data.getString("pic"))) {
 			record.setPic(data.getString("pic"));
 		} else {
 			record.setPic(NOIMG);
@@ -176,7 +176,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 		record.setCompanyId(data.getInteger("companyId"));
 		record.setName(data.getString("name"));
 		record.setPhone(data.getString("phone"));
-		if (data.getString("pic") != null) {
+		if (data.getString("pic") != null && !"".equals(data.getString("pic"))) {
 			record.setPic(data.getString("pic"));
 		} else {
 			record.setPic(NOIMG);
@@ -473,6 +473,34 @@ public class EmployeeServiceImpl implements EmployeeService {
 			employeeDTOs.add(employeeDTO);
 		}
 
+		Page<employeeDTO> page = new Page<employeeDTO>();
+		page.setPageNum(pageNum);
+		page.setPageSize(PAGESIZE);
+		page.setTotal(total);
+		page.setList(employeeDTOs);
+		return page;
+	}
+	
+	@Override
+	public Page<employeeDTO> getEmployeeByPostJYZ(JSONObject data) {
+		Integer companyId = data.getInteger("companyId");
+		post post = new post();
+		post.setCompanyId(data.getInteger("companyId"));
+		post.setName("经营者");
+		post = postMapper.selectByCompanyIdAndPostName(post);
+		Integer pageNum = data.getInteger("pageNum");
+		Integer stateYSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(stateYSX);
+		List<employee> employees = employeeMapper.selectByPostId(companyId, post.getId(), stateList, (pageNum - 1) * PAGESIZE,
+				PAGESIZE);
+		int total = employeeMapper.selectByPostCount(companyId, post.getId(), stateList);
+		List<employeeDTO> employeeDTOs = new ArrayList<employeeDTO>();
+		for (employee e : employees) {
+			employeeDTO employeeDTO = this.sEmployeeDTO(e);
+			employeeDTOs.add(employeeDTO);
+		}
+		
 		Page<employeeDTO> page = new Page<employeeDTO>();
 		page.setPageNum(pageNum);
 		page.setPageSize(PAGESIZE);

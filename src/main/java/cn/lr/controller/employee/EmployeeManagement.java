@@ -188,6 +188,28 @@ public class EmployeeManagement {
 			LoggerUtil.LOGGER.info("-------------end 根据职位获取职员信息--------------------");
 		}
 	}
+	@PostMapping("/getEmployeeByPostJYZ")
+	@ResponseBody
+	public String getEmployeeByPostJYZ(@RequestBody String data, HttpSession session) {
+		LoggerUtil.LOGGER.info("-------------enter 根据经营者获得职员信息--------------------");
+		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
+		LoggerUtil.LOGGER.debug("data : {}", data);
+		JSONObject dataJson = JSON.parseObject(data);
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+		}
+		try {
+			CompanyService.getCompany(dataJson);
+			Page<employeeDTO> employees = EmployeeService.getEmployeeByPostJYZ(dataJson);
+			return ResultJsonUtil.toJsonString(200, employees, "根据经营者获取职员信息成功",session.getId());
+		} catch (BusiException e) {
+			return ResultJsonUtil.toJsonString(101, null, e.getMessage(),session.getId());
+		} catch (Exception e) {
+			return ResultJsonUtil.toJsonString(404, null, "系统未知错误",session.getId());
+		}finally {
+			LoggerUtil.LOGGER.info("-------------end 根据经营者获取职员信息--------------------");
+		}
+	}
 	@PostMapping("/getEmployeeByPostAll")
 	@ResponseBody
 	public String getEmployeeByPostAll(@RequestBody String data, HttpSession session) {
