@@ -36,6 +36,10 @@ public interface EmployeeService {
 	
 	public Integer addEmployeeJYZ(JSONObject data);
 	
+	public Integer modifyEmployeeJYZ(JSONObject data);
+	
+	public Integer deleteEmployeeJYZ(JSONObject data);
+	
 	public Page<employeeDTO> getEmployeeByPostJYZ(JSONObject data);
 	
 }

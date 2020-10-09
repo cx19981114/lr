@@ -100,6 +100,28 @@ public class EmployeeManagement {
 			LoggerUtil.LOGGER.info("-------------end 修改职员信息--------------------");
 		}
 	}
+	@PostMapping("/modifyEmployeeJYZ")
+	@ResponseBody
+	public String modifyEmployeeJYZ(@RequestBody String data, HttpSession session) {
+		LoggerUtil.LOGGER.info("-------------enter 修改经营者信息--------------------");
+		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
+		LoggerUtil.LOGGER.debug("data : {}", data);
+		JSONObject dataJson = JSON.parseObject(data);
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+		}
+		try {
+			EmployeeService.getEmployee(dataJson);
+			int id = EmployeeService.modifyEmployeeJYZ(dataJson);
+			return ResultJsonUtil.toJsonString(200, null, "修改经营者信息成功",session.getId());
+		} catch (BusiException e) {
+			return ResultJsonUtil.toJsonString(101, null, e.getMessage(),session.getId());
+		} catch (Exception e) {
+			return ResultJsonUtil.toJsonString(404, null, "系统未知错误",session.getId());
+		}finally {
+			LoggerUtil.LOGGER.info("-------------end 修改经营者信息--------------------");
+		}
+	}
 	@PostMapping("/deleteEmployee")
 	@ResponseBody
 	public String deleteEmployee(@RequestBody String data, HttpSession session) {
@@ -122,6 +144,29 @@ public class EmployeeManagement {
 			return ResultJsonUtil.toJsonString(404, null, "系统未知错误",session.getId());
 		}finally {
 			LoggerUtil.LOGGER.info("-------------end 删除职员信息--------------------");
+		}
+	}
+	@PostMapping("/deleteEmployeeJYZ")
+	@ResponseBody
+	public String deleteEmployeeJYZ(@RequestBody String data, HttpSession session) {
+		LoggerUtil.LOGGER.info("-------------enter 删除经营者信息--------------------");
+		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
+		LoggerUtil.LOGGER.debug("data : {}", data);
+		JSONObject dataJson = JSON.parseObject(data);
+		if (session.getAttribute("companyId") != null) {
+			dataJson.put("companyId", session.getAttribute("companyId"));
+		}
+		try {
+			CompanyService.getCompany(dataJson);
+			EmployeeService.getEmployee(dataJson);
+			int id = EmployeeService.deleteEmployeeJYZ(dataJson);
+			return ResultJsonUtil.toJsonString(200, null, "删除经营者信息成功",session.getId());
+		} catch (BusiException e) {
+			return ResultJsonUtil.toJsonString(101, null, e.getMessage(),session.getId());
+		} catch (Exception e) {
+			return ResultJsonUtil.toJsonString(404, null, "系统未知错误",session.getId());
+		}finally {
+			LoggerUtil.LOGGER.info("-------------end 删除经营者信息--------------------");
 		}
 	}
 	@PostMapping("/getEmployee")

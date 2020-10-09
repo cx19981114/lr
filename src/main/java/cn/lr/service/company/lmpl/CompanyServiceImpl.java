@@ -15,11 +15,14 @@ import cn.lr.dao.companyMapper;
 import cn.lr.dao.dictMapper;
 import cn.lr.dao.postMapper;
 import cn.lr.dao.postTaskMapper;
+import cn.lr.dao.taskMapper;
 import cn.lr.dto.Page;
 import cn.lr.exception.BusiException;
 import cn.lr.po.company;
+import cn.lr.po.dict;
 import cn.lr.po.post;
 import cn.lr.po.postTask;
+import cn.lr.po.task;
 import cn.lr.service.company.CompanyService;
 import cn.lr.util.DateUtil;
 import cn.lr.util.TimeFormatUtil;
@@ -35,6 +38,8 @@ public class CompanyServiceImpl implements CompanyService {
 	postMapper postMapper;
 	@Autowired
 	postTaskMapper postTaskMapper;
+	@Autowired
+	taskMapper taskMapper;
 	
 	@Value("${data.type}")
 	private String DATA_TYPE;
@@ -44,44 +49,153 @@ public class CompanyServiceImpl implements CompanyService {
 	private String NOIMG;
 	@Value("${permissionList}")
 	private String PERMISSIONLIST;
+	@Value("${post}")
+	private String POST;
+	@Value("${prevTask.type}")
+	private String PRETASK_TYPE;
+	@Value("${task.type}")
+	private String TASK_TYPE;
 	
 	@Override
 	public Integer addCompany(JSONObject data) {
+		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<>();
+		stateList.add(stateWSX);
 		company record = new company();
 		record.setName(data.getString("name"));
-		
+		company company = companyMapper.selectByName(record);
+		if(company != null) {
+			throw new BusiException("该公司名称已存在");
+		}
 		record.setAddress(data.getString("address"));
 		record.setDateTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
 		record.setStartTime(data.getString("startTime"));
 		record.setEndTime(data.getString("endTime"));
+		record.setState(stateWSX);
 		// 完整填写信息
 		int count = companyMapper.insertSelective(record);
 		if(count == 0) {
 			throw new BusiException("插入公司表失败");
 		}
-		record.setState(dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效",data.getInteger("companyId")));
-		count = companyMapper.updateByPrimaryKey(record);
-		if(count == 0) {
-			throw new BusiException("更新公司表失败");
-		}
 		// 添加post
-		post post = new post();
-		post.setCompanyId(record.getId());
-		post.setName("经营者");
-		post.setPermissionList(PERMISSIONLIST);
-		post.setPic(NOIMG);
-		post.setLeaderPostId(0);
-		post.setNum(0);
-		post.setState(dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId")));
-		count = postMapper.insert(post);
-		if (count == 0) {
-			throw new BusiException("添加post表失败");
-		}
-		postTask postTask = new postTask();
-		postTask.setPostId(record.getId());
-		count = postTaskMapper.insertSelective(postTask);
-		if (count == 0) {
-			throw new BusiException("添加postTask表失败");
+		String[] postList = POST.split("-");
+		List<Integer> postIdList = new ArrayList<>();
+		postIdList.add(0);
+		for(int i = 0;i<postList.length;i++) {
+			post post = new post();
+			post.setCompanyId(record.getId());
+			post.setName(postList[i]);
+			post.setPermissionList(PERMISSIONLIST);
+			post.setPic(NOIMG);
+			post.setLeaderPostId(postIdList.get(i));
+			post.setNum(0);
+			post.setState(stateWSX);
+			count = postMapper.insertSelective(post);
+			if (count == 0) {
+				throw new BusiException("添加post表失败");
+			}
+			postIdList.add(post.getId());
+			post post2 = new post();
+			post2.setCompanyId(2);
+			post2.setName(postList[i]);
+			post2 = postMapper.selectByCompanyIdAndPostName(post2);
+			postTask postTask = new postTask();
+			postTask.setPostId(post.getId());
+			//task-赋能思维
+			String taskIdList = "";
+			List<task> taskList = taskMapper.selectByPost(post2.getId(),
+					dictMapper.selectByCodeAndStateName(PRETASK_TYPE, "赋能思维", record.getId()),null, stateList);
+			for(task t:taskList) {
+				task tCopy = new task();
+				tCopy.setCompanyId(record.getId());
+				tCopy.setContent(t.getContent());
+				tCopy.setName(t.getName());
+				tCopy.setPostIdList(String.valueOf(post.getId()));
+				tCopy.setPrevType(t.getPrevType());
+				tCopy.setRank(t.getRank());
+				tCopy.setState(stateWSX);
+				tCopy.setStep(t.getStep());
+				tCopy.setType(t.getType());
+				count = taskMapper.insertSelective(tCopy);
+				taskIdList += tCopy.getId()+"-";
+				if(count == 0) {
+					throw new BusiException("插入任务失败");
+				}
+			}
+			postTask.setTaskIdListFN(taskIdList);
+			//task-任务清单-日流程
+			taskIdList = "";
+			taskList = taskMapper.selectByPost(post2.getId(),
+					dictMapper.selectByCodeAndStateName(PRETASK_TYPE, "任务清单", record.getId()),
+					dictMapper.selectByCodeAndStateName(TASK_TYPE, "日流程", record.getId()), stateList);
+			for(task t:taskList) {
+				task tCopy = new task();
+				tCopy.setCompanyId(record.getId());
+				tCopy.setContent(t.getContent());
+				tCopy.setName(t.getName());
+				tCopy.setPostIdList(String.valueOf(post.getId()));
+				tCopy.setPrevType(t.getPrevType());
+				tCopy.setRank(t.getRank());
+				tCopy.setState(stateWSX);
+				tCopy.setStep(t.getStep());
+				tCopy.setType(t.getType());
+				count = taskMapper.insertSelective(tCopy);
+				taskIdList += tCopy.getId()+"-";
+				if(count == 0) {
+					throw new BusiException("插入任务失败");
+				}
+			}
+			postTask.setTaskIdListRWDay(taskIdList);
+			//task-任务清单-周安排
+			taskIdList = "";
+			taskList = taskMapper.selectByPost(post2.getId(),
+					dictMapper.selectByCodeAndStateName(PRETASK_TYPE, "任务清单", record.getId()),
+					dictMapper.selectByCodeAndStateName(TASK_TYPE, "周安排", record.getId()), stateList);
+			for(task t:taskList) {
+				task tCopy = new task();
+				tCopy.setCompanyId(record.getId());
+				tCopy.setContent(t.getContent());
+				tCopy.setName(t.getName());
+				tCopy.setPostIdList(String.valueOf(post.getId()));
+				tCopy.setPrevType(t.getPrevType());
+				tCopy.setRank(t.getRank());
+				tCopy.setState(stateWSX);
+				tCopy.setStep(t.getStep());
+				tCopy.setType(t.getType());
+				count = taskMapper.insertSelective(tCopy);
+				taskIdList += tCopy.getId()+"-";
+				if(count == 0) {
+					throw new BusiException("插入任务失败");
+				}
+			}
+			postTask.setTaskIdListRWWeek(taskIdList);
+			//task-任务清单-月计划
+			taskIdList = "";
+			taskList = taskMapper.selectByPost(post2.getId(),
+					dictMapper.selectByCodeAndStateName(PRETASK_TYPE, "任务清单", record.getId()),
+					dictMapper.selectByCodeAndStateName(TASK_TYPE, "月计划", record.getId()), stateList);
+			for(task t:taskList) {
+				task tCopy = new task();
+				tCopy.setCompanyId(record.getId());
+				tCopy.setContent(t.getContent());
+				tCopy.setName(t.getName());
+				tCopy.setPostIdList(String.valueOf(post.getId()));
+				tCopy.setPrevType(t.getPrevType());
+				tCopy.setRank(t.getRank());
+				tCopy.setState(stateWSX);
+				tCopy.setStep(t.getStep());
+				tCopy.setType(t.getType());
+				count = taskMapper.insertSelective(tCopy);
+				taskIdList += tCopy.getId()+"-";
+				if(count == 0) {
+					throw new BusiException("插入任务失败");
+				}
+			}
+			postTask.setTaskIdListRWMon(taskIdList);
+			count = postTaskMapper.insertSelective(postTask);
+			if (count == 0) {
+				throw new BusiException("添加postTask表失败");
+			}
 		}
 		return record.getId();
 	}

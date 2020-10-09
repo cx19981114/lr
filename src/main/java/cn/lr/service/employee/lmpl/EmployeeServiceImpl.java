@@ -34,7 +34,6 @@ import cn.lr.po.customerProject;
 import cn.lr.po.employee;
 import cn.lr.po.employeeLogTomorrow;
 import cn.lr.po.employeeRest;
-import cn.lr.po.employeeTask;
 import cn.lr.po.order;
 import cn.lr.po.post;
 import cn.lr.service.company.PostService;
@@ -293,6 +292,19 @@ public class EmployeeServiceImpl implements EmployeeService {
 		}
 		return record.getId();
 	}
+	@Override
+	public Integer modifyEmployeeJYZ(JSONObject data) {
+		employee record = employeeMapper.selectByPrimaryKey(data.getInteger("employeeId"));
+		record.setName(data.getString("name"));
+		record.setPhone(data.getString("phone"));
+		record.setPic(data.getString("pic"));
+		record.setSex(data.getString("sex"));
+		int count = employeeMapper.updateByPrimaryKeySelective(record);
+		if (count == 0) {
+			throw new BusiException("更新enployee表失败");
+		}
+		return record.getId();
+	}
 
 	// FIXED: 删除时用户下面有客户或者预约
 	@Override
@@ -301,7 +313,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 		String date = TimeFormatUtil.dateToString(new Date());
 		Integer stateSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", record.getCompanyId());
 		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", record.getCompanyId());
-		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
+		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", record.getCompanyId());
 		Integer stateSHZ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核中", record.getCompanyId());
 		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", record.getCompanyId());
 		Integer stateSB = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核失败", record.getCompanyId());
@@ -401,7 +413,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 		}
 		if (record.getUnderIdList() != null && !"".equals(record.getUnderIdList())) {
 			String leader = "";
-			if (record.getLeaderIdList() != null && "".equals(record.getLeaderIdList())) {
+			if (record.getLeaderIdList() != null && !"".equals(record.getLeaderIdList())) {
 				leader = record.getLeaderIdList();
 			}
 			String[] oriUnder = record.getUnderIdList().split("-");
@@ -413,6 +425,29 @@ public class EmployeeServiceImpl implements EmployeeService {
 					throw new BusiException("更新underList的LeaderList失败");
 				}
 			}
+		}
+		// 将职员状态设为已失效
+		record.setState(stateSX);
+		count = employeeMapper.updateByPrimaryKeySelective(record);
+		if (count == 0) {
+			throw new BusiException("更新employee表失败");
+		}
+		return record.getId();
+	}
+	@Override
+	public Integer deleteEmployeeJYZ(JSONObject data) {
+		employee record = employeeMapper.selectByPrimaryKey(data.getInteger("employeeId"));
+		Integer stateSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", record.getCompanyId());
+		// 删除职位数量
+		post post = postMapper.selectByPrimaryKey(record.getPostId());
+		post.setNum(post.getNum() - 1);
+		int count = postMapper.updateByPrimaryKeySelective(post);
+		if (count == 0) {
+			throw new BusiException("删除当前职位数量失败");
+		}
+
+		if (record.getUnderIdList() != null && !"".equals(record.getUnderIdList())) {
+			throw new BusiException("该经营者下有员工，无法删除");
 		}
 		// 将职员状态设为已失效
 		record.setState(stateSX);

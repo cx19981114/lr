@@ -83,7 +83,7 @@
         #{state,jdbcType=INTEGER},
       </if>
       <if test="leaderPostId != null">
-        leaderPostId,
+       #{leaderPostId,jdbcType=INTEGER}
       </if>
     </trim>
   </insert>

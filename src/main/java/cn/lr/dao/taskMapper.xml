@@ -192,7 +192,7 @@
     select 
     <include refid="Base_Column_List" />
     from tb_task
-    where postIdList like concat('%',#{postId},'%') 
+    where postIdList = #{postId}
     <if test="prevType != null">
         and prevType = #{prevType,jdbcType=INTEGER}
      </if>  
@@ -210,7 +210,7 @@
     select 
     <include refid="Base_Column_List" />
     from tb_task
-    where postIdList like concat('%',#{postId},'%') 
+    where postIdList = #{postId}
     <if test="prevType != null">
         and prevType = #{prevType,jdbcType=INTEGER}
      </if>  
@@ -228,7 +228,7 @@
    <select id="selectByPostAndStepMax" resultType="Integer">
     select max(step)
     from tb_task
-    where postIdList like concat('%',#{postId},'%') 
+    where postIdList = #{postId}
     <if test="prevType != null">
         and prevType = #{prevType,jdbcType=INTEGER}
      </if>  
