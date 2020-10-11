@@ -25,9 +25,9 @@ public interface employeeMapper {
 
 	int selectByCompanyCount(@Param("companyId")Integer companyId,@Param("state") List<Integer> state);
 
-	List<employee> selectByPostId(@Param("companyId") Integer companyId,@Param("postId") Integer postId,
+	List<employee> selectByPostId(@Param("companyId") Integer companyId,@Param("postId") List<Integer> postId,
 			@Param("state") List<Integer> state,@Param("page") Integer page,@Param("size") Integer size);
 	
-	int selectByPostCount(@Param("companyId")Integer companyId,@Param("postId") Integer postId,
+	int selectByPostCount(@Param("companyId")Integer companyId,@Param("postId")  List<Integer> postId,
 			@Param("state") List<Integer> state);
 }

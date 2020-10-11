@@ -18,6 +18,7 @@ import cn.lr.dao.taskMapper;
 import cn.lr.dto.Page;
 import cn.lr.dto.PostDTO;
 import cn.lr.exception.BusiException;
+import cn.lr.po.leader;
 import cn.lr.po.post;
 import cn.lr.po.postTask;
 import cn.lr.po.task;
@@ -63,7 +64,7 @@ public class PostServiceImpl implements PostService {
 		}else {
 			record.setPic(NOIMG);
 		}
-		record.setLeaderPostId(data.getInteger("leaderPostId"));
+		record.setLeaderPostId(data.getString("leaderPostId"));
 		record.setNum(0);
 		record.setState(dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId")));
 		int count = postMapper.insert(record);
@@ -85,7 +86,7 @@ public class PostServiceImpl implements PostService {
 		test2.setName(data.getString("name"));
 		test2.setPic(data.getString("pic"));
 		test2.setPermissionList(data.getString("permissionList"));
-		test2.setLeaderPostId(data.getInteger("leaderPostId"));
+		test2.setLeaderPostId(data.getString("leaderPostId"));
 		int count = postMapper.updateByPrimaryKeySelective(test2);
 		if (count == 0) {
 			throw new BusiException("更新post表失败");
@@ -96,7 +97,7 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public Integer deletePost(JSONObject data) {
 		post test2 = postMapper.selectByPrimaryKey(data.getInteger("postId"));
-		if(test2.getLeaderPostId() == 0) {
+		if(test2.getLeaderPostId().equals("0")) {
 			throw new BusiException("经营者无法删除");
 		}
 		test2.setState(dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId")));
@@ -185,13 +186,20 @@ public class PostServiceImpl implements PostService {
 
 	public PostDTO sePostDTO(post post) {
 		PostDTO postDTO = new PostDTO();
-		if(post.getLeaderPostId() != 0) {
-			post post2 = postMapper.selectByPrimaryKey(post.getLeaderPostId());
-			if (!post.getName().contains("店长")) {
-				postDTO.setLeaderPostId(post.getLeaderPostId());
-				postDTO.setLeaderPostName(post2.getName());
+		ArrayList<leader> leaderList = new ArrayList<leader>();
+		if(!post.getLeaderPostId().equals("0")) {
+			String[] postList = post.getLeaderPostId().split("-");
+			for(int i = 0;i<postList.length;i++) {
+				post post2 = postMapper.selectByPrimaryKey(Integer.valueOf(postList[i]));
+//				if (!post.getName().contains("店长")) {
+				leader leader = new leader();
+				leader.setLeaderPostId(post2.getId());
+				leader.setLeaderPostName(post2.getName());
+				leaderList.add(leader);
+//				}
 			}
 		}
+		postDTO.setLeaderPost(leaderList);
 		postTask postTask = postTaskMapper.selectByPost(post.getId());
 		postDTO.setCompanyId(post.getCompanyId());
 		postDTO.setId(post.getId());

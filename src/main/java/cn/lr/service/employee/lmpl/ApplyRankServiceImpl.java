@@ -50,7 +50,6 @@ import cn.lr.po.employeeRank;
 import cn.lr.po.employeeRest;
 import cn.lr.po.employeeTask;
 import cn.lr.po.order;
-import cn.lr.po.project;
 import cn.lr.service.employee.ApplyRankService;
 import cn.lr.service.employee.EmployeeService;
 import cn.lr.util.TimeFormatUtil;
@@ -286,7 +285,9 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 			employee employee = employeeMapper.selectByPrimaryKey(dynamic.getEmployeeId());
 			stateList.add(stateWSX);
 			Integer postId = postMapper.selectByNameAndCompany(ADMIN, data.getInteger("companyId"), stateList);
-			List<employee> employees = employeeMapper.selectByPostId(employee.getCompanyId(), postId, stateList, 0, Integer.MAX_VALUE);
+			List<Integer> postIntegers = new ArrayList<Integer>();
+			postIntegers.add(postId);
+			List<employee> employees = employeeMapper.selectByPostId(employee.getCompanyId(), postIntegers, stateList, 0, Integer.MAX_VALUE);
 			checkIdList = "";
 			for (employee employee2:employees) {
 				checkIdList += employee2.getId()+"-";

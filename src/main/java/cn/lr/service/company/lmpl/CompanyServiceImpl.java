@@ -2,7 +2,9 @@ package cn.lr.service.company.lmpl;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +21,6 @@ import cn.lr.dao.taskMapper;
 import cn.lr.dto.Page;
 import cn.lr.exception.BusiException;
 import cn.lr.po.company;
-import cn.lr.po.dict;
 import cn.lr.po.post;
 import cn.lr.po.postTask;
 import cn.lr.po.task;
@@ -79,22 +80,33 @@ public class CompanyServiceImpl implements CompanyService {
 		}
 		// 添加post
 		String[] postList = POST.split("-");
-		List<Integer> postIdList = new ArrayList<>();
-		postIdList.add(0);
+		Map<String,String> postIdList = new HashMap<String,String>();
+		postIdList.put("经营者", "0");
 		for(int i = 0;i<postList.length;i++) {
 			post post = new post();
 			post.setCompanyId(record.getId());
 			post.setName(postList[i]);
 			post.setPermissionList(PERMISSIONLIST);
 			post.setPic(NOIMG);
-			post.setLeaderPostId(postIdList.get(i));
+			if(postList[i].equals("经营者")) {
+				post.setLeaderPostId(postIdList.get("经营者"));
+			}else if(postList[i].equals("店长")) {
+				post.setLeaderPostId(postIdList.get("经营者"));
+			}else if(postList[i].equals("顾问")) {
+				post.setLeaderPostId(postIdList.get("店长"));
+			}else if(postList[i].equals("美容师")) {
+				post.setLeaderPostId(postIdList.get("店长")+"-"+postIdList.get("顾问"));
+			}else if(postList[i].equals("前台")) {
+				post.setLeaderPostId(postIdList.get("店长"));
+			}
 			post.setNum(0);
 			post.setState(stateWSX);
 			count = postMapper.insertSelective(post);
 			if (count == 0) {
 				throw new BusiException("添加post表失败");
 			}
-			postIdList.add(post.getId());
+			postIdList.put(postList[i], String.valueOf(post.getId()));
+			
 			post post2 = new post();
 			post2.setCompanyId(2);
 			post2.setName(postList[i]);

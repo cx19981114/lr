@@ -499,9 +499,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 		Integer stateYSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
 		List<Integer> stateList = new ArrayList<Integer>();
 		stateList.add(stateYSX);
-		List<employee> employees = employeeMapper.selectByPostId(companyId, postId, stateList, (pageNum - 1) * PAGESIZE,
+		List<Integer> postIntegers = new ArrayList<Integer>();
+		postIntegers.add(postId);
+		List<employee> employees = employeeMapper.selectByPostId(companyId, postIntegers, stateList, (pageNum - 1) * PAGESIZE,
 				PAGESIZE);
-		int total = employeeMapper.selectByPostCount(companyId, postId, stateList);
+		int total = employeeMapper.selectByPostCount(companyId, postIntegers, stateList);
 		List<employeeDTO> employeeDTOs = new ArrayList<employeeDTO>();
 		for (employee e : employees) {
 			employeeDTO employeeDTO = this.sEmployeeDTO(e);
@@ -527,9 +529,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 		Integer stateYSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
 		List<Integer> stateList = new ArrayList<Integer>();
 		stateList.add(stateYSX);
-		List<employee> employees = employeeMapper.selectByPostId(companyId, post.getId(), stateList, (pageNum - 1) * PAGESIZE,
+		List<Integer> postIntegers = new ArrayList<Integer>();
+		postIntegers.add(post.getId());
+		List<employee> employees = employeeMapper.selectByPostId(companyId,postIntegers, stateList, (pageNum - 1) * PAGESIZE,
 				PAGESIZE);
-		int total = employeeMapper.selectByPostCount(companyId, post.getId(), stateList);
+		int total = employeeMapper.selectByPostCount(companyId, postIntegers, stateList);
 		List<employeeDTO> employeeDTOs = new ArrayList<employeeDTO>();
 		for (employee e : employees) {
 			employeeDTO employeeDTO = this.sEmployeeDTO(e);
@@ -550,7 +554,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 		Integer stateYSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
 		List<Integer> stateList = new ArrayList<Integer>();
 		stateList.add(stateYSX);
-		List<employee> employees = employeeMapper.selectByPostId(data.getInteger("companyId"), post.getLeaderPostId(),
+		String[] postIdList = post.getLeaderPostId().split("-");
+		List<Integer> postIntegers = new ArrayList<Integer>();
+		for(int i = 0;i<postIdList.length;i++) {
+			postIntegers.add(Integer.valueOf(postIdList[i]));
+		}
+		List<employee> employees = employeeMapper.selectByPostId(data.getInteger("companyId"), postIntegers,
 				stateList, 0, Integer.MAX_VALUE);
 		List<JSONObject> jsonList = new ArrayList<JSONObject>();
 		for (employee e : employees) {
@@ -616,7 +625,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 			dataPost.put("postId", postId);
 			dataPost.put("companyId", companyId);
 			PostService.getPost(dataPost);
-			List<employee> employees = employeeMapper.selectByPostId(companyId, postId, stateList, 0,
+			List<Integer> postIntegers = new ArrayList<Integer>();
+			postIntegers.add(postId);
+			List<employee> employees = employeeMapper.selectByPostId(companyId, postIntegers, stateList, 0,
 					Integer.MAX_VALUE);
 			for (employee e : employees) {
 				JSONObject dataEmployee = new JSONObject();

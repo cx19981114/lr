@@ -1,7 +1,11 @@
 package cn.lr.dto;
 
+import java.util.ArrayList;
+
+import cn.lr.po.leader;
+
 public class PostDTO {
-	 private Integer id;
+		private Integer id;
 
 	    private Integer companyId;
 
@@ -15,9 +19,7 @@ public class PostDTO {
 
 	    private String state;
 	    
-	    private Integer leaderPostId;
-	    
-	    private String leaderPostName;
+	    private ArrayList<leader> leaderPost;
 	    
 	    private String taskFN;
 	    
@@ -26,13 +28,13 @@ public class PostDTO {
 	    private String taskRWWeek;
 	    
 	    private String taskRWMon;
-
-		public String getLeaderPostName() {
-			return leaderPostName;
+	    
+		public ArrayList<leader> getLeaderPost() {
+			return leaderPost;
 		}
 
-		public void setLeaderPostName(String leaderPostName) {
-			this.leaderPostName = leaderPostName;
+		public void setLeaderPost(ArrayList<leader> leaderPost) {
+			this.leaderPost = leaderPost;
 		}
 
 		public Integer getId() {
@@ -89,14 +91,6 @@ public class PostDTO {
 
 		public void setState(String state) {
 			this.state = state;
-		}
-
-		public Integer getLeaderPostId() {
-			return leaderPostId;
-		}
-
-		public void setLeaderPostId(Integer leaderPostId) {
-			this.leaderPostId = leaderPostId;
 		}
 
 		public String getTaskFN() {

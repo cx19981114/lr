@@ -227,7 +227,13 @@
     select 
     <include refid="Base_Column_List" />
     from tb_employee
-    where companyId = #{companyId,jdbcType=INTEGER} and postId = #{postId,jdbcType=INTEGER} 
+    where companyId = #{companyId,jdbcType=INTEGER} 
+    <if test="postId != null">
+    	and postId in
+	    <foreach collection="postId" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>
     <if test="state != null">
     	and state not in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -239,7 +245,13 @@
   <select id="selectByPostCount"  resultType="Integer">
     select count(*)
     from tb_employee
-    where companyId = #{companyId,jdbcType=INTEGER} and postId = #{postId,jdbcType=INTEGER} 
+    where companyId = #{companyId,jdbcType=INTEGER}
+    <if test="postId != null">
+    	and postId in
+	    <foreach collection="postId" item="item" open="(" close=")" index="index" separator=",">
+	         #{item,jdbcType=INTEGER}
+	    </foreach>
+    </if>
     <if test="state != null">
     	and state not in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">

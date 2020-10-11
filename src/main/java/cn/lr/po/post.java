@@ -15,13 +15,13 @@ public class post {
 
     private Integer state;
     
-    private Integer leaderPostId;
+    private String leaderPostId;
 
-    public Integer getLeaderPostId() {
+	public String getLeaderPostId() {
 		return leaderPostId;
 	}
 
-	public void setLeaderPostId(Integer leaderPostId) {
+	public void setLeaderPostId(String leaderPostId) {
 		this.leaderPostId = leaderPostId;
 	}
 

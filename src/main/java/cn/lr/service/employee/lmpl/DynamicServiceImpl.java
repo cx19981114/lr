@@ -78,7 +78,9 @@ public class DynamicServiceImpl implements DynamicService {
 		}else if(data.getString("name").equals("新增客户")){
 			stateList.add(stateWSX);
 			Integer postId = postMapper.selectByNameAndCompany(ADMIN, data.getInteger("companyId"), stateList);
-			List<employee> employees = employeeMapper.selectByPostId(employee.getCompanyId(), postId, stateList, 0, Integer.MAX_VALUE);
+			List<Integer> postIntegers = new ArrayList<Integer>();
+			postIntegers.add(postId);
+			List<employee> employees = employeeMapper.selectByPostId(employee.getCompanyId(), postIntegers, stateList, 0, Integer.MAX_VALUE);
 			record.setCheckId(employees.get(0).getId());
 			record.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核",data.getInteger("companyId")));
 		}else {

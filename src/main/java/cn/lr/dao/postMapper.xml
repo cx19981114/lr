@@ -9,7 +9,7 @@
     <result column="pic" jdbcType="VARCHAR" property="pic" />
     <result column="num" jdbcType="INTEGER" property="num" />
     <result column="state" jdbcType="INTEGER" property="state" />
-    <result column="leaderPostId" jdbcType="INTEGER" property="leaderPostId" />
+    <result column="leaderPostId" jdbcType="VARCHAR" property="leaderPostId" />
   </resultMap>
   <sql id="Base_Column_List">
     id, companyId, name, permissionList, pic, num, state, leaderPostId
@@ -30,7 +30,7 @@
       state,leaderPostId)
     values (#{id,jdbcType=INTEGER}, #{companyId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
       #{permissionList,jdbcType=VARCHAR}, #{pic,jdbcType=VARCHAR}, #{num,jdbcType=INTEGER}, 
-      #{state,jdbcType=INTEGER},#{leaderPostId,jdbcType=INTEGER})
+      #{state,jdbcType=INTEGER},#{leaderPostId,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="cn.lr.po.post" useGeneratedKeys="true" keyProperty="id">
     insert into tb_post
@@ -83,7 +83,7 @@
         #{state,jdbcType=INTEGER},
       </if>
       <if test="leaderPostId != null">
-       #{leaderPostId,jdbcType=INTEGER}
+       #{leaderPostId,jdbcType=VARCHAR}
       </if>
     </trim>
   </insert>
@@ -109,7 +109,7 @@
         state = #{state,jdbcType=INTEGER},
       </if>
       <if test="leaderPostId != null">
-        leaderPostId = #{leaderPostId,jdbcType=INTEGER},
+        leaderPostId = #{leaderPostId,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -122,7 +122,7 @@
       pic = #{pic,jdbcType=VARCHAR},
       num = #{num,jdbcType=INTEGER},
       state = #{state,jdbcType=INTEGER},
-      leaderPostId = #{leaderPostId,jdbcType=INTEGER}
+      leaderPostId = #{leaderPostId,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
   
