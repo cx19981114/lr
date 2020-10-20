@@ -130,12 +130,11 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 		List<Integer> stateList = new ArrayList<Integer>();
 		applyRank applyRank = new applyRank();
 		String checkIdList = employeeMapper.selectByPrimaryKey(data.getInteger("employeeId")).getLeaderIdList();
-		String[] checkId = checkIdList.split("-");
+		String now = TimeFormatUtil.timeStampToString(new Date().getTime());
+		dynamic dynamic = dynamicMapper.selectByPrimaryKey(data.getInteger("dynamicId"));
 		String checkList = "";
 		String checkTimeList = "";
 		String noteList = "";
-		String now = TimeFormatUtil.timeStampToString(new Date().getTime());
-		dynamic dynamic = dynamicMapper.selectByPrimaryKey(data.getInteger("dynamicId"));
 		if (checkIdList == null || "".equals(checkIdList)) {
 			Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
 			applyRank.setStartTime(now);
@@ -304,6 +303,7 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 			applyRank.setDynamicId(data.getInteger("dynamicId"));
 			applyRank.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId")));
 		} else{
+			String[] checkId = checkIdList.split("-");
 			for (int i = 0; i < checkId.length; i++) {
 				checkList += dictMapper.selectByCodeAndStateName(CHECK_FLOW, "未审核", data.getInteger("companyId")) + "-";
 				checkTimeList += now + "--";

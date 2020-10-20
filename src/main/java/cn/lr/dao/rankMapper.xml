@@ -95,7 +95,7 @@
    <select id="selectByName" resultType="Integer">
     select score
     from tb_rank
-    where name = #{name,jdbcType=VARCHAR} and companyId = #{companyId,jdbcType=INTEGER} 
+    where name = #{name,jdbcType=VARCHAR} 
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
