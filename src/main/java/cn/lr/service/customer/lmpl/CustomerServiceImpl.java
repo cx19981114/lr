@@ -13,12 +13,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.lr.dao.applyRankMapper;
+import cn.lr.dao.companyMapper;
 import cn.lr.dao.customerMapper;
 import cn.lr.dao.customerPerformanceMapper;
 import cn.lr.dao.customerProjectMapper;
 import cn.lr.dao.dictMapper;
 import cn.lr.dao.dynamicMapper;
 import cn.lr.dao.employeeMapper;
+import cn.lr.dao.postMapper;
 import cn.lr.dao.rankMapper;
 import cn.lr.dto.CustomerDTO;
 import cn.lr.dto.Page;
@@ -27,6 +29,7 @@ import cn.lr.po.customer;
 import cn.lr.po.customerPerformance;
 import cn.lr.po.customerProject;
 import cn.lr.po.employee;
+import cn.lr.po.post;
 import cn.lr.service.customer.CustomerPerformanceService;
 import cn.lr.service.customer.CustomerService;
 import cn.lr.service.employee.ApplyRankService;
@@ -53,6 +56,11 @@ public class CustomerServiceImpl implements CustomerService {
 	applyRankMapper applyRankMapper;
 	@Autowired
 	customerPerformanceMapper customerPerformanceMapper;
+	@Autowired
+	postMapper postMapper;
+	@Autowired
+	companyMapper companyMapper;
+	
 	
 	@Autowired
 	ApplyRankService ApplyRankService;
@@ -97,7 +105,7 @@ public class CustomerServiceImpl implements CustomerService {
 		customer.setPlan(data.getString("plan"));
 		customer.setSex(data.getString("sex"));
 		customer.setOperatorId(data.getInteger("operatorId"));
-		if(data.getString("pic") != null) {
+		if(data.getString("pic") != null && ! "".equals(data.getString("pic"))) {
 			customer.setPic(data.getString("pic"));
 		}else {
 			customer.setPic(NOIMG);
@@ -205,9 +213,50 @@ public class CustomerServiceImpl implements CustomerService {
 		return this.sCustomerDTO(customer);
 	}
 
+	public List<Integer> getEmployeeeList(Integer employeeId){
+		employee employee = employeeMapper.selectByPrimaryKey(employeeId);
+		post post = postMapper.selectByPrimaryKey(employee.getPostId());
+		List<Integer> employeeList = new ArrayList<Integer>();
+		Integer stateYSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", employee.getCompanyId());
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(stateYSX);
+		if(post.getName().equals("经营者")) {
+			List<employee> employees = employeeMapper.selectByCompanyId(employee.getCompanyId(), stateList, 0, Integer.MAX_VALUE);
+			for(employee e:employees) {
+				employeeList.add(e.getId());
+			}
+		}else if(post.getName().equals("店长") || post.getName().equals("顾问")) {
+			employeeList.add(employeeId);
+			String under = employee.getUnderIdList();
+			String[] underIdList = null;
+			int flag = 1;
+			while(!"".equals(under)  && under != null) {
+				if(flag == 1) {
+					underIdList = under.split("-");
+					under = "";
+					flag = 0;
+				}
+				for (int j = 0; j < underIdList.length; j++) {
+					employee employee3 = employeeMapper.selectByPrimaryKey(Integer.valueOf(underIdList[j]));
+					if (employee3 == null) {
+						throw new BusiException("该职员不存在");
+					}
+					if(employee3.getUnderIdList() != null && !"".equals(employee3.getUnderIdList())) {
+						under += employee3.getUnderIdList();
+						flag = 1;
+					}
+					employeeList.add(Integer.valueOf(underIdList[j]));
+				}
+			}
+		}else {
+			employeeList.add(employeeId);
+		}
+		return employeeList;
+	}
 	@Override
 	public Page<JSONObject> getCustomerByEmployee(JSONObject data) {
 		Integer employeeId = data.getInteger("employeeId");
+		List<Integer> employeeIdList = this.getEmployeeeList(employeeId);
 		Integer pageNum = data.getInteger("pageNum");
 		String searchString = data.getString("search");
 		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
@@ -219,7 +268,9 @@ public class CustomerServiceImpl implements CustomerService {
 		stateList.add(stateWTJ);
 		stateList.add(stateWSH);
 		stateList.add(stateSHZ);
-		List<customer> customers = customerMapper.selectByEmployeeId(employeeId,stateList,searchString,(pageNum-1)*PAGESIZE,PAGESIZE);
+		customerMapper.selectByEmployeeId(employeeIdList,stateList,searchString,(pageNum-1)*PAGESIZE,PAGESIZE);
+		System.out.println(employeeIdList.toString());
+		List<customer> customers = customerMapper.selectByEmployeeId(employeeIdList,stateList,searchString,(pageNum-1)*PAGESIZE,PAGESIZE);
 		List<JSONObject> jsonObjects = new ArrayList<JSONObject>();
 		for(customer c : customers) {
 			JSONObject customer = new JSONObject();
@@ -228,10 +279,21 @@ public class CustomerServiceImpl implements CustomerService {
 			customer.put("name", c.getName());
 			customer.put("phone", c.getPhone());
 			customer.put("birth", c.getBirth());
-			customer.put("employeeName", employeeMapper.selectByPrimaryKey(employeeId).getName());
+			String employeeIdListByCustomer = c.getEmployeeIdList();
+			List<JSONObject> employeeJsonList = new ArrayList<JSONObject>();
+			if(employeeIdListByCustomer != null && !"".equals(employeeIdListByCustomer)) {
+				String[] emStrings = employeeIdListByCustomer.split("-");
+				for(int i = 0;i<emStrings.length;i++) {
+					JSONObject employeeJson = new JSONObject();
+					String name = employeeMapper.selectByPrimaryKey(Integer.valueOf(emStrings[i])).getName();
+					employeeJson.put("name", name);
+					employeeJsonList.add(employeeJson);
+				}
+			}
+			customer.put("employeeName", employeeJsonList);
 			jsonObjects.add(customer);
 		}
-		int total = customerMapper.selectByEmployeeIdCount(employeeId,stateList,searchString);
+		int total = customerMapper.selectByEmployeeIdCount(employeeIdList,stateList,searchString);
 		Page<JSONObject> page = new Page<JSONObject>();
 		page.setPageNum(pageNum);
 		page.setPageSize(PAGESIZE);
@@ -243,6 +305,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public List<JSONObject> getCustomerByEmployeeList(JSONObject data) {
 		Integer employeeId = data.getInteger("employeeId");
+		List<Integer> employeeIdList = this.getEmployeeeList(employeeId);
 		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
 		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
 		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", data.getInteger("companyId"));
@@ -252,7 +315,7 @@ public class CustomerServiceImpl implements CustomerService {
 		stateList.add(stateWTJ);
 		stateList.add(stateWSH);
 		stateList.add(stateSHZ);
-		List<customer> customers = customerMapper.selectByEmployeeIdList(employeeId,stateList);
+		List<customer> customers = customerMapper.selectByEmployeeIdList(employeeIdList,stateList);
 		List<JSONObject> jsonObjects = new ArrayList<JSONObject>();
 		for(customer c : customers) {
 			JSONObject customerJson = new JSONObject();
@@ -265,6 +328,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public List<JSONObject> getNewCustomerTypeByEmployee(JSONObject data) {
 		Integer employeeId = data.getInteger("employeeId");
+		List<Integer> employeeIdList = this.getEmployeeeList(employeeId);
 		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
 		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
 		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", data.getInteger("companyId"));
@@ -274,10 +338,10 @@ public class CustomerServiceImpl implements CustomerService {
 		stateList.add(stateWTJ);
 		stateList.add(stateWSH);
 		stateList.add(stateSHZ);
-		int day = customerMapper.selectByEmployeeIdDayCount(employeeId,stateList);
-		int mon = customerMapper.selectByEmployeeIdMonCount(employeeId,stateList);
-		int qtr = customerMapper.selectByEmployeeIdQtrCount(employeeId,stateList);
-		int year = customerMapper.selectByEmployeeIdYearCount(employeeId,stateList);
+		int day = customerMapper.selectByEmployeeIdDayCount(employeeIdList,stateList);
+		int mon = customerMapper.selectByEmployeeIdMonCount(employeeIdList,stateList);
+		int qtr = customerMapper.selectByEmployeeIdQtrCount(employeeIdList,stateList);
+		int year = customerMapper.selectByEmployeeIdYearCount(employeeIdList,stateList);
 		List<JSONObject> customerTypeList = new ArrayList<>();
 		JSONObject customerType = new JSONObject();
 		customerType.put("value", "本日");
@@ -301,6 +365,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public Page<JSONObject> getNewCustomerByEmployeeTime(JSONObject data) {
 		Integer employeeId = data.getInteger("employeeId");
+		List<Integer> employeeIdList = this.getEmployeeeList(employeeId);
 		Integer pageNum = data.getInteger("pageNum");
 		String type = data.getString("type");
 		String search = data.getString("search");
@@ -317,17 +382,17 @@ public class CustomerServiceImpl implements CustomerService {
 		List<JSONObject> jsonObjects = new ArrayList<>();
 		int total = 0;
 		if(type.equals("day")) {
-			customers = customerMapper.selectByEmployeeIdDay(employeeId,stateList,(pageNum-1)*PAGESIZE,PAGESIZE);
-			total = customerMapper.selectByEmployeeIdDayCount(employeeId,stateList);
+			customers = customerMapper.selectByEmployeeIdDay(employeeIdList,stateList,(pageNum-1)*PAGESIZE,PAGESIZE);
+			total = customerMapper.selectByEmployeeIdDayCount(employeeIdList,stateList);
 		}else if(type.equals("mon")) {
-			customers = customerMapper.selectByEmployeeIdMon(employeeId,stateList,(pageNum-1)*PAGESIZE,PAGESIZE);
-			total = customerMapper.selectByEmployeeIdMonCount(employeeId,stateList);
+			customers = customerMapper.selectByEmployeeIdMon(employeeIdList,stateList,(pageNum-1)*PAGESIZE,PAGESIZE);
+			total = customerMapper.selectByEmployeeIdMonCount(employeeIdList,stateList);
 		}else if(type.equals("qtr")) {
-			customers = customerMapper.selectByEmployeeIdQtr(employeeId,stateList,(pageNum-1)*PAGESIZE,PAGESIZE);
-			total = customerMapper.selectByEmployeeIdQtrCount(employeeId,stateList);
+			customers = customerMapper.selectByEmployeeIdQtr(employeeIdList,stateList,(pageNum-1)*PAGESIZE,PAGESIZE);
+			total = customerMapper.selectByEmployeeIdQtrCount(employeeIdList,stateList);
 		}else if(type.equals("year")) {
-			customers = customerMapper.selectByEmployeeIdYear(employeeId,stateList,(pageNum-1)*PAGESIZE,PAGESIZE);
-			total = customerMapper.selectByEmployeeIdYearCount(employeeId,stateList);
+			customers = customerMapper.selectByEmployeeIdYear(employeeIdList,stateList,(pageNum-1)*PAGESIZE,PAGESIZE);
+			total = customerMapper.selectByEmployeeIdYearCount(employeeIdList,stateList);
 		}
 		int count = 0;
 		for(customer c:customers) {
@@ -339,7 +404,18 @@ public class CustomerServiceImpl implements CustomerService {
 					customer.put("pic", c.getPic());
 					customer.put("name", c.getName());
 					customer.put("phone", c.getPhone());
-					customer.put("employeeName", employeeMapper.selectByPrimaryKey(employeeId).getName());
+					String employeeIdListByCustomer = c.getEmployeeIdList();
+					List<JSONObject> employeeJsonList = new ArrayList<JSONObject>();
+					if(employeeIdListByCustomer != null && !"".equals(employeeIdListByCustomer)) {
+						String[] emStrings = employeeIdListByCustomer.split("-");
+						for(int i = 0;i<emStrings.length;i++) {
+							JSONObject employeeJson = new JSONObject();
+							String name = employeeMapper.selectByPrimaryKey(Integer.valueOf(emStrings[i])).getName();
+							employeeJson.put("name", name);
+							employeeJsonList.add(employeeJson);
+						}
+					}
+					customer.put("employeeName", employeeJsonList);
 					jsonObjects.add(customer);
 				}
 			}else {
@@ -348,7 +424,18 @@ public class CustomerServiceImpl implements CustomerService {
 				customer.put("pic", c.getPic());
 				customer.put("name", c.getName());
 				customer.put("phone", c.getPhone());
-				customer.put("employeeName", employeeMapper.selectByPrimaryKey(employeeId).getName());
+				String employeeIdListByCustomer = c.getEmployeeIdList();
+				List<JSONObject> employeeJsonList = new ArrayList<JSONObject>();
+				if(employeeIdListByCustomer != null && !"".equals(employeeIdListByCustomer)) {
+					String[] emStrings = employeeIdListByCustomer.split("-");
+					for(int i = 0;i<emStrings.length;i++) {
+						JSONObject employeeJson = new JSONObject();
+						String name = employeeMapper.selectByPrimaryKey(Integer.valueOf(emStrings[i])).getName();
+						employeeJson.put("name", name);
+						employeeJsonList.add(employeeJson);
+					}
+				}
+				customer.put("employeeName", employeeJsonList);
 				jsonObjects.add(customer);
 			}
 		}
@@ -366,6 +453,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public Page<JSONObject> getCustomerByConsume(JSONObject data) throws ParseException {
 		Integer employeeId = data.getInteger("employeeId");
+		List<Integer> employeeIdList = this.getEmployeeeList(employeeId);
 		Integer pageNum = data.getInteger("pageNum");
 		String type = data.getString("type");
 		String search = data.getString("search");
@@ -382,11 +470,11 @@ public class CustomerServiceImpl implements CustomerService {
 		List<JSONObject> jsonObjects = new ArrayList<>();
 		int total = 0;
 		if(type.equals("mon")) {
-			customers = customerMapper.selectByConsumeMon(employeeId,stateList,(pageNum-1)*PAGESIZE,PAGESIZE);
-			total = customerMapper.selectByConsumeMonCount(employeeId,stateList);
+			customers = customerMapper.selectByConsumeMon(employeeIdList,stateList,(pageNum-1)*PAGESIZE,PAGESIZE);
+			total = customerMapper.selectByConsumeMonCount(employeeIdList,stateList);
 		}else if(type.equals("qtr")) {
-			customers = customerMapper.selectByConsumeQtr(employeeId,stateList,(pageNum-1)*PAGESIZE,PAGESIZE);
-			total = customerMapper.selectByConsumeQtrCount(employeeId,stateList);
+			customers = customerMapper.selectByConsumeQtr(employeeIdList,stateList,(pageNum-1)*PAGESIZE,PAGESIZE);
+			total = customerMapper.selectByConsumeQtrCount(employeeIdList,stateList);
 		}
 		int count = 0;
 		for(customer c:customers) {
@@ -399,7 +487,18 @@ public class CustomerServiceImpl implements CustomerService {
 					customer.put("name", c.getName());
 					customer.put("phone", c.getPhone());
 					customer.put("dateTime", TimeFormatUtil.stringToTimeStamp(c.getActiveConsumeTime()));
-					customer.put("employeeName", employeeMapper.selectByPrimaryKey(employeeId).getName());
+					String employeeIdListByCustomer = c.getEmployeeIdList();
+					List<JSONObject> employeeJsonList = new ArrayList<JSONObject>();
+					if(employeeIdListByCustomer != null && !"".equals(employeeIdListByCustomer)) {
+						String[] emStrings = employeeIdListByCustomer.split("-");
+						for(int i = 0;i<emStrings.length;i++) {
+							JSONObject employeeJson = new JSONObject();
+							String name = employeeMapper.selectByPrimaryKey(Integer.valueOf(emStrings[i])).getName();
+							employeeJson.put("name", name);
+							employeeJsonList.add(employeeJson);
+						}
+					}
+					customer.put("employeeName", employeeJsonList);
 					jsonObjects.add(customer);
 				}
 			}else {
@@ -408,7 +507,18 @@ public class CustomerServiceImpl implements CustomerService {
 				customer.put("pic", c.getPic());
 				customer.put("name", c.getName());
 				customer.put("phone", c.getPhone());
-				customer.put("employeeName", employeeMapper.selectByPrimaryKey(employeeId).getName());
+				String employeeIdListByCustomer = c.getEmployeeIdList();
+				List<JSONObject> employeeJsonList = new ArrayList<JSONObject>();
+				if(employeeIdListByCustomer != null && !"".equals(employeeIdListByCustomer)) {
+					String[] emStrings = employeeIdListByCustomer.split("-");
+					for(int i = 0;i<emStrings.length;i++) {
+						JSONObject employeeJson = new JSONObject();
+						String name = employeeMapper.selectByPrimaryKey(Integer.valueOf(emStrings[i])).getName();
+						employeeJson.put("name", name);
+						employeeJsonList.add(employeeJson);
+					}
+				}
+				customer.put("employeeName", employeeJsonList);
 				customer.put("dateTime", TimeFormatUtil.stringToTimeStamp(c.getActiveConsumeTime()));
 				jsonObjects.add(customer);
 			}
@@ -427,6 +537,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public Page<JSONObject> getCustomerByService(JSONObject data) throws ParseException {
 		Integer employeeId = data.getInteger("employeeId");
+		List<Integer> employeeIdList = this.getEmployeeeList(employeeId);
 		Integer pageNum = data.getInteger("pageNum");
 		String type = data.getString("type");
 		String search = data.getString("search");
@@ -443,11 +554,11 @@ public class CustomerServiceImpl implements CustomerService {
 		List<JSONObject> jsonObjects = new ArrayList<>();
 		int total = 0;
 		if(type.equals("mon")) {
-			customers = customerMapper.selectByServiceMon(employeeId,stateList,(pageNum-1)*PAGESIZE,PAGESIZE);
-			total = customerMapper.selectByServiceMonCount(employeeId,stateList);
+			customers = customerMapper.selectByServiceMon(employeeIdList,stateList,(pageNum-1)*PAGESIZE,PAGESIZE);
+			total = customerMapper.selectByServiceMonCount(employeeIdList,stateList);
 		}else if(type.equals("qtr")) {
-			customers = customerMapper.selectByServiceQtr(employeeId,stateList,(pageNum-1)*PAGESIZE,PAGESIZE);
-			total = customerMapper.selectByServiceQtrCount(employeeId,stateList);
+			customers = customerMapper.selectByServiceQtr(employeeIdList,stateList,(pageNum-1)*PAGESIZE,PAGESIZE);
+			total = customerMapper.selectByServiceQtrCount(employeeIdList,stateList);
 		}
 		int count = 0;
 		for(customer c:customers) {
@@ -459,7 +570,18 @@ public class CustomerServiceImpl implements CustomerService {
 					customer.put("pic", c.getPic());
 					customer.put("name", c.getName());
 					customer.put("phone", c.getPhone());
-					customer.put("employeeName", employeeMapper.selectByPrimaryKey(employeeId).getName());
+					String employeeIdListByCustomer = c.getEmployeeIdList();
+					List<JSONObject> employeeJsonList = new ArrayList<JSONObject>();
+					if(employeeIdListByCustomer != null && !"".equals(employeeIdListByCustomer)) {
+						String[] emStrings = employeeIdListByCustomer.split("-");
+						for(int i = 0;i<emStrings.length;i++) {
+							JSONObject employeeJson = new JSONObject();
+							String name = employeeMapper.selectByPrimaryKey(Integer.valueOf(emStrings[i])).getName();
+							employeeJson.put("name", name);
+							employeeJsonList.add(employeeJson);
+						}
+					}
+					customer.put("employeeName", employeeJsonList);
 					customer.put("dateTime", TimeFormatUtil.stringToTimeStamp(c.getActiveServiceTime()));
 					jsonObjects.add(customer);
 				}
@@ -469,7 +591,18 @@ public class CustomerServiceImpl implements CustomerService {
 				customer.put("pic", c.getPic());
 				customer.put("name", c.getName());
 				customer.put("phone", c.getPhone());
-				customer.put("employeeName", employeeMapper.selectByPrimaryKey(employeeId).getName());
+				String employeeIdListByCustomer = c.getEmployeeIdList();
+				List<JSONObject> employeeJsonList = new ArrayList<JSONObject>();
+				if(employeeIdListByCustomer != null && !"".equals(employeeIdListByCustomer)) {
+					String[] emStrings = employeeIdListByCustomer.split("-");
+					for(int i = 0;i<emStrings.length;i++) {
+						JSONObject employeeJson = new JSONObject();
+						String name = employeeMapper.selectByPrimaryKey(Integer.valueOf(emStrings[i])).getName();
+						employeeJson.put("name", name);
+						employeeJsonList.add(employeeJson);
+					}
+				}
+				customer.put("employeeName", employeeJsonList);
 				customer.put("dateTime", TimeFormatUtil.stringToTimeStamp(c.getActiveServiceTime()));
 				jsonObjects.add(customer);
 			}
@@ -487,6 +620,7 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 	public List<JSONObject> getCustomerServiceType(JSONObject data){
 		Integer employeeId = data.getInteger("employeeId");
+		List<Integer> employeeIdList = this.getEmployeeeList(employeeId);
 		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
 		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
 		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", data.getInteger("companyId"));
@@ -498,31 +632,31 @@ public class CustomerServiceImpl implements CustomerService {
 		stateList.add(stateSHZ);
 		List<JSONObject> serviceTypeList = new ArrayList<JSONObject>();
 		JSONObject serviceTypeJsonObject = new JSONObject();
-		int total = customerMapper.selectByConsumeMonCount(employeeId,stateList);
+		int total = customerMapper.selectByConsumeMonCount(employeeIdList,stateList);
 		serviceTypeJsonObject.put("title", "当月消费");
 		serviceTypeJsonObject.put("count", total);
 		serviceTypeList.add(serviceTypeJsonObject);
 		
 		serviceTypeJsonObject = new JSONObject();
-		total = customerMapper.selectByConsumeQtrCount(employeeId,stateList);
+		total = customerMapper.selectByConsumeQtrCount(employeeIdList,stateList);
 		serviceTypeJsonObject.put("title", "三月消费");
 		serviceTypeJsonObject.put("count", total);
 		serviceTypeList.add(serviceTypeJsonObject);
 		
 		serviceTypeJsonObject = new JSONObject();
-		total = customerMapper.selectByServiceMonCount(employeeId,stateList);
+		total = customerMapper.selectByServiceMonCount(employeeIdList,stateList);
 		serviceTypeJsonObject.put("title", "当月服务");
 		serviceTypeJsonObject.put("count", total);
 		serviceTypeList.add(serviceTypeJsonObject);
 		
 		serviceTypeJsonObject = new JSONObject();
-		total = customerMapper.selectByServiceQtrCount(employeeId,stateList);
+		total = customerMapper.selectByServiceQtrCount(employeeIdList,stateList);
 		serviceTypeJsonObject.put("title", "三月服务");
 		serviceTypeJsonObject.put("count", total);
 		serviceTypeList.add(serviceTypeJsonObject);
 		
 		serviceTypeJsonObject = new JSONObject();
-		total = customerMapper.selectByUnServiceQtrCount(employeeId,stateList);
+		total = customerMapper.selectByUnServiceQtrCount(employeeIdList,stateList);
 		serviceTypeJsonObject.put("title", "三月未消费");
 		serviceTypeJsonObject.put("count", total);
 		serviceTypeList.add(serviceTypeJsonObject);
@@ -533,6 +667,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public Page<JSONObject> getCustomerByUnService(JSONObject data) throws ParseException {
 		Integer employeeId = data.getInteger("employeeId");
+		List<Integer> employeeIdList = this.getEmployeeeList(employeeId);
 		Integer pageNum = data.getInteger("pageNum");
 		String search = data.getString("search");
 		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
@@ -547,8 +682,8 @@ public class CustomerServiceImpl implements CustomerService {
 		List<customer> customers = new ArrayList<>();
 		List<JSONObject> jsonObjects = new ArrayList<>();
 		int total = 0;
-		customers = customerMapper.selectByUnServiceQtr(employeeId,stateList,(pageNum-1)*PAGESIZE,PAGESIZE);
-		total = customerMapper.selectByUnServiceQtrCount(employeeId,stateList);
+		customers = customerMapper.selectByUnServiceQtr(employeeIdList,stateList,(pageNum-1)*PAGESIZE,PAGESIZE);
+		total = customerMapper.selectByUnServiceQtrCount(employeeIdList,stateList);
 		int count = 0;
 		for(customer c:customers) {
 			if(!"".equals(search)) {
@@ -559,7 +694,18 @@ public class CustomerServiceImpl implements CustomerService {
 					customer.put("pic", c.getPic());
 					customer.put("name", c.getName());
 					customer.put("phone", c.getPhone());
-					customer.put("employeeName", employeeMapper.selectByPrimaryKey(employeeId).getName());
+					String employeeIdListByCustomer = c.getEmployeeIdList();
+					List<JSONObject> employeeJsonList = new ArrayList<JSONObject>();
+					if(employeeIdListByCustomer != null && !"".equals(employeeIdListByCustomer)) {
+						String[] emStrings = employeeIdListByCustomer.split("-");
+						for(int i = 0;i<emStrings.length;i++) {
+							JSONObject employeeJson = new JSONObject();
+							String name = employeeMapper.selectByPrimaryKey(Integer.valueOf(emStrings[i])).getName();
+							employeeJson.put("name", name);
+							employeeJsonList.add(employeeJson);
+						}
+					}
+					customer.put("employeeName", employeeJsonList);
 					customer.put("dateTime", TimeFormatUtil.stringToTimeStamp(c.getActiveServiceTime()));
 					jsonObjects.add(customer);
 				}
@@ -569,7 +715,18 @@ public class CustomerServiceImpl implements CustomerService {
 				customer.put("pic", c.getPic());
 				customer.put("name", c.getName());
 				customer.put("phone", c.getPhone());
-				customer.put("employeeName", employeeMapper.selectByPrimaryKey(employeeId).getName());
+				String employeeIdListByCustomer = c.getEmployeeIdList();
+				List<JSONObject> employeeJsonList = new ArrayList<JSONObject>();
+				if(employeeIdListByCustomer != null && !"".equals(employeeIdListByCustomer)) {
+					String[] emStrings = employeeIdListByCustomer.split("-");
+					for(int i = 0;i<emStrings.length;i++) {
+						JSONObject employeeJson = new JSONObject();
+						String name = employeeMapper.selectByPrimaryKey(Integer.valueOf(emStrings[i])).getName();
+						employeeJson.put("name", name);
+						employeeJsonList.add(employeeJson);
+					}
+				}
+				customer.put("employeeName", employeeJsonList);
 				customer.put("dateTime", TimeFormatUtil.stringToTimeStamp(c.getActiveServiceTime()));
 				jsonObjects.add(customer);
 			}
@@ -629,6 +786,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public JSONObject getCustomerChart(JSONObject data) {
 		Integer employeeId = data.getInteger("employeeId");
+		List<Integer> employeeIdList = this.getEmployeeeList(employeeId);
 		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
 		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
 		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", data.getInteger("companyId"));
@@ -647,7 +805,7 @@ public class CustomerServiceImpl implements CustomerService {
 		List<Integer> line = new ArrayList<Integer>();
 		JSONObject series = new JSONObject();
 		for(int i = 1;i <= 7 ;i++) {
-			line.add(customerMapper.selectByConsumeDay(employeeId, stateList,i));
+			line.add(customerMapper.selectByConsumeDay(employeeIdList, stateList,i));
 		}
 		series.put("data", line);
 		series.put("type", "line");
@@ -656,7 +814,7 @@ public class CustomerServiceImpl implements CustomerService {
 		line = new ArrayList<Integer>();
 		series = new JSONObject();
 		for(int i = 1;i <= 7 ;i++) {
-			line.add(customerMapper.selectByServiceDay(employeeId, stateList,i));
+			line.add(customerMapper.selectByServiceDay(employeeIdList, stateList,i));
 		}
 		series.put("data", line);
 		series.put("type", "line");

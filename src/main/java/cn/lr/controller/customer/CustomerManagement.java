@@ -129,7 +129,7 @@ public class CustomerManagement {
 		} catch (BusiException e) {
 			return ResultJsonUtil.toJsonString(101, null, e.getMessage(),session.getId());
 		} catch (Exception e) {
-			return ResultJsonUtil.toJsonString(404, null, "系统未知错误",session.getId());
+			return ResultJsonUtil.toJsonString(404, e.toString(),"系统错误",session.getId());
 		}finally {
 			LoggerUtil.LOGGER.info("-------------end 根据职员获取客户信息--------------------");
 		}

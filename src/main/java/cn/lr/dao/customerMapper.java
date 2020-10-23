@@ -19,60 +19,60 @@ public interface customerMapper {
 
     int updateByPrimaryKey(customer record);
     
-    List<customer> selectByEmployeeId(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state,
+    List<customer> selectByEmployeeId(@Param("employeeId") List<Integer> employeeId,@Param("state") List<Integer> state,
     		@Param("search")String search,@Param("page") Integer page,@Param("size") Integer size);
 
-	int selectByEmployeeIdCount(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state,
+	int selectByEmployeeIdCount(@Param("employeeId") List<Integer> employeeId,@Param("state") List<Integer> state,
 			@Param("search")String search);
 	
-	List<customer> selectByEmployeeIdList(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state);
+	List<customer> selectByEmployeeIdList(@Param("employeeId") List<Integer> employeeId,@Param("state") List<Integer> state);
 	
-	List<customer> selectByEmployeeIdDay(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state,@Param("page") Integer page,
+	List<customer> selectByEmployeeIdDay(@Param("employeeId") List<Integer> employeeId,@Param("state") List<Integer> state,@Param("page") Integer page,
 			@Param("size") Integer size);
 
-	int selectByEmployeeIdDayCount(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state);
+	int selectByEmployeeIdDayCount(@Param("employeeId") List<Integer> employeeId,@Param("state") List<Integer> state);
 	
-	List<customer> selectByEmployeeIdMon(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state,@Param("page") Integer page,
+	List<customer> selectByEmployeeIdMon(@Param("employeeId") List<Integer> employeeId,@Param("state") List<Integer> state,@Param("page") Integer page,
 			@Param("size") Integer size);
 	
-	int selectByEmployeeIdMonCount(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state);
+	int selectByEmployeeIdMonCount(@Param("employeeId") List<Integer> employeeId,@Param("state") List<Integer> state);
 	
-	List<customer> selectByEmployeeIdQtr(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state,@Param("page") Integer page,
+	List<customer> selectByEmployeeIdQtr(@Param("employeeId") List<Integer> employeeId,@Param("state") List<Integer> state,@Param("page") Integer page,
 			@Param("size") Integer size);
 	
-	int selectByEmployeeIdQtrCount(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state);
+	int selectByEmployeeIdQtrCount(@Param("employeeId") List<Integer> employeeId,@Param("state") List<Integer> state);
 	
-	List<customer> selectByEmployeeIdYear(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state,@Param("page") Integer page,
+	List<customer> selectByEmployeeIdYear(@Param("employeeId") List<Integer> employeeId,@Param("state") List<Integer> state,@Param("page") Integer page,
 			@Param("size") Integer size);
 	
-	int selectByEmployeeIdYearCount(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state);
+	int selectByEmployeeIdYearCount(@Param("employeeId") List<Integer> employeeId,@Param("state") List<Integer> state);
 	
-	List<customer> selectByConsumeMon(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state,@Param("page") Integer page,
+	List<customer> selectByConsumeMon(@Param("employeeId") List<Integer> employeeId,@Param("state") List<Integer> state,@Param("page") Integer page,
 			@Param("size") Integer size);
 	
-	int selectByConsumeMonCount(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state);
+	int selectByConsumeMonCount(@Param("employeeId") List<Integer> employeeId,@Param("state") List<Integer> state);
 	
-	List<customer> selectByConsumeQtr(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state,@Param("page") Integer page,
+	List<customer> selectByConsumeQtr(@Param("employeeId") List<Integer> employeeId,@Param("state") List<Integer> state,@Param("page") Integer page,
 			@Param("size") Integer size);
 	
-	int selectByConsumeQtrCount(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state);
+	int selectByConsumeQtrCount(@Param("employeeId") List<Integer> employeeId,@Param("state") List<Integer> state);
 	
-	List<customer> selectByServiceMon(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state,@Param("page") Integer page,
+	List<customer> selectByServiceMon(@Param("employeeId") List<Integer> employeeId,@Param("state") List<Integer> state,@Param("page") Integer page,
 			@Param("size") Integer size);
 	
-	int selectByServiceMonCount(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state);
+	int selectByServiceMonCount(@Param("employeeId") List<Integer> employeeId,@Param("state") List<Integer> state);
 	
-	List<customer> selectByServiceQtr(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state,@Param("page") Integer page,
+	List<customer> selectByServiceQtr(@Param("employeeId") List<Integer> employeeId,@Param("state") List<Integer> state,@Param("page") Integer page,
 			@Param("size") Integer size);
 	
-	int selectByServiceQtrCount(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state);
+	int selectByServiceQtrCount(@Param("employeeId") List<Integer> employeeId,@Param("state") List<Integer> state);
 	
-	List<customer> selectByUnServiceQtr(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state,@Param("page") Integer page,
+	List<customer> selectByUnServiceQtr(@Param("employeeId") List<Integer> employeeId,@Param("state") List<Integer> state,@Param("page") Integer page,
 			@Param("size") Integer size);
 	
-	int selectByUnServiceQtrCount(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state);
+	int selectByUnServiceQtrCount(@Param("employeeId") List<Integer> employeeId,@Param("state") List<Integer> state);
 	
-	int selectByConsumeDay(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state,@Param("day") Integer day);
+	int selectByConsumeDay(@Param("employeeId") List<Integer> employeeId,@Param("state") List<Integer> state,@Param("day") Integer day);
 	
-	int selectByServiceDay(@Param("employeeId") Integer employeeId,@Param("state") List<Integer> state,@Param("day") Integer day);
+	int selectByServiceDay(@Param("employeeId") List<Integer> employeeId,@Param("state") List<Integer> state,@Param("day") Integer day);
 }
