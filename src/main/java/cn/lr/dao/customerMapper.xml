@@ -226,7 +226,7 @@
     where 1=1
     <if test="employeeId != null">    and 
      <foreach collection="employeeId" item="item" index="index" >
-	  employeeIdList like concat('%',#{item,jdbcType=INTEGER},'-%') 
+	  employeeIdList like concat('%-',#{item,jdbcType=INTEGER},'-%') 
 	  <if test="index != (employeeId.size() - 1)">
 	  or
 	  </if>
@@ -246,7 +246,7 @@
     where   1=1
      <if test="employeeId != null">    and 
      <foreach collection="employeeId" item="item" index="index" >
-	  employeeIdList like concat('%',#{item,jdbcType=INTEGER},'-%') 
+	  employeeIdList like concat('%-',#{item,jdbcType=INTEGER},'-%') 
 	  <if test="index != (employeeId.size() - 1)">
 	  or
 	  </if>
@@ -267,7 +267,7 @@
     where   1=1
      <if test="employeeId != null">    and 
      <foreach collection="employeeId" item="item" index="index" >
-	  employeeIdList like concat('%',#{item,jdbcType=INTEGER},'-%') 
+	  employeeIdList like concat('%-',#{item,jdbcType=INTEGER},'-%') 
 	  <if test="index != (employeeId.size() - 1)">
 	  or
 	  </if>
@@ -288,7 +288,7 @@
     where  1=1
      <if test="employeeId != null">
      <foreach collection="employeeId" item="item" index="index" >
-	  employeeIdList like concat('%',#{item,jdbcType=INTEGER},'-%') 
+	  employeeIdList like concat('%-',#{item,jdbcType=INTEGER},'-%') 
 	  <if test="index != (employeeId.size() - 1)">
 	  or
 	  </if>
@@ -308,7 +308,7 @@
     where  1=1
      <if test="employeeId != null">    and 
      <foreach collection="employeeId" item="item" index="index" >
-	  employeeIdList like concat('%',#{item,jdbcType=INTEGER},'-%') 
+	  employeeIdList like concat('%-',#{item,jdbcType=INTEGER},'-%') 
 	  <if test="index != (employeeId.size() - 1)">
 	  or
 	  </if>
@@ -330,7 +330,7 @@
     where 1=1
      <if test="employeeId != null">    and 
      <foreach collection="employeeId" item="item" index="index" >
-	  employeeIdList like concat('%',#{item,jdbcType=INTEGER},'-%') 
+	  employeeIdList like concat('%-',#{item,jdbcType=INTEGER},'-%') 
 	  <if test="index != (employeeId.size() - 1)">
 	  or
 	  </if>
@@ -350,7 +350,7 @@
     where  1=1
      <if test="employeeId != null">    and 
      <foreach collection="employeeId" item="item" index="index" >
-	  employeeIdList like concat('%',#{item,jdbcType=INTEGER},'-%') 
+	  employeeIdList like concat('%-',#{item,jdbcType=INTEGER},'-%') 
 	  <if test="index != (employeeId.size() - 1)">
 	  or
 	  </if>
@@ -372,7 +372,7 @@
     where 1=1
      <if test="employeeId != null">    and 
      <foreach collection="employeeId" item="item" index="index" >
-	  employeeIdList like concat('%',#{item,jdbcType=INTEGER},'-%') 
+	  employeeIdList like concat('%-',#{item,jdbcType=INTEGER},'-%') 
 	  <if test="index != (employeeId.size() - 1)">
 	  or
 	  </if>
@@ -392,7 +392,7 @@
     where 1=1
      <if test="employeeId != null">    and 
      <foreach collection="employeeId" item="item" index="index" >
-	  employeeIdList like concat('%',#{item,jdbcType=INTEGER},'-%') 
+	  employeeIdList like concat('%-',#{item,jdbcType=INTEGER},'-%') 
 	  <if test="index != (employeeId.size() - 1)">
 	  or
 	  </if>
@@ -414,7 +414,7 @@
     where  1=1
      <if test="employeeId != null">    and 
      <foreach collection="employeeId" item="item" index="index" >
-	  employeeIdList like concat('%',#{item,jdbcType=INTEGER},'-%') 
+	  employeeIdList like concat('%-',#{item,jdbcType=INTEGER},'-%') 
 	  <if test="index != (employeeId.size() - 1)">
 	  or
 	  </if>
@@ -434,7 +434,7 @@
     where  1=1
     <if test="employeeId != null">    and 
      <foreach collection="employeeId" item="item" index="index" >
-	  employeeIdList like concat('%',#{item,jdbcType=INTEGER},'-%') 
+	  employeeIdList like concat('%-',#{item,jdbcType=INTEGER},'-%') 
 	  <if test="index != (employeeId.size() - 1)">
 	  or
 	  </if>
@@ -456,7 +456,7 @@
     where 1=1
     <if test="employeeId != null">    and 
      <foreach collection="employeeId" item="item" index="index" >
-	  employeeIdList like concat('%',#{item,jdbcType=INTEGER},'-%') 
+	  employeeIdList like concat('%-',#{item,jdbcType=INTEGER},'-%') 
 	  <if test="index != (employeeId.size() - 1)">
 	  or
 	  </if>
@@ -476,7 +476,7 @@
     where 1=1
     <if test="employeeId != null">    and 
      <foreach collection="employeeId" item="item" index="index" >
-	  employeeIdList like concat('%',#{item,jdbcType=INTEGER},'-%') 
+	  employeeIdList like concat('%-',#{item,jdbcType=INTEGER},'-%') 
 	  <if test="index != (employeeId.size() - 1)">
 	  or
 	  </if>
@@ -498,7 +498,7 @@
     where 1=1
     <if test="employeeId != null">    and 
      <foreach collection="employeeId" item="item" index="index" >
-	  employeeIdList like concat('%',#{item,jdbcType=INTEGER},'-%') 
+	  employeeIdList like concat('%-',#{item,jdbcType=INTEGER},'-%') 
 	  <if test="index != (employeeId.size() - 1)">
 	  or
 	  </if>
@@ -518,7 +518,7 @@
     where 1=1
     <if test="employeeId != null">    and 
      <foreach collection="employeeId" item="item" index="index" >
-	  employeeIdList like concat('%',#{item,jdbcType=INTEGER},'-%') 
+	  employeeIdList like concat('%-',#{item,jdbcType=INTEGER},'-%') 
 	  <if test="index != (employeeId.size() - 1)">
 	  or
 	  </if>
@@ -540,7 +540,7 @@
     where 1=1
     <if test="employeeId != null">    and 
      <foreach collection="employeeId" item="item" index="index" >
-	  employeeIdList like concat('%',#{item,jdbcType=INTEGER},'-%') 
+	  employeeIdList like concat('%-',#{item,jdbcType=INTEGER},'-%') 
 	  <if test="index != (employeeId.size() - 1)">
 	  or
 	  </if>
@@ -560,7 +560,7 @@
     where 1=1
     <if test="employeeId != null">    and 
      <foreach collection="employeeId" item="item" index="index" >
-	  employeeIdList like concat('%',#{item,jdbcType=INTEGER},'-%') 
+	  employeeIdList like concat('%-',#{item,jdbcType=INTEGER},'-%') 
 	  <if test="index != (employeeId.size() - 1)">
 	  or
 	  </if>
@@ -582,7 +582,7 @@
     where 1=1
     <if test="employeeId != null">    and 
      <foreach collection="employeeId" item="item" index="index" >
-	  employeeIdList like concat('%',#{item,jdbcType=INTEGER},'-%') 
+	  employeeIdList like concat('%-',#{item,jdbcType=INTEGER},'-%') 
 	  <if test="index != (employeeId.size() - 1)">
 	  or
 	  </if>
@@ -602,7 +602,7 @@
     where 1=1
     <if test="employeeId != null">    and 
      <foreach collection="employeeId" item="item" index="index" >
-	  employeeIdList like concat('%',#{item,jdbcType=INTEGER},'-%') 
+	  employeeIdList like concat('%-',#{item,jdbcType=INTEGER},'-%') 
 	  <if test="index != (employeeId.size() - 1)">
 	  or
 	  </if>
@@ -624,7 +624,7 @@
     where 1=1
     <if test="employeeId != null">    and 
      <foreach collection="employeeId" item="item" index="index" >
-	  employeeIdList like concat('%',#{item,jdbcType=INTEGER},'-%') 
+	  employeeIdList like concat('%-',#{item,jdbcType=INTEGER},'-%') 
 	  <if test="index != (employeeId.size() - 1)">
 	  or
 	  </if>
@@ -644,7 +644,7 @@
     where 1=1
     <if test="employeeId != null">    and 
      <foreach collection="employeeId" item="item" index="index" >
-	  employeeIdList like concat('%',#{item,jdbcType=INTEGER},'-%') 
+	  employeeIdList like concat('%-',#{item,jdbcType=INTEGER},'-%') 
 	  <if test="index != (employeeId.size() - 1)">
 	  or
 	  </if>
@@ -665,7 +665,7 @@
     where  1=1
     <if test="employeeId != null">    and 
      <foreach collection="employeeId" item="item" index="index" >
-	  employeeIdList like concat('%',#{item,jdbcType=INTEGER},'-%') 
+	  employeeIdList like concat('%-',#{item,jdbcType=INTEGER},'-%') 
 	  <if test="index != (employeeId.size() - 1)">
 	  or
 	  </if>
@@ -686,7 +686,7 @@
     where 1=1 
     <if test="employeeId != null">    and 
      <foreach collection="employeeId" item="item" index="index" >
-	  employeeIdList like concat('%',#{item,jdbcType=INTEGER},'-%') 
+	  employeeIdList like concat('%-',#{item,jdbcType=INTEGER},'-%') 
 	  <if test="index != (employeeId.size() - 1)">
 	  or
 	  </if>

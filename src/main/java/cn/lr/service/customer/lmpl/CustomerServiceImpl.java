@@ -283,7 +283,7 @@ public class CustomerServiceImpl implements CustomerService {
 			List<JSONObject> employeeJsonList = new ArrayList<JSONObject>();
 			if(employeeIdListByCustomer != null && !"".equals(employeeIdListByCustomer)) {
 				String[] emStrings = employeeIdListByCustomer.split("-");
-				for(int i = 0;i<emStrings.length;i++) {
+				for(int i = 1;i<emStrings.length;i++) {
 					JSONObject employeeJson = new JSONObject();
 					String name = employeeMapper.selectByPrimaryKey(Integer.valueOf(emStrings[i])).getName();
 					employeeJson.put("name", name);
@@ -408,7 +408,7 @@ public class CustomerServiceImpl implements CustomerService {
 					List<JSONObject> employeeJsonList = new ArrayList<JSONObject>();
 					if(employeeIdListByCustomer != null && !"".equals(employeeIdListByCustomer)) {
 						String[] emStrings = employeeIdListByCustomer.split("-");
-						for(int i = 0;i<emStrings.length;i++) {
+						for(int i = 1;i<emStrings.length;i++) {
 							JSONObject employeeJson = new JSONObject();
 							String name = employeeMapper.selectByPrimaryKey(Integer.valueOf(emStrings[i])).getName();
 							employeeJson.put("name", name);
@@ -428,7 +428,7 @@ public class CustomerServiceImpl implements CustomerService {
 				List<JSONObject> employeeJsonList = new ArrayList<JSONObject>();
 				if(employeeIdListByCustomer != null && !"".equals(employeeIdListByCustomer)) {
 					String[] emStrings = employeeIdListByCustomer.split("-");
-					for(int i = 0;i<emStrings.length;i++) {
+					for(int i = 1;i<emStrings.length;i++) {
 						JSONObject employeeJson = new JSONObject();
 						String name = employeeMapper.selectByPrimaryKey(Integer.valueOf(emStrings[i])).getName();
 						employeeJson.put("name", name);
@@ -491,7 +491,7 @@ public class CustomerServiceImpl implements CustomerService {
 					List<JSONObject> employeeJsonList = new ArrayList<JSONObject>();
 					if(employeeIdListByCustomer != null && !"".equals(employeeIdListByCustomer)) {
 						String[] emStrings = employeeIdListByCustomer.split("-");
-						for(int i = 0;i<emStrings.length;i++) {
+						for(int i = 1;i<emStrings.length;i++) {
 							JSONObject employeeJson = new JSONObject();
 							String name = employeeMapper.selectByPrimaryKey(Integer.valueOf(emStrings[i])).getName();
 							employeeJson.put("name", name);
@@ -511,7 +511,7 @@ public class CustomerServiceImpl implements CustomerService {
 				List<JSONObject> employeeJsonList = new ArrayList<JSONObject>();
 				if(employeeIdListByCustomer != null && !"".equals(employeeIdListByCustomer)) {
 					String[] emStrings = employeeIdListByCustomer.split("-");
-					for(int i = 0;i<emStrings.length;i++) {
+					for(int i = 1;i<emStrings.length;i++) {
 						JSONObject employeeJson = new JSONObject();
 						String name = employeeMapper.selectByPrimaryKey(Integer.valueOf(emStrings[i])).getName();
 						employeeJson.put("name", name);
@@ -574,7 +574,7 @@ public class CustomerServiceImpl implements CustomerService {
 					List<JSONObject> employeeJsonList = new ArrayList<JSONObject>();
 					if(employeeIdListByCustomer != null && !"".equals(employeeIdListByCustomer)) {
 						String[] emStrings = employeeIdListByCustomer.split("-");
-						for(int i = 0;i<emStrings.length;i++) {
+						for(int i = 1;i<emStrings.length;i++) {
 							JSONObject employeeJson = new JSONObject();
 							String name = employeeMapper.selectByPrimaryKey(Integer.valueOf(emStrings[i])).getName();
 							employeeJson.put("name", name);
@@ -595,7 +595,7 @@ public class CustomerServiceImpl implements CustomerService {
 				List<JSONObject> employeeJsonList = new ArrayList<JSONObject>();
 				if(employeeIdListByCustomer != null && !"".equals(employeeIdListByCustomer)) {
 					String[] emStrings = employeeIdListByCustomer.split("-");
-					for(int i = 0;i<emStrings.length;i++) {
+					for(int i = 1;i<emStrings.length;i++) {
 						JSONObject employeeJson = new JSONObject();
 						String name = employeeMapper.selectByPrimaryKey(Integer.valueOf(emStrings[i])).getName();
 						employeeJson.put("name", name);
@@ -698,7 +698,7 @@ public class CustomerServiceImpl implements CustomerService {
 					List<JSONObject> employeeJsonList = new ArrayList<JSONObject>();
 					if(employeeIdListByCustomer != null && !"".equals(employeeIdListByCustomer)) {
 						String[] emStrings = employeeIdListByCustomer.split("-");
-						for(int i = 0;i<emStrings.length;i++) {
+						for(int i = 1;i<emStrings.length;i++) {
 							JSONObject employeeJson = new JSONObject();
 							String name = employeeMapper.selectByPrimaryKey(Integer.valueOf(emStrings[i])).getName();
 							employeeJson.put("name", name);
@@ -719,7 +719,7 @@ public class CustomerServiceImpl implements CustomerService {
 				List<JSONObject> employeeJsonList = new ArrayList<JSONObject>();
 				if(employeeIdListByCustomer != null && !"".equals(employeeIdListByCustomer)) {
 					String[] emStrings = employeeIdListByCustomer.split("-");
-					for(int i = 0;i<emStrings.length;i++) {
+					for(int i = 1;i<emStrings.length;i++) {
 						JSONObject employeeJson = new JSONObject();
 						String name = employeeMapper.selectByPrimaryKey(Integer.valueOf(emStrings[i])).getName();
 						employeeJson.put("name", name);
