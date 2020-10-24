@@ -747,7 +747,7 @@ public class CustomerServiceImpl implements CustomerService {
 		Integer companyId = opEmployee.getCompanyId();
 		List<JSONObject> employeeList = new ArrayList<>();
 		String[] employeeIdList = customer.getEmployeeIdList().split("-");
-		for(int i = 0;i<employeeIdList.length;i++) {
+		for(int i = 1;i<employeeIdList.length;i++) {
 			JSONObject employeeJson = new JSONObject();
 			employee employee = employeeMapper.selectByPrimaryKey(Integer.valueOf(employeeIdList[i]));
 			employeeJson.put("name", employee.getName());
