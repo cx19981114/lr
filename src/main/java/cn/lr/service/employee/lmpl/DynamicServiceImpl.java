@@ -72,10 +72,7 @@ public class DynamicServiceImpl implements DynamicService {
 		if (employee == null || employee.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效",data.getInteger("companyId"))) {
 			throw new BusiException("该职员不存在");
 		}
-		if (employee.getLeaderIdList() != null && !"".equals(employee.getLeaderIdList())) {
-			record.setCheckId(Integer.valueOf(employee.getLeaderIdList().split("-")[0]));
-			record.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交",data.getInteger("companyId")));
-		}else if(data.getString("name").equals("新增客户")){
+		if (data.getString("name").equals("新增顾客")){
 			stateList.add(stateWSX);
 			Integer postId = postMapper.selectByNameAndCompany(ADMIN, data.getInteger("companyId"), stateList);
 			List<Integer> postIntegers = new ArrayList<Integer>();
@@ -83,6 +80,9 @@ public class DynamicServiceImpl implements DynamicService {
 			List<employee> employees = employeeMapper.selectByPostId(employee.getCompanyId(), postIntegers, stateList, 0, Integer.MAX_VALUE);
 			record.setCheckId(employees.get(0).getId());
 			record.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核",data.getInteger("companyId")));
+		}else if(employee.getLeaderIdList() != null && !"".equals(employee.getLeaderIdList())){
+			record.setCheckId(Integer.valueOf(employee.getLeaderIdList().split("-")[0]));
+			record.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交",data.getInteger("companyId")));
 		}else {
 			record.setCheckId(employee.getId());
 			record.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功",data.getInteger("companyId")));

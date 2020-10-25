@@ -177,7 +177,7 @@
     select 
     <include refid="Base_Column_List" />
     from tb_dynamic
-    where checkId = #{checkId,jdbcType=INTEGER} and to_days(dateTime) = to_days(now()) 
+    where checkId = #{checkId,jdbcType=INTEGER} 
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -189,7 +189,7 @@
   <select id="selectByCheckCount"  resultType="Integer">
     select count(*)
     from tb_dynamic
-    where checkId = #{checkId,jdbcType=INTEGER} and to_days(dateTime) = to_days(now()) 
+    where checkId = #{checkId,jdbcType=INTEGER}
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">

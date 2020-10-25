@@ -79,7 +79,7 @@ public class CustomerPerformanceServiceImpl implements CustomerPerformanceServic
 		customerPerformance customerPerformance = new customerPerformance();
 		customerPerformance.setCustomerId(data.getInteger("customerId"));
 		customerPerformance.setDateTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
-		customerPerformance.setEmployeeIdList(data.getInteger("employeeId")+"-");
+		customerPerformance.setEmployeeIdList("-"+data.getInteger("employeeId")+"-");
 		customerPerformance.setMoney(data.getInteger("money"));
 		customerPerformance.setNote(data.getString("note"));
 		customerPerformance.setState(stateWTJ);

@@ -144,7 +144,7 @@
   <select id="selectByEmployeeState"  resultMap="BaseResultMap">
     select <include refid="Base_Column_List" />
     from tb_customerperformance
-    where employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
+    where employeeIdList like concat('%-',#{employeeId,jdbcType=INTEGER},'-%')
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -157,7 +157,7 @@
   <select id="selectByEmployeeConditionDay"  resultMap="BaseResultMap">
     select <include refid="Base_Column_List" />
     from tb_customerperformance
-    where employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
+    where employeeIdList like concat('%-',#{employeeId,jdbcType=INTEGER},'-%')
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -169,7 +169,7 @@
   <select id="selectByEmployeeConditionDayCount"  resultType="Integer">
     select count(*)
     from tb_customerperformance
-    where employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%') 
+    where employeeIdList like concat('%-',#{employeeId,jdbcType=INTEGER},'-%') 
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -182,7 +182,7 @@
   <select id="selectByEmployeeConditionMon"  resultMap="BaseResultMap">
     select <include refid="Base_Column_List" />
     from tb_customerperformance
-    where employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
+    where employeeIdList like concat('%-',#{employeeId,jdbcType=INTEGER},'-%')
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -194,7 +194,7 @@
   <select id="selectByEmployeeConditionMonCount"  resultType="Integer">
     select count(*)
     from tb_customerperformance
-    where employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
+    where employeeIdList like concat('%-',#{employeeId,jdbcType=INTEGER},'-%')
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -207,7 +207,7 @@
   <select id="selectByEmployeeConditionYear"  resultMap="BaseResultMap">
     select <include refid="Base_Column_List" />
     from tb_customerperformance
-    where employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
+    where employeeIdList like concat('%-',#{employeeId,jdbcType=INTEGER},'-%')
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -219,7 +219,7 @@
   <select id="selectByEmployeeConditionYearCount"  resultType="Integer">
     select count(*)
     from tb_customerperformance
-    where employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
+    where employeeIdList like concat('%-',#{employeeId,jdbcType=INTEGER},'-%')
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -232,7 +232,7 @@
   <select id="selectByEmployeeCondition"  resultMap="BaseResultMap">
     select <include refid="Base_Column_List" />
     from tb_customerperformance
-    where employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
+    where employeeIdList like concat('%-',#{employeeId,jdbcType=INTEGER},'-%')
     <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -244,7 +244,7 @@
   <select id="selectByEmployeeConditionCount" resultType="Integer">
     select count(*)
     from tb_customerperformance
-    where employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
+    where employeeIdList like concat('%-',#{employeeId,jdbcType=INTEGER},'-%')
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -256,7 +256,7 @@
     select 
     <include refid="Base_Column_List" />
     from tb_customerperformance
-    where employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
+    where employeeIdList like concat('%-',#{employeeId,jdbcType=INTEGER},'-%')
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
@@ -268,7 +268,7 @@
   <select id="selectByEmployeeCount"  resultType="Integer">
     select count(*)
     from tb_customerperformance
-    where employeeIdList like concat('%',#{employeeId,jdbcType=INTEGER},'%')
+    where employeeIdList like concat('%-',#{employeeId,jdbcType=INTEGER},'-%')
      <if test="state != null">
     	and state in
 	    <foreach collection="state" item="item" open="(" close=")" index="index" separator=",">
