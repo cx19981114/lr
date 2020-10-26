@@ -31,6 +31,7 @@ import cn.lr.po.employee;
 import cn.lr.po.employeeRest;
 import cn.lr.service.employee.ApplyRankService;
 import cn.lr.service.employee.DynamicService;
+import cn.lr.service.employee.EmployeeRankService;
 import cn.lr.service.employee.EmployeeRestService;
 import cn.lr.util.TimeFormatUtil;
 
@@ -58,6 +59,8 @@ public class EmployeeRestServiceImpl implements EmployeeRestService {
 	ApplyRankService ApplyRankService;
 	@Autowired
 	DynamicService DynamicService;
+	@Autowired
+	EmployeeRankService EmployeeRankService;
 
 	@Value("${data.type}")
 	private String DATA_TYPE;
@@ -335,6 +338,7 @@ public class EmployeeRestServiceImpl implements EmployeeRestService {
 	// FIXED Rest发来数据
 	@Override
 	public Integer addEmployeeRest(JSONObject data) throws ParseException {
+		String now = TimeFormatUtil.timeStampToString(new Date().getTime());
 		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
 		List<Integer> stateList = new ArrayList<Integer>();
 		JSONObject dataJson = new JSONObject();
@@ -346,7 +350,7 @@ public class EmployeeRestServiceImpl implements EmployeeRestService {
 			throw new BusiException("该用户今日已添加行程");
 		}
 		employeeRest employeeRest = new employeeRest();
-		employeeRest.setDateTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
+		employeeRest.setDateTime(now);
 		employeeRest.setEmployeeId(data.getInteger("employeeId"));
 		employeeRest.setOperatorId(data.getInteger("operatorId"));
 		employeeRest.setOperatorTime(TimeFormatUtil.dateToString(data.getDate("operatorTime")));
@@ -374,6 +378,12 @@ public class EmployeeRestServiceImpl implements EmployeeRestService {
 		dataJSonApply.put("dynamicId", dynamicId);
 		dataJSonApply.put("companyId", data.getInteger("companyId"));
 		ApplyRankService.addApplyRank(dataJSonApply);
+		
+		JSONObject dataJSonRank = new JSONObject();
+		dataJSonRank.put("companyId", data.getInteger("companyId"));
+		dataJSonRank.put("dynamicId", dynamicId);
+		dataJSonRank.put("time", now);
+		EmployeeRankService.addEmployeeRank(dataJSonRank);
 		return employeeRest.getId();
 	}
 
@@ -435,6 +445,10 @@ public class EmployeeRestServiceImpl implements EmployeeRestService {
 		dataJSonApply.put("companyId", data.getInteger("companyId"));
 		ApplyRankService.deleteApplyRank(dataJSonApply);
 
+		JSONObject dataJSonRank = new JSONObject();
+		dataJSonRank.put("companyId", data.getInteger("companyId"));
+		dataJSonRank.put("dynamicId", dynamic.getId());
+		EmployeeRankService.deleteEmployeeRank(dataJSonRank);
 		return employeeRest.getId();
 	}
 	@Override
@@ -459,6 +473,10 @@ public class EmployeeRestServiceImpl implements EmployeeRestService {
 		dataJSonApply.put("companyId", data.getInteger("companyId"));
 		ApplyRankService.annulApplyRank(dataJSonApply);
 		
+		JSONObject dataJSonRank = new JSONObject();
+		dataJSonRank.put("companyId", data.getInteger("companyId"));
+		dataJSonRank.put("dynamicId", dynamic.getId());
+		EmployeeRankService.deleteEmployeeRank(dataJSonRank);
 		return employeeRest.getId();
 	}
 

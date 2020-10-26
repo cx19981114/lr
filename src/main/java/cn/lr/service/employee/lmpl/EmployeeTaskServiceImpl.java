@@ -32,6 +32,7 @@ import cn.lr.po.postTask;
 import cn.lr.po.task;
 import cn.lr.service.employee.ApplyRankService;
 import cn.lr.service.employee.DynamicService;
+import cn.lr.service.employee.EmployeeRankService;
 import cn.lr.service.employee.EmployeeTaskService;
 import cn.lr.util.TimeFormatUtil;
 
@@ -61,6 +62,8 @@ public class EmployeeTaskServiceImpl implements EmployeeTaskService {
 	ApplyRankService ApplyRankService;
 	@Autowired
 	DynamicService DynamicService;
+	@Autowired
+	EmployeeRankService EmployeeRankService;
 
 	@Value("${data.type}")
 	private String DATA_TYPE;
@@ -214,6 +217,13 @@ public class EmployeeTaskServiceImpl implements EmployeeTaskService {
 		dataJSonApply.put("companyId", data.getInteger("companyId"));
 		ApplyRankService.addApplyRank(dataJSonApply);
 		
+		
+		JSONObject dataJSonRank = new JSONObject();
+		dataJSonRank.put("companyId", data.getInteger("companyId"));
+		dataJSonRank.put("dynamicId", dynamicId);
+		dataJSonRank.put("time", now);
+		EmployeeRankService.addEmployeeRank(dataJSonRank);
+		
 		employeeTask = employeeTaskMapper.selectByPrimaryKey(employeeTask.getId());
 		if(employeeTask.getState() != stateCG) {
 			data.put("employeeTaskId", employeeTask.getId());
@@ -281,6 +291,10 @@ public class EmployeeTaskServiceImpl implements EmployeeTaskService {
 		dataJSonApply.put("dynamicId", dynamic.getId());
 		ApplyRankService.deleteApplyRank(dataJSonApply);
 
+		JSONObject dataJSonRank = new JSONObject();
+		dataJSonRank.put("companyId", data.getInteger("companyId"));
+		dataJSonRank.put("dynamicId", dynamic.getId());
+		EmployeeRankService.deleteEmployeeRank(dataJSonRank);
 		return employeeTask.getId();
 	}
 
@@ -306,6 +320,10 @@ public class EmployeeTaskServiceImpl implements EmployeeTaskService {
 		dataJSonApply.put("dynamicId", dynamic.getId());
 		ApplyRankService.annulApplyRank(dataJSonApply);
 		
+		JSONObject dataJSonRank = new JSONObject();
+		dataJSonRank.put("companyId", data.getInteger("companyId"));
+		dataJSonRank.put("dynamicId", dynamic.getId());
+		EmployeeRankService.deleteEmployeeRank(dataJSonRank);
 		return employeeTask.getId();
 	}
 

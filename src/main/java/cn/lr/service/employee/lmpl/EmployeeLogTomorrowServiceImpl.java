@@ -27,6 +27,7 @@ import cn.lr.po.employeeLogTomorrow;
 import cn.lr.service.employee.ApplyRankService;
 import cn.lr.service.employee.DynamicService;
 import cn.lr.service.employee.EmployeeLogTomorrowService;
+import cn.lr.service.employee.EmployeeRankService;
 import cn.lr.util.TimeFormatUtil;
 
 @Service
@@ -51,6 +52,8 @@ public class EmployeeLogTomorrowServiceImpl implements EmployeeLogTomorrowServic
 	ApplyRankService ApplyRankService;
 	@Autowired
 	DynamicService DynamicService;
+	@Autowired
+	EmployeeRankService EmployeeRankService;
 
 	@Value("${data.type}")
 	private String DATA_TYPE;
@@ -61,6 +64,7 @@ public class EmployeeLogTomorrowServiceImpl implements EmployeeLogTomorrowServic
 
 	@Override
 	public Integer addEmployeeLogTomorrow(JSONObject data) {
+		String now = TimeFormatUtil.timeStampToString(new Date().getTime());
 		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
 		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
 		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", data.getInteger("companyId"));
@@ -81,7 +85,7 @@ public class EmployeeLogTomorrowServiceImpl implements EmployeeLogTomorrowServic
 		record.setMoney(data.getString("money"));
 		record.setPerson(data.getString("person"));
 		record.setRun(data.getString("run"));
-		record.setDateTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
+		record.setDateTime(now);
 		record.setState(stateWTJ);
 		int count = employeeLogTomorrowMapper.insertSelective(record);
 		if (count == 0) {
@@ -103,6 +107,12 @@ public class EmployeeLogTomorrowServiceImpl implements EmployeeLogTomorrowServic
 		dataJSonApply.put("dynamicId", dynamicId);
 		dataJSonApply.put("companyId", data.getInteger("companyId"));
 		ApplyRankService.addApplyRank(dataJSonApply);
+		
+		JSONObject dataJSonRank = new JSONObject();
+		dataJSonRank.put("companyId", data.getInteger("companyId"));
+		dataJSonRank.put("dynamicId", dynamicId);
+		dataJSonRank.put("time", now);
+		EmployeeRankService.addEmployeeRank(dataJSonRank);
 		return record.getId();
 	}
 
@@ -161,6 +171,11 @@ public class EmployeeLogTomorrowServiceImpl implements EmployeeLogTomorrowServic
 		dataJSonApply.put("companyId", data.getInteger("companyId"));
 		dataJSonApply.put("dynamicId", dynamic.getId());
 		ApplyRankService.deleteApplyRank(dataJSonApply);
+		
+		JSONObject dataJSonRank = new JSONObject();
+		dataJSonRank.put("companyId", data.getInteger("companyId"));
+		dataJSonRank.put("dynamicId", dynamic.getId());
+		EmployeeRankService.deleteEmployeeRank(dataJSonRank);
 
 		return record.getId();
 	}
@@ -186,6 +201,10 @@ public class EmployeeLogTomorrowServiceImpl implements EmployeeLogTomorrowServic
 		dataJSonApply.put("dynamicId", dynamic.getId());
 		ApplyRankService.annulApplyRank(dataJSonApply);
 		
+		JSONObject dataJSonRank = new JSONObject();
+		dataJSonRank.put("companyId", data.getInteger("companyId"));
+		dataJSonRank.put("dynamicId", dynamic.getId());
+		EmployeeRankService.deleteEmployeeRank(dataJSonRank);
 		return record.getId();
 	}
 

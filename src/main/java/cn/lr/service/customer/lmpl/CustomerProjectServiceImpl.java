@@ -36,6 +36,7 @@ import cn.lr.po.project;
 import cn.lr.service.customer.CustomerProjectService;
 import cn.lr.service.employee.ApplyRankService;
 import cn.lr.service.employee.DynamicService;
+import cn.lr.service.employee.EmployeeRankService;
 import cn.lr.util.TimeFormatUtil;
 @Service
 @Transactional
@@ -65,6 +66,8 @@ public class CustomerProjectServiceImpl implements CustomerProjectService {
 	ApplyRankService ApplyRankService;
 	@Autowired
 	DynamicService DynamicService;
+	@Autowired
+	EmployeeRankService EmployeeRankService;
 
 	@Value("${data.type}")
 	private String DATA_TYPE;
@@ -126,6 +129,12 @@ public class CustomerProjectServiceImpl implements CustomerProjectService {
 		dataJSonApply.put("dynamicId", dynamicId);
 		dataJSonApply.put("companyId", data.getInteger("companyId"));
 		ApplyRankService.addApplyRank(dataJSonApply);
+		
+		JSONObject dataJSonRank = new JSONObject();
+		dataJSonRank.put("companyId", data.getInteger("companyId"));
+		dataJSonRank.put("dynamicId", dynamicId);
+		dataJSonRank.put("time", now);
+		EmployeeRankService.addEmployeeRank(dataJSonRank);
 		
 		customerProject = customerProjectMapper.selectByPrimaryKey(customerProject.getId());
 		if(customerProject.getState() != stateCG) {
@@ -221,6 +230,11 @@ public class CustomerProjectServiceImpl implements CustomerProjectService {
 		dataJSonApply.put("dynamicId", dynamic.getId());
 		ApplyRankService.deleteApplyRank(dataJSonApply);
 		
+		JSONObject dataJSonRank = new JSONObject();
+		dataJSonRank.put("companyId", data.getInteger("companyId"));
+		dataJSonRank.put("dynamicId", dynamic.getId());
+		EmployeeRankService.deleteEmployeeRank(dataJSonRank);
+		
 		return customerProject.getId();
 	}
 	@Override
@@ -252,6 +266,11 @@ public class CustomerProjectServiceImpl implements CustomerProjectService {
 		dataJSonApply.put("companyId", data.getInteger("companyId"));
 		dataJSonApply.put("dynamicId", dynamic.getId());
 		ApplyRankService.annulApplyRank(dataJSonApply);
+		
+		JSONObject dataJSonRank = new JSONObject();
+		dataJSonRank.put("companyId", data.getInteger("companyId"));
+		dataJSonRank.put("dynamicId", dynamic.getId());
+		EmployeeRankService.deleteEmployeeRank(dataJSonRank);
 		
 		return customerProject.getId();
 	}

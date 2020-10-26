@@ -33,6 +33,7 @@ import cn.lr.po.statisticType;
 import cn.lr.service.customer.CustomerPerformanceService;
 import cn.lr.service.employee.ApplyRankService;
 import cn.lr.service.employee.DynamicService;
+import cn.lr.service.employee.EmployeeRankService;
 import cn.lr.util.DataLengthUtil;
 import cn.lr.util.TimeFormatUtil;
 @Service
@@ -59,6 +60,8 @@ public class CustomerPerformanceServiceImpl implements CustomerPerformanceServic
 	ApplyRankService ApplyRankService;
 	@Autowired
 	DynamicService DynamicService;
+	@Autowired
+	EmployeeRankService EmployeeRankService;
 	
 	@Value("${pageSize}")
 	private Integer PAGESIZE;
@@ -72,6 +75,7 @@ public class CustomerPerformanceServiceImpl implements CustomerPerformanceServic
 	private String CUSTOMERPERFORMAN_TYPE;
 	@Override
 	public Integer addCustomerPerformance(JSONObject data) {
+		String now = TimeFormatUtil.timeStampToString(new Date().getTime());
 		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
 		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
 		Integer stateCG = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId"));
@@ -92,7 +96,7 @@ public class CustomerPerformanceServiceImpl implements CustomerPerformanceServic
 		
 		customer customer = customerMapper.selectByPrimaryKey(customerPerformance.getCustomerId());
 		customer.setMoney(customer.getMoney() + customerPerformance.getMoney());
-		customer.setActiveConsumeTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
+		customer.setActiveConsumeTime(now);
 		count = customerMapper.updateByPrimaryKeySelective(customer);
 		if (count == 0) {
 			throw new BusiException("更新customer表失败");
@@ -114,6 +118,12 @@ public class CustomerPerformanceServiceImpl implements CustomerPerformanceServic
 		dataJSonApply.put("dynamicId", dynamicId);
 		dataJSonApply.put("companyId", data.getInteger("companyId"));
 		ApplyRankService.addApplyRank(dataJSonApply);
+		
+		JSONObject dataJSonRank = new JSONObject();
+		dataJSonRank.put("companyId", data.getInteger("companyId"));
+		dataJSonRank.put("dynamicId", dynamicId);
+		dataJSonRank.put("time", now);
+		EmployeeRankService.addEmployeeRank(dataJSonRank);
 		
 		customerPerformance = customerPerformanceMapper.selectByPrimaryKey(customerPerformance.getId());
 		if(customerPerformance.getState() != stateCG) {
@@ -160,6 +170,11 @@ public class CustomerPerformanceServiceImpl implements CustomerPerformanceServic
 		dataJSonApply.put("companyId", data.getInteger("companyId"));
 		dataJSonApply.put("dynamicId", dynamic.getId());
 		ApplyRankService.annulApplyRank(dataJSonApply);
+		
+		JSONObject dataJSonRank = new JSONObject();
+		dataJSonRank.put("companyId", data.getInteger("companyId"));
+		dataJSonRank.put("dynamicId", dynamic.getId());
+		EmployeeRankService.deleteEmployeeRank(dataJSonRank);
 		
 		return customerPerformance.getId();
 	}
@@ -247,6 +262,11 @@ public class CustomerPerformanceServiceImpl implements CustomerPerformanceServic
 		dataJSonApply.put("companyId", data.getInteger("companyId"));
 		dataJSonApply.put("dynamicId", dynamic.getId());
 		ApplyRankService.deleteApplyRank(dataJSonApply);
+		
+		JSONObject dataJSonRank = new JSONObject();
+		dataJSonRank.put("companyId", data.getInteger("companyId"));
+		dataJSonRank.put("dynamicId", dynamic.getId());
+		EmployeeRankService.deleteEmployeeRank(dataJSonRank);
 		return customerPerformance.getId();
 	}
 
@@ -334,9 +354,11 @@ public class CustomerPerformanceServiceImpl implements CustomerPerformanceServic
 		Integer companyId = opEmployee.getCompanyId();
 		String[] employeeIdList = customerPerformance.getEmployeeIdList().split("-");
 		List<String> employeeNameList = new ArrayList<>();
-		for(int i = 0;i<employeeIdList.length;i++) {
-			employee employee = employeeMapper.selectByPrimaryKey(Integer.valueOf(employeeIdList[i]));
-			employeeNameList.add(employee.getName());
+		if(employeeIdList.length > 1) {
+			for(int i = 1;i<employeeIdList.length;i++) {
+				employee employee = employeeMapper.selectByPrimaryKey(Integer.valueOf(employeeIdList[i]));
+				employeeNameList.add(employee.getName());
+			}
 		}
 		String type = dictMapper.selectByCodeAndStateCode(CUSTOMERPERFORMAN_TYPE, customerPerformance.getType(),companyId);
 		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", companyId);

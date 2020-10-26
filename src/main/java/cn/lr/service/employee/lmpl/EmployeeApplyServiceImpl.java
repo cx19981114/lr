@@ -27,6 +27,7 @@ import cn.lr.po.employeeApply;
 import cn.lr.service.employee.ApplyRankService;
 import cn.lr.service.employee.DynamicService;
 import cn.lr.service.employee.EmployeeApplyService;
+import cn.lr.service.employee.EmployeeRankService;
 import cn.lr.util.TimeFormatUtil;
 @Service
 @Transactional
@@ -51,6 +52,8 @@ public class EmployeeApplyServiceImpl implements EmployeeApplyService {
 	ApplyRankService ApplyRankService;
 	@Autowired
 	DynamicService DynamicService;
+	@Autowired
+	EmployeeRankService EmployeeRankService;
 	
 	@Value("${data.type}")
 	private String DATA_TYPE;
@@ -88,6 +91,7 @@ public class EmployeeApplyServiceImpl implements EmployeeApplyService {
 
 	@Override
 	public Integer addEmployeeApply(JSONObject data) {
+		String now = TimeFormatUtil.timeStampToString(new Date().getTime());
 		employeeApply employeeApply = new employeeApply();
 		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
 		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
@@ -99,7 +103,7 @@ public class EmployeeApplyServiceImpl implements EmployeeApplyService {
 		employeeApply.setEndDate(TimeFormatUtil.dateToString(data.getDate("endDate")));
 		employeeApply.setEndPhase(data.getString("endPhase"));
 		employeeApply.setNote(data.getString("note"));
-		employeeApply.setDateTime(TimeFormatUtil.timeStampToString(new Date().getTime()));
+		employeeApply.setDateTime(now);
 		employeeApply.setType(dictMapper.selectByCodeAndStateName(APPLY_TYPE, data.getString("type"),data.getInteger("companyId")));
 		employeeApply.setState(stateWTJ);
 		int count = employeeApplyMapper.insertSelective(employeeApply);
@@ -122,6 +126,12 @@ public class EmployeeApplyServiceImpl implements EmployeeApplyService {
 		dataJSonApply.put("companyId", data.getInteger("companyId"));
 		dataJSonApply.put("dynamicId", dynamicId);
 		ApplyRankService.addApplyRank(dataJSonApply);
+		
+		JSONObject dataJSonRank = new JSONObject();
+		dataJSonRank.put("companyId", data.getInteger("companyId"));
+		dataJSonRank.put("dynamicId", dynamicId);
+		dataJSonRank.put("time", now);
+		EmployeeRankService.addEmployeeRank(dataJSonRank);
 		return employeeApply.getId();
 	}
 
@@ -193,6 +203,10 @@ public class EmployeeApplyServiceImpl implements EmployeeApplyService {
 		dataJSonApply.put("companyId", data.getInteger("companyId"));
 		ApplyRankService.deleteApplyRank(dataJSonApply);
 		
+		JSONObject dataJSonRank = new JSONObject();
+		dataJSonRank.put("companyId", data.getInteger("companyId"));
+		dataJSonRank.put("dynamicId", dynamic.getId());
+		EmployeeRankService.deleteEmployeeRank(dataJSonRank);
 		return employeeApply.getId();
 	}
 	@Override
@@ -216,6 +230,10 @@ public class EmployeeApplyServiceImpl implements EmployeeApplyService {
 		dataJSonApply.put("companyId", data.getInteger("companyId"));
 		ApplyRankService.annulApplyRank(dataJSonApply);
 		
+		JSONObject dataJSonRank = new JSONObject();
+		dataJSonRank.put("companyId", data.getInteger("companyId"));
+		dataJSonRank.put("dynamicId", dynamic.getId());
+		EmployeeRankService.deleteEmployeeRank(dataJSonRank);
 		return employeeApply.getId();
 	}
 

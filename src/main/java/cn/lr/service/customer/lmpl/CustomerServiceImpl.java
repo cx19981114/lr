@@ -34,6 +34,7 @@ import cn.lr.service.customer.CustomerPerformanceService;
 import cn.lr.service.customer.CustomerService;
 import cn.lr.service.employee.ApplyRankService;
 import cn.lr.service.employee.DynamicService;
+import cn.lr.service.employee.EmployeeRankService;
 import cn.lr.util.TimeFormatUtil;
 @Service
 @Transactional
@@ -68,6 +69,8 @@ public class CustomerServiceImpl implements CustomerService {
 	DynamicService DynamicService;
 	@Autowired
 	CustomerPerformanceService CustomerPerformanceService;
+	@Autowired
+	EmployeeRankService EmployeeRankService;
 	
 	@Value("${data.type}")
 	private String DATA_TYPE;
@@ -148,6 +151,12 @@ public class CustomerServiceImpl implements CustomerService {
 		dataJSonApply.put("dynamicId", dynamicId);
 		dataJSonApply.put("companyId", data.getInteger("companyId"));
 		ApplyRankService.addApplyRank(dataJSonApply);
+		
+		JSONObject dataJSonRank = new JSONObject();
+		dataJSonRank.put("companyId", data.getInteger("companyId"));
+		dataJSonRank.put("dynamicId", dynamicId);
+		dataJSonRank.put("time", now);
+		EmployeeRankService.addEmployeeRank(dataJSonRank);
 		
 		customerPerformance = customerPerformanceMapper.selectByPrimaryKey(customerPerformance.getId());
 		if(customerPerformance.getState() != stateCG) {
