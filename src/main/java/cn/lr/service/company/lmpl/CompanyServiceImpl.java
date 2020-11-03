@@ -108,7 +108,8 @@ public class CompanyServiceImpl implements CompanyService {
 			postIdList.put(postList[i], String.valueOf(post.getId()));
 			
 			post post2 = new post();
-			post2.setCompanyId(2);
+			//模板-木习习有限公司id = 14
+			post2.setCompanyId(14);
 			post2.setName(postList[i]);
 			post2 = postMapper.selectByCompanyIdAndPostName(post2);
 			postTask postTask = new postTask();

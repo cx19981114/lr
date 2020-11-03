@@ -384,8 +384,8 @@ public class TaskServiceImpl implements TaskService {
 	}
 
 	public void AddTaskByExcel(JSONObject data) throws Exception {
-		Workbook rwb = Workbook.getWorkbook(new File(ACTPATH + data.getString("file")));
-//		Workbook rwb = Workbook.getWorkbook(new File("C:\\Users\\23847\\eclipse-workspace\\lr\\upload"+data.getString("file")));
+//		Workbook rwb = Workbook.getWorkbook(new File(ACTPATH + data.getString("file")));
+		Workbook rwb = Workbook.getWorkbook(new File("D:\\eclipse-work\\lr\\upload"+data.getString("file")));
 		Sheet rs = rwb.getSheet("task");// 或者rwb.getSheet(0)
 		int clos = rs.getColumns();// 得到所有的列
 		int rows = rs.getRows();// 得到所有的行
