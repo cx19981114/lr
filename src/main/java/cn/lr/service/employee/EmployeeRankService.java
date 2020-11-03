@@ -16,4 +16,8 @@ public interface EmployeeRankService {
 	public EmployeeRankDTO getEmployeeRankByEmployee(JSONObject data);
 	
 	public String getEmployeeRankFrist(JSONObject data);
+	
+	public Integer addEmployeeRank(JSONObject data);
+	
+	public Integer deleteEmployeeRank(JSONObject data);
 }

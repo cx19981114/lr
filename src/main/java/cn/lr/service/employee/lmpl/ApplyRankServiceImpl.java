@@ -46,7 +46,6 @@ import cn.lr.po.employeeApply;
 import cn.lr.po.employeeAttendance;
 import cn.lr.po.employeeLogDay;
 import cn.lr.po.employeeLogTomorrow;
-import cn.lr.po.employeeRank;
 import cn.lr.po.employeeRest;
 import cn.lr.po.employeeTask;
 import cn.lr.po.order;
@@ -384,22 +383,22 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 								dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功", data.getInteger("companyId")),
 								null, data.getInteger("companyId"));
 
-						employeeRank employeeRank = new employeeRank();
-						employeeRank.setDateTime(now);
-						dynamic dynamic = dynamicMapper.selectByPrimaryKey(applyRank.getDynamicId());
-						if (dynamic == null || dynamic.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE,
-								"已失效", data.getInteger("companyId"))) {
-							throw new BusiException("该动态不存在");
-						}
-						employeeRank.setDynamicId(dynamic.getId());
-						employeeRank.setRank(dynamic.getRank());
-						employeeRank.setEmployeeId(dynamic.getEmployeeId());
-						employeeRank.setCompanyId(dynamic.getCompanyId());
-						employeeRank.setIsAdd(1);
-						int count = employeeRankMapper.insertSelective(employeeRank);
-						if (count == 0) {
-							throw new BusiException("更新employeeRank表失败");
-						}
+//						employeeRank employeeRank = new employeeRank();
+//						employeeRank.setDateTime(now);
+//						dynamic dynamic = dynamicMapper.selectByPrimaryKey(applyRank.getDynamicId());
+//						if (dynamic == null || dynamic.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE,
+//								"已失效", data.getInteger("companyId"))) {
+//							throw new BusiException("该动态不存在");
+//						}
+//						employeeRank.setDynamicId(dynamic.getId());
+//						employeeRank.setRank(dynamic.getRank());
+//						employeeRank.setEmployeeId(dynamic.getEmployeeId());
+//						employeeRank.setCompanyId(dynamic.getCompanyId());
+//						employeeRank.setIsAdd(1);
+//						int count = employeeRankMapper.insertSelective(employeeRank);
+//						if (count == 0) {
+//							throw new BusiException("更新employeeRank表失败");
+//						}
 					} else {
 						applyRank.setCheckNumber(i + 1);
 						applyRank.setState(

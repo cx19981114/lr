@@ -11,10 +11,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.lr.dao.dictMapper;
+import cn.lr.dao.dynamicMapper;
 import cn.lr.dao.employeeMapper;
 import cn.lr.dao.employeeRankMapper;
 import cn.lr.dto.EmployeeRankDTO;
 import cn.lr.dto.Page;
+import cn.lr.exception.BusiException;
+import cn.lr.po.dynamic;
 import cn.lr.po.employee;
 import cn.lr.po.employeeRank;
 import cn.lr.service.employee.EmployeeRankService;
@@ -29,6 +32,8 @@ public class EmployeeRankServiceImpl implements EmployeeRankService {
 	employeeMapper employeeMapper;
 	@Autowired
 	dictMapper dictMapper;
+	@Autowired
+	dynamicMapper dynamicMapper;
 
 	@Value("${pageSize}")
 	private Integer PAGESIZE;
@@ -49,15 +54,15 @@ public class EmployeeRankServiceImpl implements EmployeeRankService {
 		List<employeeRank> employeeRanks = new ArrayList<>();
 		for(employee e:employees) {
 			if(type.equals("day")) {
-				employeeRanks = employeeRankMapper.selectByEmployeeIdDay(e.getId());
+				employeeRanks = employeeRankMapper.selectByEmployeeIdDay(e.getId(),stateList);
 			}else if(type.equals("week")) {
-				employeeRanks = employeeRankMapper.selectByEmployeeIdWeek(e.getId());
+				employeeRanks = employeeRankMapper.selectByEmployeeIdWeek(e.getId(),stateList);
 			}else if(type.equals("mon")) {
-				employeeRanks = employeeRankMapper.selectByEmployeeIdMon(e.getId());
+				employeeRanks = employeeRankMapper.selectByEmployeeIdMon(e.getId(),stateList);
 			}else if(type.equals("qtr")) {
-				employeeRanks = employeeRankMapper.selectByEmployeeIdQtr(e.getId());
+				employeeRanks = employeeRankMapper.selectByEmployeeIdQtr(e.getId(),stateList);
 			}else if(type.equals("year")) {
-				employeeRanks = employeeRankMapper.selectByEmployeeIdYear(e.getId());
+				employeeRanks = employeeRankMapper.selectByEmployeeIdYear(e.getId(),stateList);
 			}
 			EmployeeRankDTO employeeRankDTO = this.sEmployeeRankDTO(employeeRanks, e.getId());
 			employeeRankDTOs.add(employeeRankDTO);
@@ -118,7 +123,7 @@ public class EmployeeRankServiceImpl implements EmployeeRankService {
 		List<EmployeeRankDTO> employeeRankDTOs = new ArrayList<EmployeeRankDTO>();
 		List<employeeRank> employeeRanks = new ArrayList<>();
 		for(employee e:employees) {
-			employeeRanks = employeeRankMapper.selectByEmployeeIdDay(e.getId());
+			employeeRanks = employeeRankMapper.selectByEmployeeIdDay(e.getId(),stateList);
 			EmployeeRankDTO employeeRankDTO = this.sEmployeeRankDTO(employeeRanks, e.getId());
 			employeeRankDTOs.add(employeeRankDTO);
 		}
@@ -151,5 +156,38 @@ public class EmployeeRankServiceImpl implements EmployeeRankService {
 			return employeeRankDTOs2.get(0).getName();
 		}
 		return null;
+	}
+	public Integer addEmployeeRank(JSONObject data) {
+		employeeRank employeeRank = new employeeRank();
+		employeeRank.setDateTime(data.getString("time"));
+		System.out.println(data.getInteger("dynamicId"));
+		dynamic dynamic = dynamicMapper.selectByPrimaryKey(data.getInteger("dynamicId"));
+		if (dynamic == null || dynamic.getState() == dictMapper.selectByCodeAndStateName(DATA_TYPE,
+				"已失效", data.getInteger("companyId"))) {
+			throw new BusiException("该动态不存在");
+		}
+		employeeRank.setDynamicId(dynamic.getId());
+		employeeRank.setRank(dynamic.getRank());
+		employeeRank.setEmployeeId(dynamic.getEmployeeId());
+		employeeRank.setCompanyId(dynamic.getCompanyId());
+		employeeRank.setIsAdd(1);
+		employeeRank.setState(dictMapper.selectByCodeAndStateName(DATA_TYPE,"未失效", data.getInteger("companyId")));
+		int count = employeeRankMapper.insertSelective(employeeRank);
+		if (count == 0) {
+			throw new BusiException("更新employeeRank表失败");
+		}
+		return employeeRank.getId();
+	}
+	public Integer deleteEmployeeRank(JSONObject data) {
+		Integer stateYSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "已失效", data.getInteger("companyId"));
+		List<Integer> stateList = new ArrayList<Integer>();
+		stateList.add(stateYSX);
+		employeeRank employeeRank = employeeRankMapper.selectByDynamic(data.getInteger("dynamicId"),stateList);
+		employeeRank.setState(stateYSX);
+		int count = employeeRankMapper.updateByPrimaryKey(employeeRank);
+		if (count == 0) {
+			throw new BusiException("更新employeeRank表失败");
+		}
+		return employeeRank.getId();
 	}
 }

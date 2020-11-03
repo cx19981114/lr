@@ -15,6 +15,16 @@ public class employeeRank {
 
     private Integer isAdd;
     
+    private Integer state;
+    
+	public Integer getState() {
+		return state;
+	}
+
+	public void setState(Integer state) {
+		this.state = state;
+	}
+
 	public Integer getIsAdd() {
 		return isAdd;
 	}

@@ -39,6 +39,7 @@ import cn.lr.po.statisticType;
 import cn.lr.service.customer.OrderService;
 import cn.lr.service.employee.ApplyRankService;
 import cn.lr.service.employee.DynamicService;
+import cn.lr.service.employee.EmployeeRankService;
 import cn.lr.util.DateUtil;
 import cn.lr.util.TimeFormatUtil;
 @Service
@@ -73,6 +74,8 @@ public class OrderServiceImpl implements OrderService {
 	ApplyRankService ApplyRankService;
 	@Autowired
 	DynamicService DynamicService;
+	@Autowired
+	EmployeeRankService EmployeeRankService;
 	
 	@Value("${pageSize}")
 	private Integer PAGESIZE;
@@ -214,6 +217,13 @@ public class OrderServiceImpl implements OrderService {
 		dataJSonApply.put("dynamicId", dynamicId);
 		dataJSonApply.put("companyId", data.getInteger("companyId"));
 		ApplyRankService.addApplyRank(dataJSonApply);
+		
+		JSONObject dataJSonRank = new JSONObject();
+		dataJSonRank.put("companyId", data.getInteger("companyId"));
+		dataJSonRank.put("dynamicId", dynamicId);
+		dataJSonRank.put("time", now);
+		EmployeeRankService.addEmployeeRank(dataJSonRank);
+		
 		order = orderMapper.selectByPrimaryKey(order.getId());
 		if(order.getApplyState() != stateCG) {
 			data.put("orderId", order.getId());
@@ -246,6 +256,11 @@ public class OrderServiceImpl implements OrderService {
 		dataJSonApply.put("companyId", data.getInteger("companyId"));
 		dataJSonApply.put("dynamicId", dynamic.getId());
 		ApplyRankService.annulApplyRank(dataJSonApply);
+		
+		JSONObject dataJSonRank = new JSONObject();
+		dataJSonRank.put("companyId", data.getInteger("companyId"));
+		dataJSonRank.put("dynamicId", dynamic.getId());
+		EmployeeRankService.deleteEmployeeRank(dataJSonRank);
 		
 		customerProject customerProject = customerProjectMapper.selectByPrimaryKey(order.getCustomerProjectId());
 		customerProject.setIngCount(customerProject.getIngCount()-1);
@@ -319,6 +334,11 @@ public class OrderServiceImpl implements OrderService {
 		dataJSonApply.put("companyId", data.getInteger("companyId"));
 		dataJSonApply.put("dynamicId", dynamic.getId());
 		ApplyRankService.deleteApplyRank(dataJSonApply);
+		
+		JSONObject dataJSonRank = new JSONObject();
+		dataJSonRank.put("companyId", data.getInteger("companyId"));
+		dataJSonRank.put("dynamicId", dynamic.getId());
+		EmployeeRankService.deleteEmployeeRank(dataJSonRank);
 		
 		customerProject customerProject = customerProjectMapper.selectByPrimaryKey(order.getCustomerProjectId());
 		customerProject.setIngCount(customerProject.getIngCount()-1);
@@ -749,6 +769,12 @@ public class OrderServiceImpl implements OrderService {
 		dataJSonApply.put("companyId", data.getInteger("companyId"));
 		ApplyRankService.addApplyRank(dataJSonApply);
 		
+		JSONObject dataJSonRank = new JSONObject();
+		dataJSonRank.put("companyId", data.getInteger("companyId"));
+		dataJSonRank.put("dynamicId", dynamicId);
+		dataJSonRank.put("time", now);
+		EmployeeRankService.addEmployeeRank(dataJSonRank);
+		
 		order = orderMapper.selectByPrimaryKey(order.getId());
 		if(order.getApplyOrderState() != stateCG) {
 			this.affirmOrderFinish(data);
@@ -814,6 +840,11 @@ public class OrderServiceImpl implements OrderService {
 		dataJSonApply.put("dynamicId", dynamic.getId());
 		ApplyRankService.annulApplyRank(dataJSonApply);
 		
+		JSONObject dataJSonRank = new JSONObject();
+		dataJSonRank.put("companyId", data.getInteger("companyId"));
+		dataJSonRank.put("dynamicId", dynamic.getId());
+		EmployeeRankService.deleteEmployeeRank(dataJSonRank);
+		
 		customerProject customerProject = customerProjectMapper.selectByPrimaryKey(order.getCustomerProjectId());
 		customerProject.setIngCount(customerProject.getIngCount()-1);
 		count = customerProjectMapper.updateByPrimaryKeySelective(customerProject);
@@ -846,6 +877,11 @@ public class OrderServiceImpl implements OrderService {
 		dataJSonApply.put("companyId", data.getInteger("companyId"));
 		dataJSonApply.put("dynamicId", dynamic.getId());
 		ApplyRankService.deleteApplyRank(dataJSonApply);
+		
+		JSONObject dataJSonRank = new JSONObject();
+		dataJSonRank.put("companyId", data.getInteger("companyId"));
+		dataJSonRank.put("dynamicId", dynamic.getId());
+		EmployeeRankService.deleteEmployeeRank(dataJSonRank);
 		
 		customerProject customerProject = customerProjectMapper.selectByPrimaryKey(order.getCustomerProjectId());
 		customerProject.setIngCount(customerProject.getIngCount()-1);
