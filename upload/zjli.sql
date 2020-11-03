@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50730
 File Encoding         : 65001
 
-Date: 2020-11-03 17:32:07
+Date: 2020-11-03 17:54:47
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -250,8 +250,8 @@ CREATE TABLE `tb_employee` (
 -- ----------------------------
 -- Records of tb_employee
 -- ----------------------------
-INSERT INTO `tb_employee` VALUES ('2', '17367073440', 'cjmm', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '女', '14', '8', '/upload//20200721140018.jpg', '', '2', '867111', '2020-07-21 15:20:32', '17-');
-INSERT INTO `tb_employee` VALUES ('17', '17764585713', '陈佳敏', '7l7ins3to6v3hcgcqri6iid10sfpq3ht', '女', '14', '9', '/upload/20200727191209.jpg', '2-', '2', '402320', '2020-07-21 16:13:20', '');
+INSERT INTO `tb_employee` VALUES ('2', '17367073440', 'cjmm', 'fh58q2ea6thauof5ikg98fe2ciafh50r', '女', '14', '8', '/upload/tubiao.png', '', '2', '867111', '2020-07-21 15:20:32', '17-');
+INSERT INTO `tb_employee` VALUES ('17', '17764585713', '陈佳敏', '7l7ins3to6v3hcgcqri6iid10sfpq3ht', '女', '14', '9', '/upload/tubiao.png', '2-', '2', '402320', '2020-07-21 16:13:20', '');
 INSERT INTO `tb_employee` VALUES ('18', '18968074777', '管理员', 'fh58q2ea6thauof5ikg98fe2ciafh50r', null, null, '0', null, null, null, null, null, null);
 
 -- ----------------------------
@@ -347,6 +347,7 @@ CREATE TABLE `tb_employeerank` (
   `dynamicId` int(11) DEFAULT NULL,
   `companyId` int(11) DEFAULT NULL,
   `isAdd` int(11) DEFAULT NULL,
+  `state` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
@@ -454,11 +455,11 @@ CREATE TABLE `tb_permission` (
 -- ----------------------------
 -- Records of tb_permission
 -- ----------------------------
-INSERT INTO `tb_permission` VALUES ('1', '公司制度', null, '1');
-INSERT INTO `tb_permission` VALUES ('2', '项目管理', null, '1');
-INSERT INTO `tb_permission` VALUES ('3', '宣告管理', null, '1');
-INSERT INTO `tb_permission` VALUES ('4', '岗位管理', null, '1');
-INSERT INTO `tb_permission` VALUES ('5', '员工管理', null, '1');
+INSERT INTO `tb_permission` VALUES ('1', '公司制度', '14', '1');
+INSERT INTO `tb_permission` VALUES ('2', '项目管理', '14', '1');
+INSERT INTO `tb_permission` VALUES ('3', '宣告管理', '14', '1');
+INSERT INTO `tb_permission` VALUES ('4', '岗位管理', '14', '1');
+INSERT INTO `tb_permission` VALUES ('5', '员工管理', '14', '1');
 
 -- ----------------------------
 -- Table structure for tb_pic
@@ -495,11 +496,11 @@ CREATE TABLE `tb_post` (
 -- ----------------------------
 -- Records of tb_post
 -- ----------------------------
-INSERT INTO `tb_post` VALUES ('8', '14', '经营者', null, null, '1', '1', '0');
-INSERT INTO `tb_post` VALUES ('9', '14', '店长', null, null, '1', '1', '8');
-INSERT INTO `tb_post` VALUES ('10', '14', '顾问', null, null, '0', '1', '9');
-INSERT INTO `tb_post` VALUES ('11', '14', '美容师', null, null, '0', '1', '9-10');
-INSERT INTO `tb_post` VALUES ('12', '14', '前台', null, null, '0', '1', '9');
+INSERT INTO `tb_post` VALUES ('8', '14', '经营者', '1-2-3-4-5', '/upload/tubiao.png', '1', '1', '0');
+INSERT INTO `tb_post` VALUES ('9', '14', '店长', '1-2-3-4-5', '/upload/tubiao.png', '1', '1', '8');
+INSERT INTO `tb_post` VALUES ('10', '14', '顾问', '1-2-3-4-5', '/upload/tubiao.png', '0', '1', '9');
+INSERT INTO `tb_post` VALUES ('11', '14', '美容师', '1-2-3-4-5', '/upload/tubiao.png', '0', '1', '9-10');
+INSERT INTO `tb_post` VALUES ('12', '14', '前台', '1-2-3-4-5', '/upload/tubiao.png', '0', '1', '9');
 INSERT INTO `tb_post` VALUES ('13', '15', '经营者', '1-2-3-4-5', '/upload/tubiao.png', '0', '1', '0');
 INSERT INTO `tb_post` VALUES ('14', '15', '店长', '1-2-3-4-5', '/upload/tubiao.png', '0', '1', '13');
 INSERT INTO `tb_post` VALUES ('15', '15', '顾问', '1-2-3-4-5', '/upload/tubiao.png', '0', '1', '14');
