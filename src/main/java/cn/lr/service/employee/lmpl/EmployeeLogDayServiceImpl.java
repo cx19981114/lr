@@ -85,7 +85,7 @@ public class EmployeeLogDayServiceImpl implements EmployeeLogDayService {
 		record.setTaskAchievement(data.getString("taskAchievement"));
 		record.setFeel(data.getString("feel"));
 		record.setDateTime(now);
-		record.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交",data.getInteger("companyId")));
+		record.setState(stateWSH);
 		int count = employeeLogDayMapper.insertSelective(record);
 		if (count == 0) {
 			throw new BusiException("插入employeeLogDay表失败");

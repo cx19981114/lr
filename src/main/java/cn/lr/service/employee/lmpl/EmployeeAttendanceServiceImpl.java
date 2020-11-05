@@ -103,6 +103,7 @@ public class EmployeeAttendanceServiceImpl implements EmployeeAttendanceService 
 		EmployeeAttendanceDTO employeeAttendanceDTO = this.getEmployeeAttendanceByEmployeeNew(data);
 		Integer stateWSX = dictMapper.selectByCodeAndStateName(DATA_TYPE, "未失效", data.getInteger("companyId"));
 		Integer stateWTJ = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId"));
+		Integer stateWSH = dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", data.getInteger("companyId"));
 		List<Integer> stateList = new ArrayList<Integer>();
 		if (employeeAttendanceDTO != null) {
 			throw new BusiException("该用户今日已打卡");
@@ -118,7 +119,7 @@ public class EmployeeAttendanceServiceImpl implements EmployeeAttendanceService 
 			picString += o.toString() + "-";
 		}
 		employeeAttendance.setPic(picString);
-		employeeAttendance.setState(stateWTJ);
+		employeeAttendance.setState(stateWSH);
 		int count = employeeAttendanceMapper.insertSelective(employeeAttendance);
 		if (count == 0) {
 			throw new BusiException("插入employeeAttendance表失败");

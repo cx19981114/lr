@@ -134,7 +134,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 		}
 		record.setPostId(data.getInteger("postId"));
 		record.setSex(data.getString("sex"));
-		record.setState(dictMapper.selectByCodeAndStateName(EMPLOYEE_TYPE, "未激活", data.getInteger("companyId")));
+		record.setState(dictMapper.selectByCodeAndStateName(EMPLOYEE_TYPE, "已激活", data.getInteger("companyId")));
 		count = employeeMapper.insertSelective(record);
 		if (count == 0) {
 			throw new BusiException("插入employee表失败");
@@ -191,7 +191,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 		}
 		record.setPostId(post.getId());
 		record.setSex(data.getString("sex"));
-		record.setState(dictMapper.selectByCodeAndStateName(EMPLOYEE_TYPE, "未激活", data.getInteger("companyId")));
+		record.setState(dictMapper.selectByCodeAndStateName(EMPLOYEE_TYPE, "已激活", data.getInteger("companyId")));
 		count = employeeMapper.insertSelective(record);
 		if (count == 0) {
 			throw new BusiException("插入employee表失败");

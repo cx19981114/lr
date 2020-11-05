@@ -82,7 +82,7 @@ public class DynamicServiceImpl implements DynamicService {
 			record.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核",data.getInteger("companyId")));
 		}else if(employee.getLeaderIdList() != null && !"".equals(employee.getLeaderIdList())){
 			record.setCheckId(Integer.valueOf(employee.getLeaderIdList().split("-")[0]));
-			record.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交",data.getInteger("companyId")));
+			record.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核",data.getInteger("companyId")));
 		}else {
 			record.setCheckId(employee.getId());
 			record.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核成功",data.getInteger("companyId")));

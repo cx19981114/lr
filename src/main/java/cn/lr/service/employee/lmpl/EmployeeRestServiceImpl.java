@@ -356,7 +356,7 @@ public class EmployeeRestServiceImpl implements EmployeeRestService {
 		employeeRest.setOperatorTime(TimeFormatUtil.dateToString(data.getDate("operatorTime")));
 		employeeRest.setSchedule(dictMapper.selectByCodeAndStateName(ATTENDANCE_TYPE, data.getString("schedule"),data.getInteger("companyId")));
 		employeeRest.setNote(data.getString("note"));
-		employeeRest.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交",data.getInteger("companyId")));
+		employeeRest.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核",data.getInteger("companyId")));
 		int count = employeeRestMapper.insertSelective(employeeRest);
 		if (count == 0) {
 			throw new BusiException("插入employeeRest表失败");
@@ -571,24 +571,27 @@ public class EmployeeRestServiceImpl implements EmployeeRestService {
 		List<dict> dicts = dictMapper.selectByName("行程安排",data.getInteger("companyId"));
 		List<JSONObject> employeeRestJson = new ArrayList<>();
 		Map<String, Integer> rest = new HashMap<String, Integer>();
-		rest.put("内勤", 0);
-		rest.put("外勤", 0);
+		rest.put("早班", 0);
+		rest.put("晚班", 0);
+		rest.put("通班", 0);
 		rest.put("请假", 0);
-		rest.put("轮休", 0);
+		rest.put("休息", 0);
 		JSONObject all = new JSONObject();
 		all.put("value", "全部");
 		all.put("count", employeeIdList.size());
 		all.put("id", 0);
 		employeeRestJson.add(all);
 		for (employeeRest e : employeeRests) {
-			if (e.getSchedule() == dictMapper.selectByCodeAndStateName(ATTENDANCE_TYPE, "内勤",data.getInteger("companyId"))) {
-				rest.put("内勤", rest.get("内勤") + 1);
-			} else if (e.getSchedule() == dictMapper.selectByCodeAndStateName(ATTENDANCE_TYPE, "外勤",data.getInteger("companyId"))) {
-				rest.put("外勤", rest.get("外勤") + 1);
+			if (e.getSchedule() == dictMapper.selectByCodeAndStateName(ATTENDANCE_TYPE, "早班",data.getInteger("companyId"))) {
+				rest.put("早班", rest.get("早班") + 1);
+			} else if (e.getSchedule() == dictMapper.selectByCodeAndStateName(ATTENDANCE_TYPE, "晚班",data.getInteger("companyId"))) {
+				rest.put("晚班", rest.get("晚班") + 1);
+			} else if (e.getSchedule() == dictMapper.selectByCodeAndStateName(ATTENDANCE_TYPE, "通班",data.getInteger("companyId"))) {
+				rest.put("通班", rest.get("通班") + 1);
 			} else if (e.getSchedule() == dictMapper.selectByCodeAndStateName(ATTENDANCE_TYPE, "请假",data.getInteger("companyId"))) {
 				rest.put("请假", rest.get("请假") + 1);
-			} else if (e.getSchedule() == dictMapper.selectByCodeAndStateName(ATTENDANCE_TYPE, "轮休",data.getInteger("companyId"))) {
-				rest.put("轮休", rest.get("轮休") + 1);
+			}else if (e.getSchedule() == dictMapper.selectByCodeAndStateName(ATTENDANCE_TYPE, "休息",data.getInteger("companyId"))) {
+				rest.put("休息", rest.get("休息") + 1);
 			}
 		}
 		for (dict d : dicts) {

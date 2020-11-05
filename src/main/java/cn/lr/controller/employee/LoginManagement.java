@@ -99,10 +99,12 @@ public class LoginManagement {
 		LoggerUtil.LOGGER.info("sessionId : {}, employeeId : {}", session.getId(), session.getAttribute("employeeId"));
 		LoggerUtil.LOGGER.debug("data : {}", data);
 		JSONObject dataJson = JSON.parseObject(data);
-		dataJson.put("employeeId", session.getAttribute("employeeId"));
 		if (session.getAttribute("companyId") != null) {
 			dataJson.put("companyId", session.getAttribute("companyId"));
-			}
+		}
+		if (session.getAttribute("employeeId") != null) {
+			dataJson.put("employeeId", session.getAttribute("employeeId"));
+		}
 		try {
 			int id = LoginService.modifyPasswordFrist(dataJson);
 			return ResultJsonUtil.toJsonString(200, id, "修改密码成功",session.getId());

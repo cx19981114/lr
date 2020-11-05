@@ -186,7 +186,7 @@ public class EmployeeTaskServiceImpl implements EmployeeTaskService {
 		employeeTask.setDateTime(now);
 		employeeTask.setEmployeeId(data.getInteger("employeeId"));
 		employeeTask.setNote(data.getString("note"));
-		employeeTask.setState(stateWTJ);
+		employeeTask.setState(stateWSH);
 		employeeTask.setTaskId(data.getInteger("taskId"));
 		List<Object> pics = data.getJSONArray("pic");
 		if (pics != null) {

@@ -50,6 +50,7 @@ import cn.lr.po.employeeRest;
 import cn.lr.po.employeeTask;
 import cn.lr.po.order;
 import cn.lr.service.employee.ApplyRankService;
+import cn.lr.service.employee.EmployeeRankService;
 import cn.lr.service.employee.EmployeeService;
 import cn.lr.util.TimeFormatUtil;
 
@@ -58,6 +59,8 @@ import cn.lr.util.TimeFormatUtil;
 public class ApplyRankServiceImpl implements ApplyRankService {
 	@Autowired
 	EmployeeService EmployeeService;
+	@Autowired
+	EmployeeRankService EmployeeRankService;
 
 	@Autowired
 	employeeMapper employeeMapper;
@@ -300,7 +303,7 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 			applyRank.setCheckIdList(checkIdList);
 			applyRank.setCheckNumber(0);
 			applyRank.setDynamicId(data.getInteger("dynamicId"));
-			applyRank.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId")));
+			applyRank.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", data.getInteger("companyId")));
 		} else{
 			String[] checkId = checkIdList.split("-");
 			for (int i = 0; i < checkId.length; i++) {
@@ -315,7 +318,7 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 			applyRank.setCheckIdList(checkIdList);
 			applyRank.setCheckNumber(0);
 			applyRank.setDynamicId(data.getInteger("dynamicId"));
-			applyRank.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未提交", data.getInteger("companyId")));
+			applyRank.setState(dictMapper.selectByCodeAndStateName(APPLY_FLOW, "未审核", data.getInteger("companyId")));
 		}
 		int count = applyRankMapper.insertSelective(applyRank);
 		if (count == 0) {
@@ -415,6 +418,10 @@ public class ApplyRankServiceImpl implements ApplyRankService {
 					this.setState(applyRank.getDynamicId(),
 							dictMapper.selectByCodeAndStateName(APPLY_FLOW, "审核失败", data.getInteger("companyId")), null,
 							data.getInteger("companyId"));
+					JSONObject dataJSonRank = new JSONObject();
+					dataJSonRank.put("companyId", data.getInteger("companyId"));
+					dataJSonRank.put("dynamicId",applyRank.getDynamicId());
+					EmployeeRankService.deleteEmployeeRank(dataJSonRank);
 				}
 				break;
 			}
